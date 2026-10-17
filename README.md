@@ -191,7 +191,7 @@ flowchart LR
         ENV["Sıcaklık, hava nemi, ışık"]
         LVL["Depo seviye sensörü + şamandıra"]
         FLOW["Akış sensörleri x2"]
-        PUMP["12 V dalgıç pompalar x2"]
+        PUMP["Mini dalgıç pompalar x2"]
     end
 
     subgraph MCU["UNO Q - MCU (STM32U585) - Gerçek zaman ve güvenlik"]
@@ -267,37 +267,37 @@ flowchart TD
 
 ## 6. Donanım
 
-Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Sensör ve modüller yarışmanın sağladığı 50 USD'lik Robotistan çeki ile, kasa/toprak/tohum/depo gibi kalemler yerel olarak karşılanacaktır.
+Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemler yarışmanın sağladığı 50 USD'lik çekle **Robotistan'dan** alınır. Kasa, toprak, tohum, depo ve hortum gibi kalemler yerel olarak karşılanır. Ürün adları, fiyatlar, pin planı ve hazırlık takvimi için bkz. **[docs/donanim-plani.md](docs/donanim-plani.md)**.
 
 | Bileşen | Adet | Teknik rolü |
 | :--- | :---: | :--- |
 | **Arduino® UNO™ Q** (2 GB veya 4 GB) | 1 | MCU + MPU: sensör okuma, pompa kontrolü, Edge AI, pano |
-| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog) | 4 | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi |
-| **Toprak sıcaklık sensörü** (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |
-| **Sıcaklık / nem / basınç sensörü** (ör. BME280) | 1 | Ortam koşulları, buharlaşma tahmini için VPD hesabı |
-| **Işık sensörü** (ör. BH1750) | 1 | Işık düzeyi; buharlaşma tahmininde yardımcı girdi |
-| **Düşük debili akış sensörü** (Hall etkili, darbe çıkışlı) | 2 | Sulama sırasında gerçek su akışının ve hacminin ölçümü |
-| **12 V mini DC dalgıç pompa** (1–2 L/dk) | 2 | Depoya daldırılmış, yatak başına sulama |
-| **Opto-izoleli MOSFET / röle sürücü modülü** (2 kanal) + flyback diyot | 1 | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması |
-| **Su geçirmez ultrasonik seviye sensörü** (JSN-SR04T tipi) | 2 | Depo seviyesi |
-| **Şamandıra (float) anahtarı** | 2 | Yazılımdan bağımsız, donanımsal düşük seviye kilidi |
-| **Depo, 20 L** | 2 | Bütçeli su kaynağı |
-| **Bitki yatağı kasası** (60 × 40 × ~20 cm), toprak, tohum | 2 | Test yatakları |
-| **Sulama hattı** (gözenekli/damlatıcılı boru, hortum, bağlantı) | 2 set | Kontrollü su uygulaması |
-| **12 V DC adaptör (≥ 3 A)** | 1 | Pompalar için besleme. UNO Q, VIN girişinden 7–24 V ile de beslenebilir |
-| Seviye dönüştürücü *(gerekirse)* | 1–2 | Sensörlerin 3,3 V / 5 V mantık uyumu için |
-| OLED gösterge *(opsiyonel)* | 1 | Cihaz üzerinde durum |
+| **Korozyona dayanıklı kapasitif toprak nem sensörü v1.2** (analog) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından tek dış alım kalemi* |
+| **Sıcaklık / nem sensörü** (DHT22) | 1 | Ortam koşulları, buharlaşma tahmini için VPD hesabı |
+| **Işık sensörü** (TEMT6000, analog) | 1 | Işık düzeyi; buharlaşma tahmininde yardımcı girdi |
+| **Düşük debili akış sensörü** (YF-S401, 0,3–6 L/dk, Hall etkili) | 2 | Sulama sırasında gerçek su akışının ve hacminin ölçümü |
+| **Mini DC dalgıç pompa** (6 V, 120 L/sa) | 2 (+1 yedek) | Depoya daldırılmış, yatak başına sulama; 5,5 V hattan beslenir |
+| **Opto-izoleli MOSFET sürücü** (LR7843) + flyback diyot (1N5819) | 2 | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması |
+| **Ultrasonik seviye sensörü** (HC-SR04, depo kapağına monte) | 2 | Depo seviyesi (kaba kontrol) |
+| **Şamandıra (float) anahtarı** (ZP7510) | 2 | Yazılımdan bağımsız, donanımsal düşük seviye kilidi |
+| **12 V 2 A DC adaptör** + **LM2596 voltaj düşürücü** | 1 + 1 | UNO Q'nun VIN girişi (7–24 V) ve 5,5 V pompa/sensör hattı için tek besleme |
+| **Depo, 20 L** (ışık geçirmeyen, kapaklı) | 2 | Bütçeli su kaynağı |
+| **Bitki yatağı kasası** (≈ 60 × 40 × 20 cm, drenaj delikli), toprak, tohum | 2 | Test yatakları |
+| **Sulama hattı** (4/6 mm hortum, redüksiyon, damlatıcı) | 2 set | Kontrollü su uygulaması |
+| Proje kutusu, klemens, jumper kablo, gerilim bölücü dirençler | — | Kutulama ve bağlantı |
+| Su geçirmez ultrasonik sensör (AJ-SR04M) *(yedek)* | 2 | HC-SR04 nem nedeniyle sorun çıkarırsa |
+| Toprak sıcaklık sensörü (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |
 | Yük hücresi + HX711 *(opsiyonel)* | 2 | Depo ağırlığından bağımsız hacim çapraz doğrulaması |
-| LED bitki lambası *(gerekirse)* | 1 | Kış aylarında yetersiz ışık için |
 
 **Donanım tasarım notları**
 
-- Islak ortamda çalışıldığı için tüm güç hatları **düşük gerilimli DC (12 V)** olarak tasarlanır; şebeke gerilimi su hattından ayrı tutulur ve topraklı, kaçak akım korumalı priz kullanılır.
-- Pompa bobin/motor yükü için flyback diyot ve ayrı besleme hattı kullanılır; ortak toprak (GND) bağlantısına dikkat edilir.
-- Sensörlerin ve modüllerin gerilim seviyesi UNO Q ile uyumlu olacak şekilde doğrulanır; gerekirse seviye dönüştürücü eklenir.
-- Kapasitif sensörler her yatak toprağı için **iki noktalı kalibrasyon** (kuru/doygun) ve gravimetrik kontrol ile kalibre edilir.
-- Düşük debili akış sensörü seçimi kritiktir: tipik "1–30 L/dk" sensörler bu ölçekteki debilerde güvenilir olmayabilir; düşük debiye uygun bir model seçilecek ve pompa debisiyle E3 deneyinde doğrulanacaktır.
+- Islak ortamda çalışıldığı için tüm güç hatları **düşük gerilimli DC** (12 V giriş, 5,5 V pompa hattı) olarak tasarlanır. Şebeke gerilimi su hattından ayrı tutulur ve topraklı, kaçak akım korumalı priz kullanılır.
+- Pompa motor yükü için flyback diyot ve ayrı besleme hattı kullanılır; ortak toprak (GND) bağlantısına dikkat edilir.
+- UNO Q'nun MCU tarafı 3,3 V mantıktadır ve A0–A5 girişlerine 3,3 V üstü uygulanmaz. Robotistan'da seviye dönüştürücü bulunmadığından 5 V çıkışlı sinyallere (HC-SR04 echo, akış darbesi) dirençli gerilim bölücü konur.
+- Kapasitif sensörler her yatak toprağı için **iki noktalı kalibrasyon** (kuru/doygun) ve gravimetrik kontrol ile kalibre edilir. Kart kenarları ve elektroniği nemden korunur.
+- YF-S401'in ölçüm aralığı (0,3–6 L/dk) pompa debisini kapsar. Litre başına darbe sayısı satıcıya göre değiştiğinden mezürle kalibre edilir ve E3 deneyinde doğrulanır.
 - Ultrasonik seviye ölçümü depo kesitine bağlı olarak kabadır (≈ 1 cm ≈ 0,6 L). Bu yüzden **hacim doğrulamasında akış sensörü birincil**, seviye sensörü kaba kontrol ve alt sınır kilidi içindir.
+- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu yağmur ve doğrudan güneş almayan yere konur.
 
 ---
 
