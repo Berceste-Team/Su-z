@@ -55,12 +55,12 @@ Sulamada klasik yaklaşım, toprak nemi bir eşiğin altına düştüğünde pom
 Ölç → Doğrula → Tahmin Et → Karar Ver → Uygula → Sonucu Doğrula
 ```
 
-- **Ölç:** Toprak nemi (iki derinlik), toprak ve ortam sıcaklığı, hava nemi, ışık, depo seviyesi.
+- **Ölç:** Toprak nemi (iki derinlik), toprak ve ortam sıcaklığı, hava nemi, güneş radyasyonu (hava durumu servisinden), depo hacmi (akış sensöründen hesaplanır).
 - **Doğrula:** Sensör verisi, karar sürecine girmeden önce fiziksel ve istatistiksel tutarlılık kontrolünden geçer.
 - **Tahmin Et:** Model, toprak neminin önümüzdeki saatlerdeki seyrini tahmin eder.
 - **Karar Ver:** Politika; tahmini, ürünün su ihtiyacını ve **kalan su bütçesini** birlikte değerlendirir.
 - **Uygula:** MCU pompayı, güvenlik sınırları içinde çalıştırır.
-- **Sonucu Doğrula:** Su akışı, depo seviyesi ve sulama sonrası toprak tepkisi ile kararın gerçekten uygulanıp uygulanmadığı kontrol edilir.
+- **Sonucu Doğrula:** Su akışı, depo hacmi ve sulama sonrası toprak tepkisi ile kararın gerçekten uygulanıp uygulanmadığı kontrol edilir.
 
 Sistem; kuru çalışmayı, tıkanıklığı, sensör arızasını ve bağlantı kaybını fiziksel olarak tespit eder ve güvenli duruma geçer. Ek olarak, FAO yöntemlerine dayanan bir **ürün uygunluk ve senaryo (what-if) motoru**, kullanıcıya "su bütçem %20 azalırsa hangi kararlar değişir?" sorusunun yanıtını sunar.
 
@@ -143,8 +143,8 @@ Kök bölgesindeki su dengesi birim alan başına belirlenir. Bu yüzden 0,24 m�
 | **Bitki** | Turp (*Raphanus sativus*) veya roka (*Eruca vesicaria*): tohumdan hasada 3–4 hafta süren hızlı döngülü model bitkiler. İki yatakta aynı tür ve aynı ekim yoğunluğu |
 | **Sulama hattı** | Yatak başına bir gözenekli / damlatıcılı sulama hattı, ayrı pompa ve ayrı depo |
 | **Depo** | Yatak başına 20 L (bütçe hesabı ve kuru çalışma testleri için) |
-| **Sensörler (yatak başına)** | 2 korozyona dayanıklı kapasitif toprak nem sensörü (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm), akış sensörü, depo seviye sensörü + şamandıra |
-| **Ortam** | Kapalı alan, balkon veya cam önü; ışık yetersizse LED bitki lambası. Ortam sıcaklık/nem/ışık sensörleri iki yatak için ortaktır |
+| **Sensörler (yatak başına)** | 2 korozyona dayanıklı kapasitif toprak nem sensörü (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm), akış sensörü, şamandıra (depo hacmi akış sensöründen hesaplanır) |
+| **Ortam** | Kapalı alan, balkon veya cam önü; ışık yetersizse LED bitki lambası. Ortam sıcaklık/nem sensörü iki yatak için ortaktır; güneş radyasyonu Open-Meteo'dan alınır |
 
 İki derinlikte sensör bulunması yalnızca ölçüm zenginliği değil, aynı zamanda **çapraz doğrulama** sağlar: sulamadan sonra üst sensör alttan önce tepki vermelidir; bu ilişki bozulursa sensör şüpheli işaretlenir.
 
@@ -188,8 +188,8 @@ UNO Q, tek kart üzerinde iki işlemci barındırır: Linux çalıştıran **Qua
 flowchart LR
     subgraph SAHA["Saha Katmanı"]
         SOIL["Toprak nem sensörleri x4"]
-        ENV["Sıcaklık, hava nemi, ışık"]
-        LVL["Depo seviye sensörü + şamandıra"]
+        ENV["Sıcaklık, hava nemi"]
+        LVL["Şamandıra (depo alt sınırı)"]
         FLOW["Akış sensörleri x2"]
         PUMP["Mini dalgıç pompalar x2"]
     end
@@ -272,32 +272,32 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 | Bileşen | Adet | Teknik rolü |
 | :--- | :---: | :--- |
 | **Arduino® UNO™ Q** (2 GB veya 4 GB) | 1 | MCU + MPU: sensör okuma, pompa kontrolü, Edge AI, pano |
-| **Korozyona dayanıklı kapasitif toprak nem sensörü v1.2** (analog) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından tek dış alım kalemi* |
-| **Sıcaklık / nem sensörü** (DHT22) | 1 | Ortam koşulları, buharlaşma tahmini için VPD hesabı |
-| **Işık sensörü** (TEMT6000, analog) | 1 | Işık düzeyi; buharlaşma tahmininde yardımcı girdi |
-| **Düşük debili akış sensörü** (YF-S401, 0,3–6 L/dk, Hall etkili) | 2 | Sulama sırasında gerçek su akışının ve hacminin ölçümü |
-| **Mini DC dalgıç pompa** (6 V, 120 L/sa) | 2 (+1 yedek) | Depoya daldırılmış, yatak başına sulama; 5,5 V hattan beslenir |
-| **Opto-izoleli MOSFET sürücü** (LR7843) + flyback diyot (1N5819) | 2 | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması |
-| **Ultrasonik seviye sensörü** (HC-SR04, depo kapağına monte) | 2 | Depo seviyesi (kaba kontrol) |
-| **Şamandıra (float) anahtarı** (ZP7510) | 2 | Yazılımdan bağımsız, donanımsal düşük seviye kilidi |
-| **12 V 2 A DC adaptör** + **LM2596 voltaj düşürücü** | 1 + 1 | UNO Q'nun VIN girişi (7–24 V) ve 5,5 V pompa/sensör hattı için tek besleme |
-| **Depo, 20 L** (ışık geçirmeyen, kapaklı) | 2 | Bütçeli su kaynağı |
+| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog, 3,3–5,5 V) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından tek dış alım kalemi* |
+| **Sıcaklık / nem sensörü** (DHT22 modülü) | 1 (+1 yedek) | Ortam koşulları; VPD ve ET₀ hesabı |
+| **Düşük debili akış sensörü** (YF-S401, 0,3–6 L/dk, Hall etkili) | 2 (+1 yedek) | Sulama sırasında gerçek su akışının ve hacminin ölçümü; depo hacmi de bundan hesaplanır |
+| **Mini DC dalgıç pompa** (6 V, 120 L/sa) | 2 (+2 yedek) | Depoya daldırılmış, yatak başına sulama; 5 V hattan beslenir |
+| **Opto-izoleli MOSFET sürücü** (LR7843) + flyback diyot (1N5819) | 2 (+1 yedek) | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması |
+| **Şamandıra (float) anahtarı** (ZP7510) | 2 (+1 yedek) | Yazılımdan bağımsız, donanımsal düşük seviye kilidi |
+| **5 V 2 A DC adaptör** | 1 | Pompa ve akış sensörü hattı. UNO Q, USB-C şarj aletinden ayrı beslenir |
+| **Depo, 20 L** (ışık geçirmeyen, kapaklı, litre işaretli) | 2 | Bütçeli su kaynağı |
 | **Bitki yatağı kasası** (≈ 60 × 40 × 20 cm, drenaj delikli), toprak, tohum | 2 | Test yatakları |
-| **Sulama hattı** (4/6 mm hortum, redüksiyon, damlatıcı) | 2 set | Kontrollü su uygulaması |
-| Proje kutusu, klemens, jumper kablo, gerilim bölücü dirençler | — | Kutulama ve bağlantı |
-| Su geçirmez ultrasonik sensör (AJ-SR04M) *(yedek)* | 2 | HC-SR04 nem nedeniyle sorun çıkarırsa |
+| **Sulama hattı** (8×5 mm ve 4/6 mm hortum, redüksiyon, damlatıcı) | 2 set | Kontrollü su uygulaması |
+| Breadboard, pertinaks, klemens, jumper ve montaj kablosu, makaron, gerilim bölücü dirençler | — | Deneme, kalıcı kurulum ve bağlantı |
+| Kapaklı plastik saklama kabı | 1 | Elektronik kutusu |
 | Toprak sıcaklık sensörü (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |
 | Yük hücresi + HX711 *(opsiyonel)* | 2 | Depo ağırlığından bağımsız hacim çapraz doğrulaması |
 
+**Sadeleştirme notu (20 Ekim 2026):** İlk plandaki ultrasonik seviye sensörleri (HC-SR04), ışık sensörü (TEMT6000), 12 V adaptör + LM2596 ve proje kutusu çıkarıldı. Depo hacmi zaten birincil ölçüm olan akış sensöründen hesaplanır, alt sınırı şamandıra korur. Güneş radyasyonu ve ET₀ Open-Meteo'dan alınır; internet yoksa sıcaklığa dayalı Hargreaves yöntemi kullanılır. Gerekçeler: [docs/donanim-plani.md §5](docs/donanim-plani.md#5-sadeleştirme-ve-gerekçeleri).
+
 **Donanım tasarım notları**
 
-- Islak ortamda çalışıldığı için tüm güç hatları **düşük gerilimli DC** (12 V giriş, 5,5 V pompa hattı) olarak tasarlanır. Şebeke gerilimi su hattından ayrı tutulur ve topraklı, kaçak akım korumalı priz kullanılır.
-- Pompa motor yükü için flyback diyot ve ayrı besleme hattı kullanılır; ortak toprak (GND) bağlantısına dikkat edilir.
-- UNO Q'nun MCU tarafı 3,3 V mantıktadır ve A0–A5 girişlerine 3,3 V üstü uygulanmaz. Robotistan'da seviye dönüştürücü bulunmadığından 5 V çıkışlı sinyallere (HC-SR04 echo, akış darbesi) dirençli gerilim bölücü konur.
+- Islak ortamda çalışıldığı için tüm güç hatları **düşük gerilimli DC** (UNO Q için 5 V USB-C, pompa ve sensörler için ayrı 5 V adaptör) olarak tasarlanır. Şebeke gerilimi su hattından ayrı tutulur ve topraklı, kaçak akım korumalı priz kullanılır.
+- Pompa motor yükü için flyback diyot ve ayrı besleme hattı kullanılır; iki beslemenin GND'si birleştirilir (akış darbesinin okunabilmesi için şart).
+- UNO Q'nun MCU tarafı 3,3 V mantıktadır ve A0–A5 girişlerine 3,3 V üstü uygulanmaz. Robotistan'da seviye dönüştürücü bulunmadığından 5 V çıkışlı akış darbe sinyallerine dirençli gerilim bölücü (10k/20k) konur. Kapasitif sensörlerin çıkışı 0–3 V olduğundan bölücü gerekmez.
 - Kapasitif sensörler her yatak toprağı için **iki noktalı kalibrasyon** (kuru/doygun) ve gravimetrik kontrol ile kalibre edilir. Kart kenarları ve elektroniği nemden korunur.
 - YF-S401'in ölçüm aralığı (0,3–6 L/dk) pompa debisini kapsar. Litre başına darbe sayısı satıcıya göre değiştiğinden mezürle kalibre edilir ve E3 deneyinde doğrulanır.
-- Ultrasonik seviye ölçümü depo kesitine bağlı olarak kabadır (≈ 1 cm ≈ 0,6 L). Bu yüzden **hacim doğrulamasında akış sensörü birincil**, seviye sensörü kaba kontrol ve alt sınır kilidi içindir.
-- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu yağmur ve doğrudan güneş almayan yere konur.
+- **Hacim doğrulamasında akış sensörü birincildir.** Depo hacmi akıştan hesaplanır, her dolumda bidon işaretleriyle elle sıfırlanır; alt sınır kilidi şamandıradadır.
+- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu (kapaklı saklama kabı) yağmur ve doğrudan güneş almayan yere konur.
 
 ---
 
@@ -319,7 +319,7 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 | Grup | Özellikler |
 | :--- | :--- |
 | Toprak | Hacimsel nem (kök bölgesi ve süzülme bölgesi), 1 ve 3 saatlik değişim hızı, toprak sıcaklığı |
-| Ortam | Hava sıcaklığı, bağıl nem, VPD (türetilmiş), ışık düzeyi |
+| Ortam | Hava sıcaklığı, bağıl nem, VPD (türetilmiş), güneş radyasyonu ve ET₀ (Open-Meteo) |
 | Sulama geçmişi | Son sulamadan geçen süre, son doz (mm), son 24 saatte toplam su |
 | Zaman ve ürün | Günün saati (sin/cos), ekimden geçen gün, ürün profili |
 
@@ -435,7 +435,7 @@ Bu katman, bütçe mantığını "hangi ürün bu su ile ne kadar verim verir?" 
 1 − Ya/Ym = Ky × (1 − ETa/ETm)
 ```
 
-- **ETm:** Ürünün tam su ihtiyacı (referans buharlaşma × ürün katsayısı Kc; FAO-56 yöntemi ile). Referans buharlaşma FAO-56 (Penman-Monteith tabanlı) yaklaşıma dayanır; prototipte yerel sıcaklık, nem ve ışık ölçümleriyle basitleştirilmiş biçimde tahmin edilir.
+- **ETm:** Ürünün tam su ihtiyacı (referans buharlaşma × ürün katsayısı Kc; FAO-56 yöntemi ile). Referans buharlaşma FAO-56 (Penman-Monteith tabanlı) yaklaşıma dayanır; prototipte yerel sıcaklık/nem ölçümü ile Open-Meteo'nun radyasyon ve ET₀ verisinden hesaplanır. İnternet yoksa yalnızca sıcaklığa dayanan Hargreaves yöntemine (FAO-56) geçilir.
 - **ETa:** Bütçenin karşılayabildiği gerçek su tüketimi (ETa ≤ ETm; bütçe fazlaysa ETa = ETm).
 - **Ky:** Ürüne özgü verim tepkisi katsayısı.
 - **Ya/Ym:** Göreli verim tahmini, uygunluk skoru olarak sunulur.
@@ -473,7 +473,7 @@ Tasarımın amacı yalnızca doğru karar üretmek değil, **yanlış kararları
 | İnternet kesilir | Ölçüm, karar, kayıt ve pano tamamen yerel çalışır | MPU |
 | Elektrik kesintisi | Pompa açılışta varsayılan olarak KAPALI; bütçe durumu güç geldiğinde kalıcı kayıttan yüklenir | MCU + MPU |
 | Model yetersiz kalır | Model, politikaya girmeden önce baz çizgisine karşı doğrulanır; yetersizse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır | Süreç |
-| Su/elektrik güvenliği | Yalnızca 12 V DC, topraklı ve kaçak akım korumalı priz, şebeke gerilimi su hattından ayrı | Donanım |
+| Su/elektrik güvenliği | Yalnızca 5 V DC, topraklı ve kaçak akım korumalı priz, şebeke gerilimi su hattından ayrı | Donanım |
 
 ---
 
@@ -490,8 +490,10 @@ Prototipin başarısı yalnızca model doğruluğuyla değil, **kararın fizikse
 **Fiziksel doğrulama zinciri.** Her sulama döngüsü üç aşamalı olarak teyit edilir:
 
 ```text
-Pompa tetikleme → Δ Depo seviyesi + Akış darbesi → Δ Toprak nemi tepkisi
+Pompa tetikleme → Akış darbesi (hacim) → Δ Toprak nemi tepkisi
 ```
+
+Depo hacmi akış sensörünün saydığı hacimden hesaplanır ve her dolumda bidon üzerindeki litre işaretleriyle elle doğrulanır. Depo alt sınırı şamandırayla donanımsal olarak korunur.
 
 ### 9.1 Deney seti
 
@@ -641,10 +643,10 @@ gantt
 | **Gerçek veri yetersiz kalır** | Orta / Orta | Sentetik veri ile ön eğitim; fizik tabanlı özellikler; model baz çizgisini geçemezse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır |
 | **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 ikinci deneme fırsatı verir; turp ↔ roka geçişi, yedek olarak tere |
 | **Sensör kayması ve kalibrasyon hatası** | Yüksek / Orta | İki noktalı + gravimetrik kalibrasyon; haftalık kontrol; iki derinlikte çapraz doğrulama; sıcaklık düzeltmesi |
-| **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; seviye düşüşü ve isteğe bağlı yük hücresi ile çapraz kontrol |
+| **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; her dolumda bidon işaretleriyle elle hacim kontrolü ve isteğe bağlı yük hücresi ile çapraz kontrol |
 | **Bütçe/zaman aşımı** | Orta / Orta | Kapsam kesme sırası (Bölüm 11); MVP'nin M2'de tamamlanması |
-| **Wi-Fi/bağlantı sorunu** | Düşük / Düşük | Tüm işlevler yerel; pano yerel ağ üzerinden erişilir |
-| **Elektrik/su güvenliği** | Düşük / Yüksek | 12 V DC, kaçak akım korumalı priz, su hattından ayrı kablolama |
+| **Wi-Fi/bağlantı sorunu** | Düşük / Düşük | Tüm işlevler yerel; pano yerel ağ üzerinden erişilir. Open-Meteo'ya ulaşılamazsa ET₀ yerel sıcaklıkla (Hargreaves) hesaplanır |
+| **Elektrik/su güvenliği** | Düşük / Yüksek | 5 V DC, kaçak akım korumalı priz, su hattından ayrı kablolama |
 | **Sonuçlar hipotezi desteklemez** | Orta / Düşük | Sonuçlar olduğu gibi raporlanır; neden analizi yapılır (gölge mod ve kayıtlar bunu mümkün kılar) |
 
 ---

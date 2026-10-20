@@ -1,7 +1,7 @@
 # Suİz — Donanım Temin ve Hazırlık Planı
 
-> Hazırlayan: donanım ve tesisat sorumlusu · Tarih: 17 Ekim 2026
-> Fiyatlar 17.10.2026'da robotistan.com'da görülen KDV dahil liste fiyatlarıdır; sipariş öncesi tekrar kontrol edilmelidir.
+> Hazırlayan: donanım ve tesisat sorumlusu · İlk sürüm: 17 Ekim 2026 · Sadeleştirilmiş sürüm: 20 Ekim 2026
+> Fiyatlar 20.10.2026'da robotistan.com ve direnc.net ürün sayfalarında görülen KDV dahil liste fiyatlarıdır. Stok durumu aynı gün ürün sayfalarından tek tek kontrol edildi. Sipariş öncesi sepette tekrar bakılmalıdır.
 
 ## 1. Kapsam ve varsayımlar
 
@@ -9,87 +9,140 @@
 | :--- | :--- |
 | **Hazırlık süresi** | 2–3 hafta (17 Ekim – ~7 Kasım). Bitki yetiştirme dahil toplam süre ~2,5 ay (30 Aralık'a kadar); README takvimi geçerli |
 | **Konum** | Adana, balkon |
-| **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Dışarıdan alım yalnızca Robotistan'da hiç bulunmayan ve projenin çekirdek iddiasını etkileyen kalemler için yapılır (bkz. [Bölüm 4](#4-robotistan-dışı-istisnalar)) |
-| **Bütçe** | 50 USD Robotistan hediye çeki (≈ 2.100–2.300 TL, kura göre). Çeki aşan kısım ekip tarafından yine Robotistan'dan karşılanır |
-| **README'den sapmalar** | 12 V pompa yerine 6 V mini dalgıç pompa; BME280 yerine DHT22; BH1750 yerine TEMT6000; JSN-SR04T yerine HC-SR04. Gerekçeler aşağıda. README'nin 6. bölümü bu belgeye göre güncellenmeli |
+| **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Tek istisna kapasitif toprak nem sensörüdür (Robotistan'da yok, bkz. [Bölüm 3](#3-robotistan-dışı-tek-kalem)) |
+| **Bütçe** | 50 USD Robotistan hediye çeki. Çeki aşan kısım ve kargo eşiği ekip tarafından karşılanır |
+| **Deneyim** | Ekip ilk kez tesisat ve devre kuruyor. Bu yüzden kritik her kalemden **en az bir yedek** alınır; deneme için breadboard, kalıcı kurulum için pertinaks ve lehim malzemesi listeye eklenmiştir |
+| **Sadeleştirme** | İlk plana göre 6 kalem çıkarıldı (bkz. [Bölüm 5](#5-sadeleştirme-ve-gerekçeleri)). Başvurunun çekirdek iddiaları (A/B deneyi, iki derinlikte kapasitif ölçüm, akışla doğrulanan sulama, MCU'da donanımsal emniyet) aynen korunur |
 
 ## 2. Robotistan sipariş listesi
 
-### 2.1 Çekirdek (hediye çeki ile)
+Tüm kalemler 20.10.2026'da **stokta**. Fiyatlar KDV dahildir.
 
-| # | Ürün (Robotistan adı) | Adet | Birim (TL) | Toplam (TL) | Rolü / not |
+### 2.1 Çekirdek elektronik
+
+| # | Ürün (Robotistan adı) | Kullanılan | Alınacak | Birim (TL) | Toplam (TL) | Rolü / not |
+| :-: | :--- | :-: | :-: | --: | --: | :--- |
+| 1 | [Su Akış Sensörü YF-S401 Debimetre 0.3-6L/Min 3.5mm - Beyaz](https://www.robotistan.com/yfs401-akis-sensoru-3mm) | 2 | **3** | 226,33 | 678,99 | Yatak başına akış ve hacim. Depo hacmi de bundan hesaplanır |
+| 2 | [Mini Dalgıç Su Pompası 6V 120 Litre/Saat](https://www.robotistan.com/mini-dalgic-pompa-6v-120-litresaat) | 2 | **4** | 50,09 | 200,36 | 2,5–6 V, 130–220 mA. Giriş 4,7 mm, çıkış 7,5 mm. 5 V ile doğrudan çalışır |
+| 3 | [LR7843 MOSFET Sürücü Kartı](https://www.robotistan.com/lr7843-mosfet-kontrol-modulu) | 2 | **3** | 48,89 | 146,67 | Optokuplörlü, 3,3–5 V sinyalle tetiklenir |
+| 4 | [Su Seviye Sensörü (91x24 mm) - ZP7510](https://www.robotistan.com/su-seviye-sensoru-91x24-mm-zp7510) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi |
+| 5 | [DHT22 Dijital Sıcaklık ve Nem Sensörü Modülü](https://www.robotistan.com/dht22-sicaklik-nem-sensoru-modulu) | 1 | **2** | 105,62 | 211,24 | Modül tipi (3,3–5 V). Ortam sıcaklık/nem, VPD ve ET₀ hesabı |
+| 6 | [5V 2A DC Adaptör 5.5mm x 2.1mm - 1 Metre Kablo](https://www.robotistan.com/5v-2a-dc-adaptor-55mm-x-21mm-1-metre-kablo) | 1 | **1** | 142,44 | 142,44 | Pompa ve sensör hattı. UNO Q ayrı beslenir (bkz. §6) |
+| 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi |
+| 8 | [1N5819 Diyot](https://www.robotistan.com/1n5819-diyot) | 2 | **10** | 2,96 | 29,60 | Pompa flyback koruması |
+| 9 | [1/4 W 10K Direnç Paketi](https://www.robotistan.com/14w-10k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Akış darbe hatlarında 5 V → 3,3 V bölücü (üst direnç) |
+| 10 | [1/4 W 20K Direnç Paketi](https://www.robotistan.com/14w-20k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Bölücünün alt direnci |
+| | **Çekirdek toplam** | | | | **≈ 1.874,57** | |
+
+### 2.2 Bağlantı ve montaj
+
+| # | Ürün | Alınacak | Birim (TL) | Toplam (TL) | Not |
 | :-: | :--- | :-: | --: | --: | :--- |
-| 1 | Su Akış Sensörü YF-S401 Debimetre 0.3-6L/Min 3.5mm | 2 | 225,85 | 451,70 | Yatak başına akış ve hacim doğrulama. Pompanın debisi (~1–2 L/dk) ölçüm aralığında |
-| 2 | Mini Dalgıç Su Pompası 6V 120 Litre/Saat | 3 | 49,99 | 149,97 | Yatak başına 1 pompa + 1 yedek. 5–6 V ile çalışır |
-| 3 | LR7843 MOSFET Sürücü Kartı | 2 | 48,78 | 97,56 | Pompa sürme; optokuplörlü giriş, 3,3 V tetikleme |
-| 4 | Su Seviye Sensörü (91x24 mm) - ZP7510 | 2 | 145,14 | 290,28 | Şamandıra; yazılımdan bağımsız düşük seviye kilidi |
-| 5 | HC-SR04 Ultrasonik Mesafe Sensörü | 2 | 63,24 | 126,48 | Depo seviyesi (kaba kontrol). Echo hattına gerilim bölücü |
-| 6 | DHT22 Sıcaklık ve Nem Sensörü | 1 | 106,60 | 106,60 | Ortam sıcaklık/nem, VPD hesabı |
-| 7 | CJMCU-TEMT6000 Ortam Işığı Sensörü | 1 | 75,88 | 75,88 | Işık düzeyi (analog) |
-| 8 | GePro UM-0285, 12 V 2 A Adaptör | 1 | 208,38 | 208,38 | Tek besleme: UNO Q VIN + pompa hattı |
-| 9 | LM2596 Mini Ayarlanabilir Voltaj Düşürücü 3A | 1 | 68,66 | 68,66 | 12 V → 5,5 V (pompalar, akış, HC-SR04) |
-| 10 | Klemens Girişli DC Barrel Jack | 1 | 9,64 | 9,64 | Adaptör girişi |
-| 11 | 1N5819 Diyot | 4 | 2,95 | 11,80 | Pompa flyback koruması (2 kullanılır, 2 yedek) |
-| 12 | 30 cm 40 Pin Dişi-Erkek Jumper Kablo | 1 | 59,62 | 59,62 | |
-| 13 | 30 cm 40 Pin Erkek-Erkek Jumper Kablo | 1 | 63,84 | 63,84 | |
-| 14 | 30 cm 40 Pin Dişi-Dişi Jumper Kablo | 1 | 56,61 | 56,61 | |
-| 15 | KF2EDGR-5.08-2P / 3P Geçmeli Klemens | 4 + 4 | 7,89 / 11,26 | 76,60 | Sensör ve güç bağlantıları |
-| | **Çekirdek toplam** | | | **≈ 1.853,62** | 1.500 TL üstü kargo ücretsiz |
+| 11 | [30 cm 40 Pin Dişi-Erkek Jumper Kablo](https://www.robotistan.com/30cm-40-pin-ayrilabilen-disi-erkek-m-f-jumper-kablo-300-mm) | 1 | 59,75 | 59,75 | Modül → breadboard |
+| 12 | [30 cm 40 Pin Erkek-Erkek Jumper Kablo](https://www.robotistan.com/30cm-40-pin-ayrilabilen-erkek-erkek-m-m-jumper-kablo-300-mm) | 1 | 63,98 | 63,98 | Breadboard içi |
+| 13 | [30 cm 40 Pin Dişi-Dişi Jumper Kablo](https://www.robotistan.com/30cm-40-pin-ayrilabilen-disi-disi-f-f-jumper-kablo-300-mm) | 1 | 56,73 | 56,73 | Modül → modül |
+| 14 | [Orta Boy Breadboard](https://www.robotistan.com/orta-boy-breadboard) | 2 | 36,09 | 72,18 | Lehimsiz deneme; her yatak için bir tane |
+| 15 | [10x10 cm Delikli Pertinaks (Bakır) Tek Yüzlü](https://www.robotistan.com/10x10-cm-delikli-pertinaks-tek-yuzlu) | 3 | 42,85 | 128,55 | Kalıcı kurulum (1 ana kart + 2 deneme/yedek) |
+| 16 | [KF2EDGR-5.08-2P Geçmeli Klemens](https://www.robotistan.com/kf2edgr-508-2p) | 10 | 7,91 | 79,10 | Güç, pompa, şamandıra bağlantıları (pertinaksa lehimlenir) |
+| 17 | [KF2EDGR-5.08-3P Geçmeli Klemens](https://www.robotistan.com/kf2edgr-508-3p) | 10 | 11,29 | 112,90 | Sensör bağlantıları (VCC–GND–sinyal) |
+| 18 | [Tek Damar Montaj Kablosu 24AWG 20m - Kırmızı](https://www.robotistan.com/tek-damar-montaj-kablosu-24awg-20m-kirmizi) | 1 | 133,38 | 133,38 | Kalıcı kablolama (+) |
+| 19 | [Tek Damar Montaj Kablosu 24AWG 20m - Siyah](https://www.robotistan.com/tek-damar-montaj-kablosu-24awg-20m-siyah) | 1 | 133,38 | 133,38 | Kalıcı kablolama (GND) |
+| 20 | [Renkli Makaron Seti - 328 Adet](https://www.robotistan.com/328-adet-renkli-makaron) | 1 | 123,73 | 123,73 | Lehim noktalarının ve sensör kablolarının yalıtımı. *Stok az (4 adet)* |
+| 21 | [Küçük Kablo Bağı Paketi - 100 Adet (150 mm)](https://www.robotistan.com/kucuk-kablo-bagi-paketi-100-adet-150mm) | 1 | 55,53 | 55,53 | Kablo düzeni, hortum sabitleme |
+| 22 | [8 mm Çift Uçlu Timsah Ağızlı Krokodil Kablo - 10 Adet](https://www.robotistan.com/8-mm-cift-uclu-orta-boy-timsah-agizli-krokodil-kablo-35-27-mm-45-cm-10-adet) | 1 | 77,86 | 77,86 | Pompa ve şamandırayı lehimlemeden denemek için |
+| | **Bağlantı ve montaj toplamı** | | | **≈ 1.097,07** | |
 
-### 2.2 Çek yeterse (öncelik sırasıyla)
+### 2.3 Alet (evde yoksa)
 
-| # | Ürün | Adet | Birim (TL) | Not |
+| # | Ürün | Alınacak | Birim (TL) | Not |
 | :-: | :--- | :-: | --: | :--- |
-| 16 | 113 x 197.4 x 63 Proje Kutusu (Siyah) | 1 | 324,25 | Elektronik kutusu. IP sınıfı yok; kablo girişleri silikonla kapatılıp kutu yağmur almayan yere konur |
-| 17 | Direnç seti / 10 kΩ + 20 kΩ dirençler | — | fiyat bakılmadı | Echo ve akış darbe hatları için 5 V → 3,3 V bölücü (lojik seviye dönüştürücü tükenmiş) |
-| 18 | Breadboard / delikli pertinaks | 1 | fiyat bakılmadı | Kalıcı kurulumda pertinaks + lehim tercih edilir |
-| 19 | AJ-SR04M Su Geçirmez Ultrasonik Sensör | 2 | 215,78 | HC-SR04 nem nedeniyle sorun çıkarırsa yedek; kör bölgesi ~20 cm |
+| 23 | [DT830D Dijital Multimetre](https://www.robotistan.com/dt830d-dijital-multimetre-siyah-1) | 1 | 298,76 | **İlk kez kuran biri için en önemli alet:** gerilim, süreklilik ve bölücü çıkışı (≤ 3,3 V) kontrolü |
+| 24 | [Marxlow ZD-30C 30 W Havya](https://www.robotistan.com/havya) | 1 | 325,01 | Pertinaks ve pompa kablosu lehimi |
+| 25 | [ZD-10A Kalem Havya Standı](https://www.robotistan.com/havya-standi) | 1 | 155,53 | |
+| 26 | [Kurtel Sn60/Pb40 Lehim Teli (100 gr) 1 mm](https://www.robotistan.com/kurtel-sn60-pb40-lehim-teli-100-gr-makara-1-mm) | 1 | 434,55 | Hırdavatta daha küçük makara daha ucuza bulunabilir |
+| | **Alet toplamı** | | | **≈ 1.213,85** |
 
-**Robotistan'da tükenmiş veya bulunmayan kalemler (17.10.2026):** kapasitif toprak nem sensörü, su geçirmez DS18B20, BH1750, lojik seviye dönüştürücü, IP67 contalı kutular, hortum.
+### 2.4 Özet
 
-### 2.3 Neden bu seçimler?
+| Grup | Tutar (TL) |
+| :--- | --: |
+| Çekirdek elektronik | 1.874,57 |
+| Bağlantı ve montaj | 1.097,07 |
+| **Robotistan ara toplam** | **≈ 2.971,64** |
+| Alet (evde yoksa) | 1.213,85 |
+| **Alet dahil** | **≈ 4.185,49** |
 
-- **6 V pompa:** Robotistan'da 1–2 L/dk debili 12 V dalgıç pompa yok. 6 V/120 L/sa pompa hem debi hem güvenlik açısından uygun. Yedek almak ucuz olduğu için 3 adet.
-- **DHT22 (BME280 yerine):** VPD hesabı için sıcaklık ve bağıl nem yeterli; basınca gerek yok. Fark ≈ 330 TL.
-- **HC-SR04 (JSN-SR04T yerine):** Akış sensörü birincil hacim ölçümü olduğu için seviye ölçümü yalnızca kaba kontrol. HC-SR04'ün kör bölgesi (~2 cm) 20 L bidon için daha uygun. Su geçirmez modellerin 20–25 cm kör bölgesi var. Sensör depo kapağına, su yüzeyine bakacak şekilde, yağmur almayan yere monte edilir.
-- **TEMT6000 (BH1750 yerine):** BH1750 Robotistan'da yok. Analog çıkış A4'e bağlanır.
-- **Tek 12 V adaptör:** UNO Q, VIN girişinden 7–24 V ile beslenebilir (README §6). Pompalar 5,5 V'a düşürülmüş ayrı bir hattan beslenir. Pompa akımı (~2 × 0,3 A) 2 A'lık adaptör için yeterli pay bırakır. *VIN pini ve kartın akım çekişi kart dokümanından doğrulanmalı.*
+Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 
-## 3. Bağlantı ve güç planı (taslak)
+**Robotistan'da tükenmiş veya bulunmayanlar (20.10.2026):** kapasitif toprak nem sensörü, su geçirmez DS18B20, 8×5 mm hortum, 22AWG montaj kablosu, 2600'lük direnç seti.
+
+## 3. Robotistan dışı tek kalem
+
+| Kalem | Kaynak | Alınacak | Birim (TL) | Toplam (TL) | Not |
+| :--- | :--- | :-: | --: | --: | :--- |
+| [Kapasitif Toprak Nem Sensörü - Higrometre](https://www.direnc.net/kapasitif-toprak-nem-sensoru) | direnc.net (20.10.2026 stokta) | **6** (4 + 2 yedek) | 50,56 | 303,36 | 3,3–5,5 V, üzerinde regülatör var. Çıkış 0–3 V, yani UNO Q analog girişleri için güvenli |
+
+**Neden dışarıdan:** Robotistan'da yalnızca rezistif toprak sensörleri var. Rezistif problar 2,5 ayda korozyona uğrar ve README'deki "korozyona dayanıklı kapasitif sensör" iddiasını bozar. Kart kenarları ve üstteki elektronik oje veya makaronla kaplanır.
+
+## 4. Yerel temin
+
+| Kalem | Adet | Nereden | Not |
+| :--- | :-: | :--- | :--- |
+| Kasa (~60 × 40 × 20 cm) | 2 (özdeş) | Balıkçı (strafor), pazar, ambalajcı, Trendyol | Bkz. §7 |
+| Naylon astar + drenaj tepsisi | 2 | Hırdavat / market | Süzülen suyu ölçmek için tepsi |
+| Bidon, 20 L, ışık geçirmeyen, kapaklı | 2 | Hırdavat | Şamandıra kapağa ya da yan duvara monte edilir |
+| Hortum **8 × 5 mm** (iç çap 5 mm) | ~5 m | Akvaryumcu | Pompa çıkışı 7,5 mm. Robotistan'ın pompaya önerdiği ölçü budur (orada tükenmiş) |
+| Hortum 4/6 mm + redüksiyon + T-parça | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Redüksiyon ölçüsü ürünler gelince ölçülerek alınır |
+| Damlatıcı veya kılcal boru | 2 set | Akvaryumcu / ziraat bayi | |
+| Toprak, torf, perlit | 2 yatak için tek torba karışım | Fidancı / ziraat bayi | İki yatak aynı karışımla doldurulur |
+| Turp veya roka tohumu | 2 paket (Tur 1 + Tur 2) | Ziraat bayi | |
+| Kapaklı plastik saklama kabı (~2 L) | 1 (+1 yedek) | Market / züccaciye | Elektronik kutusu (proje kutusu yerine) |
+| Şeffaf PE örtü ya da mini balkon serası | 1 | Hırdavat / Idefix | Yağmur koruması, bkz. §8 |
+| Radyasyon kalkanı için beyaz, havalandırmalı küçük kap | 1 | Market | DHT22 doğrudan güneşte yanlış okur |
+| Şeffaf oje veya silikon | 1 | Market / hırdavat | Kapasitif sensör kenarları ve kablo girişleri |
+| Mezür (1 L, ml işaretli) | 1 | Market | Akış sensörü kalibrasyonu |
+| Mutfak terazisi (1 g hassasiyet) | 1 | Evde ya da market | Gravimetrik kalibrasyon (E1) |
+| USB-C şarj aleti (5 V 3 A / en az 15 W) ve kablo | 1 | Evde | UNO Q beslemesi |
+
+## 5. Sadeleştirme ve gerekçeleri
+
+| Çıkan | Yerine | Başvuruya etkisi |
+| :--- | :--- | :--- |
+| **HC-SR04 ×2** ve 2 gerilim bölücüsü | Depo hacmi **akış sensörünün saydığı hacimden** hesaplanır (başlangıç hacmi − toplam akış). Her dolumda bidon işaretinden veya mezürle elle sıfırlanır. Alt sınır kilidi şamandırada kalır | Plan zaten "akış birincil, seviye kaba kontrol" diyordu. Doğrulama zincirinde akış ve toprak tepkisi korunur |
+| **TEMT6000** | MPU, **Open-Meteo**'dan güneş radyasyonu ve ET₀ alır. İnternet yoksa DHT22 sıcaklığıyla **Hargreaves** (FAO-56) yöntemine düşer | Buharlaşma tahmini FAO'nun kendi girdisine dayanır; yerel ölçüm DHT22 ile sürer |
+| **12 V 2 A adaptör + LM2596** | UNO Q evdeki USB-C şarj aletinden, pompa ve sensörler 5 V 2 A adaptörden beslenir | Ayar gerektiren voltaj düşürücü kalkar; VIN pini belirsizliği ortadan kalkar |
+| **Proje kutusu** | Kapaklı plastik saklama kabı | Daha ucuz, sudan daha iyi korur |
+| **AJ-SR04M** (yedek) | — | Ultrasonik sensör kullanılmıyor |
+
+**Dokunulmayanlar:** 4 kapasitif sensör (iki derinlik, çapraz doğrulama), iki ayrı bidon (A/B su bütçesinin fiziksel olarak gösterilmesi), akış sensörü ve şamandıra (doğrulanmış aktüasyon ve donanımsal emniyet).
+
+## 6. Bağlantı ve güç planı
 
 ```text
-12 V 2 A adaptör ─┬─> UNO Q VIN
-                  └─> LM2596 (5,5 V) ─┬─> Pompa A (+) ─ LR7843 A ─ GND   [1N5819 pompa uçlarına ters]
-                                      ├─> Pompa B (+) ─ LR7843 B ─ GND
-                                      ├─> YF-S401 A/B VCC
-                                      └─> HC-SR04 A/B VCC
-Ortak GND: adaptör, LM2596, UNO Q, tüm sensörler
+USB-C şarj aleti (5 V 3 A) ──> UNO Q USB-C
+
+5 V 2 A adaptör ─> Barrel jack ─┬─> Pompa A (+) ─ LR7843 A ─ GND   [1N5819 pompa uçlarına ters]
+                                ├─> Pompa B (+) ─ LR7843 B ─ GND
+                                └─> YF-S401 A/B VCC
+Ortak GND: 5 V adaptör GND'si ile UNO Q GND'si birleştirilir (akış sinyali için şart)
+UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 ```
 
 | UNO Q pini | Bağlantı | Not |
 | :--- | :--- | :--- |
-| A0, A1 | Yatak A toprak nemi (5 cm / 10 cm) | 3,3 V ile besle; çıkış ≤ 3,3 V |
+| A0, A1 | Yatak A toprak nemi (5 cm / 10 cm) | 3,3 V ile besle; çıkış 0–3 V |
 | A2, A3 | Yatak B toprak nemi (5 cm / 10 cm) | |
-| A4 | TEMT6000 | 3,3 V ile besle |
-| A5 | Boş (yedek / 3. yatak) | |
-| D2, D3 | YF-S401 A / B darbe çıkışı | Kesme (interrupt) pinleri. 5 V darbe → bölücü |
+| A4, A5 | Boş (yedek / 3. yatak) | |
+| D2, D3 | YF-S401 A / B darbe çıkışı | Kesme (interrupt) pinleri. 5 V darbe → 10k/20k bölücü → ≈ 3,3 V |
 | D4, D5 | Şamandıra A / B | INPUT_PULLUP; şamandıra GND'ye kapatır |
-| D6, D7 / D8, D9 | HC-SR04 A / B trig, echo | Echo → 10k/20k bölücü |
 | D10, D11 | LR7843 A / B PWM girişi | Açılışta LOW (pompa kapalı) |
-| D12 | DHT22 veri | 3,3 V, 10 kΩ pull-up |
+| D12 | DHT22 veri | Modül tipi; pull-up kartın üzerinde |
 
-> **UNO Q gerilim uyarısı:** MCU tarafı 3,3 V mantıktadır. A0–A5 analog girişlerine 3,3 V'tan yüksek gerilim uygulanmamalı. Bazı kaynaklar dijital pinlerin 5 V toleranslı olduğunu söylüyor, ancak kaynaklar çelişkili. Resmi datasheet kontrol edilene kadar her 5 V çıkışlı sinyale bölücü konur.
+> **UNO Q gerilim uyarısı:** MCU tarafı 3,3 V mantıktadır. Analog girişlere 3,3 V'tan yüksek gerilim uygulanmamalı. Dijital pinlerin 5 V toleransı resmi datasheet ile doğrulanana kadar akış darbe hatlarında bölücü kullanılır. Bölücü çıkışı, sensör UNO Q'ya bağlanmadan önce multimetreyle ölçülür.
 
-## 4. Robotistan dışı istisnalar
+**İlk kez kuranlar için sıra:** her modül önce breadboard üzerinde tek başına denenir (önce multimetreyle gerilim kontrolü, sonra kod). Pompa ve şamandıra timsah kabloyla denenir. Hepsi çalıştıktan sonra pertinaksa lehimlenir ve klemenslerle kutuya taşınır.
 
-| Kalem | Neden dışarıdan | Öneri |
-| :--- | :--- | :--- |
-| **Kapasitif toprak nem sensörü v1.2 (4 + 2 yedek)** | Robotistan'da yalnızca **rezistif** sensörler var ("Toprak Nemi Algılama Sensörü", 49,99 TL; "12V Toprak Hygrometer", röle çıkışlı). "SHT10 Soil" (1.401 TL) toprak nemini değil, prob içindeki hava nemini ölçüyor. Rezistif problar 2,5 ayda korozyona uğrar ve README'nin "korozyona dayanıklı kapasitif sensör" iddiasını bozar | Kapasitif v1.2 modülü (ör. direnc.net). Mümkünse TLC555 entegreli olanlar seçilir (3,3 V'ta çalışır). Kart kenarları ve üstteki elektronik oje veya makaronla kaplanır |
-| **Tesisat ve mekanik** (README §6'da zaten yerel temin olarak planlı) | Robotistan'da hortum tükenmiş; kasa, depo, toprak ve tohum satılmıyor | Akvaryumcu: 4/6 mm silikon hortum, redüksiyonlar, damlatıcı veya kılcal boru. Hırdavat: 20 L ışık geçirmeyen kapaklı bidon ×2 |
-
-Robotistan'da kapasitif sensör stoğa girerse bu istisna kaldırılır. Rezistif sensörü yalnızca acil yedek olarak düşünün: ölçüm anında GPIO ile beslenmeli, ölçüm dışında kapalı tutulmalı.
-
-## 5. Kasa (test yatağı) temini
+## 7. Kasa (test yatağı) temini
 
 60 × 40 cm Avrupa standart kasa ölçüsüdür. **Ölçünün tam tutması şart değil:** karar katmanı mm biriminde çalıştığı için önemli olan iki yatağın **özdeş** olması ve iç alanın ölçülüp koda girilmesidir.
 
@@ -97,30 +150,30 @@ Robotistan'da kapasitif sensör stoğa girerse bu istisna kaldırılır. Rezisti
 | :--- | :--- |
 | Balıkçı (strafor balık kasası) | Genelde ~60 × 40, ücretsiz veya çok ucuz. Yalıtımlı, kök bölgesi sıcaklığını dengeler. Naylon astar + drenaj deliği gerekir; yıkanmalı |
 | Pazar / hal (plastik sebze kasası) | Delikliyse naylon astarla kullanılır |
-| Trendyol "60x40 plastik kasa" | Ör. 60×40×20 katlanır kasa ~1.150 TL; 40×60×30 kapalı kasa ~840 TL |
+| Trendyol "60x40 plastik kasa" | Ör. 60×40×20 katlanır kasa ~1.150 TL; 40×60×30 kapalı kasa ~840 TL (17.10.2026) |
 | Hırdavat / ambalaj toptancısı ("Euro kasa", "stok kasası") | Kapalı plastik kasa, adet bazında |
 
 - Tabana 6–8 adet drenaj deliği açılır. Altına tepsi konursa **süzülen su (D)** ölçülebilir; su dengesi için ek veri olur.
 - Toprak: iki yatağa aynı torbadan, aynı karışım (ör. bahçe toprağı + torf + perlit), aynı sıkılıkta konur.
 
-## 6. Balkon kurulumu — Adana
+## 8. Balkon kurulumu — Adana
 
 - **Yağmur deneyi bozar.** Yağmur ölçülmeyen bir su girdisidir (P); su bütçesini ve A/B karşılaştırmasını geçersiz kılar. Adana'da yağışlı dönem Kasım–Şubat'tır ve Tur 2 (Aralık) tam bu döneme denk gelir. Yataklar yağmur almamalı:
   - saçak / kapalı balkon bölümü, **veya**
   - şeffaf PE / polikarbonat örtü (yanları havalandırmalı), **veya**
   - raflı mini balkon serası (~2.000 TL; ılık havada kapağı açık tutulmalı, aşırı ısınmaya dikkat).
-- **Elektronik:** proje kutusu yağmur ve doğrudan güneş almayan yere konur; kablo girişleri silikonla kapatılır, kablolar kutuya aşağıdan girer (damla döngüsü). Priz kaçak akım korumalı olmalı.
-- **Depolar:** ışık geçirmeyen ve kapaklı bidon (yosun, sivrisinek, yağmur suyu girişi). Şamandıra ve HC-SR04 kapağa monte edilir.
+- **Elektronik:** saklama kabı yağmur ve doğrudan güneş almayan yere konur; kablo girişleri silikonla kapatılır, kablolar kaba aşağıdan girer (damla döngüsü). Priz kaçak akım korumalı olmalı.
+- **Depolar:** ışık geçirmeyen ve kapaklı bidon (yosun, sivrisinek, yağmur suyu girişi). Şamandıra bidona monte edilir; her dolumda bidonun yanına çizilen litre işaretleriyle depo hacmi elle kaydedilir.
 - **Sıcaklık ve ışık:** Adana'da don riski düşük; turp ve roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
-- **Sensör yerleşimi:** DHT22 ve TEMT6000 iki yatağın ortasına, gölgelikli bir radyasyon kalkanı içine (beyaz, havalandırmalı küçük kap) yerleştirilir; doğrudan güneşte DHT22 yanlış yüksek sıcaklık okur.
+- **Sensör yerleşimi:** DHT22 iki yatağın ortasına, gölgelikli bir radyasyon kalkanı içine (beyaz, havalandırmalı küçük kap) yerleştirilir; doğrudan güneşte yanlış yüksek sıcaklık okur.
 
-## 7. Hazırlık takvimi (17 Ekim – 7 Kasım)
+## 9. Hazırlık takvimi (17 Ekim – 7 Kasım)
 
 | Hafta | Donanım ve tesisat | Yazılım (3 kişi) |
 | :--- | :--- | :--- |
-| **1 · 17–24 Ekim** | Robotistan siparişi (hemen); kapasitif sensör siparişi; kasa, bidon, toprak, tohum, hortum temini. UNO Q + App Lab kurulumu, Bridge "merhaba" testi (**M0**) | MCU ↔ MPU mesaj şemasının (JSON alanları, birimler, olay tipleri) birlikte sabitlenmesi; depo iskeleti (`firmware/`, `app/`, `simulation/`) |
-| **2 · 25–31 Ekim** | Sensörlerin tek tek bağlanması; kapasitif sensör iki noktalı kalibrasyon (kuru / doygun) + gravimetrik kontrol (**E1**); pompa debisi ve YF-S401 darbe/litre kalibrasyonu (mezür ile); yatakların kurulması, bitkisiz kuruma eğrisinin (**E2**) başlatılması | MCU: örnekleme + medyan filtre, pompa sürücü. MPU: veri alma + SQLite kaydı. Simülatör ilk sürüm |
-| **3 · 1–7 Kasım** | MCU güvenlik kilitleri: kuru çalışma, akış yok (3 sn), azami süre (60 sn), heartbeat (**E3** ilk tur); kablo düzeni ve kutulama; **5 Kasım Tur 1 ekim** | Kural tabanlı politika uçtan uca (**M2 / MVP**); pano ilk sürüm (canlı değerler + son kararlar) |
+| **1 · 17–24 Ekim** | Robotistan ve direnc.net siparişi (hemen); kasa, bidon, toprak, tohum, hortum temini. UNO Q + App Lab kurulumu, Bridge "merhaba" testi (**M0**). Multimetre ve lehim alıştırması (yedek pertinaksta) | MCU ↔ MPU mesaj şemasının (JSON alanları, birimler, olay tipleri) birlikte sabitlenmesi; depo iskeleti (`firmware/`, `app/`, `simulation/`) |
+| **2 · 25–31 Ekim** | Sensörlerin breadboard'da tek tek bağlanması; kapasitif sensör iki noktalı kalibrasyon (kuru / doygun) + gravimetrik kontrol (**E1**); pompa debisi ve YF-S401 darbe/litre kalibrasyonu (mezür ile); yatakların kurulması, bitkisiz kuruma eğrisinin (**E2**) başlatılması | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi sayacı. MPU: veri alma + SQLite kaydı, Open-Meteo istemcisi. Simülatör ilk sürüm |
+| **3 · 1–7 Kasım** | MCU güvenlik kilitleri: kuru çalışma, akış yok (3 sn), azami süre (60 sn), heartbeat (**E3** ilk tur); pertinaksa geçiş ve kutulama; **5 Kasım Tur 1 ekim** | Kural tabanlı politika uçtan uca (**M2 / MVP**); pano ilk sürüm (canlı değerler + son kararlar) |
 
 **Önerilen iş bölümü**
 
@@ -128,21 +181,22 @@ Robotistan'da kapasitif sensör stoğa girerse bu istisna kaldırılır. Rezisti
 | :--- | :--- |
 | Donanım sorumlusu | Devre, tesisat, kalibrasyon; MCU firmware'i ve güvenlik denetçisi |
 | Yazılım 1 | Bridge veri alma, kayıt (SQLite/CSV), yerel pano |
-| Yazılım 2 | Simülatör, bütçe politikası, tahmin ve anomali modeli, senaryo motoru |
+| Yazılım 2 | Simülatör, bütçe politikası, tahmin ve anomali modeli, senaryo motoru, Open-Meteo / Hargreaves ET₀ |
 
-## 8. Açık noktalar
+## 10. Açık noktalar
 
-- [ ] Hediye çekinin TL karşılığı ve kargo dahil olup olmadığı
-- [ ] UNO Q VIN pini ve 3,3 V / 5 V tolerans değerlerinin resmi datasheet'ten doğrulanması
-- [ ] Pompa çıkışı (~7–8 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (ürünler gelince ölçülecek)
+- [ ] Hediye çekinin TL karşılığı
+- [ ] UNO Q dijital pinlerinin 5 V toleransının ve USB-C güç gereksiniminin resmi datasheet'ten doğrulanması
+- [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (ürünler gelince ölçülecek)
+- [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: pompalar gelince ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
 - [ ] Balkonun yönü ve yağmurdan korunan alanın boyutu
-- [ ] README §6 donanım tablosunun bu belgeye göre güncellenmesi
+- [ ] Elde havya, multimetre ve lehim teli olup olmadığı (§2.3)
 
 ## Kaynaklar
 
-- Robotistan ürün aramaları (17.10.2026): [akış sensörü](https://www.robotistan.com/arama?q=akis+sensoru) · [pompa](https://www.robotistan.com/arama?q=pompa) · [MOSFET](https://www.robotistan.com/arama?q=mosfet) · [seviye](https://www.robotistan.com/arama?q=seviye) · [HC-SR04](https://www.robotistan.com/arama?q=hc-sr04) · [sıcaklık/nem](https://www.robotistan.com/arama?q=sicaklik+nem+sensoru) · [ışık](https://www.robotistan.com/arama?q=isik+sensoru) · [LM2596](https://www.robotistan.com/arama?q=lm2596) · [adaptör](https://www.robotistan.com/arama?q=adaptor+12v) · [toprak](https://www.robotistan.com/arama?q=soil) · [proje kutusu](https://www.robotistan.com/arama?q=proje+kutusu)
-- Robotistan rezistif sensörler: [Toprak Nemi Algılama Sensörü](https://www.robotistan.com/toprak-nemi-algilama-sensoru) · [12V Toprak Hygrometer](https://www.robotistan.com/nem-algilama-nem-izleme-modulu) · [SHT10 Soil](https://www.robotistan.com/sht10-sicaklik-ve-nem-sensoru)
+- Robotistan ürün sayfaları (20.10.2026): tablolardaki bağlantılar
 - Kapasitif sensör: [direnc.net](https://www.direnc.net/kapasitif-toprak-nem-sensoru)
 - YF-S401 teknik bilgi: [DFRobot wiki](https://wiki.dfrobot.com/sen0216/)
 - UNO Q pin gerilimleri (üçüncü taraf, doğrulanmalı): [etechnophiles](https://www.etechnophiles.com/?p=22458) · [52Pi](https://docs.52pi.com/md/kz-0092/kz-0092/)
+- Hava verisi: [Open-Meteo](https://open-meteo.com/) (radyasyon, ET₀) · Hargreaves yöntemi: FAO-56, Bölüm 3
 - Kasa: [Trendyol 40×60](https://www.trendyol.com/40-x-60-sepet-x-c104221-a92-v23999) · Mini sera: [Idefix](https://www.idefix.com/missidea-portatif-balkon-ve-bahce-bitki-yetistirme-serasi-p-20704716)
