@@ -173,14 +173,14 @@ UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 
 ## 9. Hazırlık takvimi (güncel)
 
-> Önceki 17 Ekim – 7 Kasım takvimi geçerliliğini yitirdi. Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. **Tur 1 kaldırıldı** (gerekçe README §9.2).
+> Önceki 17 Ekim – 7 Kasım takvimi geçerliliğini yitirdi. Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. İki tur korunur; **Tur 1 kısaltıldı** (15 Kasım – 3 Aralık, README §9.2).
 
 | Dönem | Donanım ve tesisat | Yazılım |
 | :--- | :--- | :--- |
-| **9–15 Kasım** | Siparişi say ve kontrol et; direnc.net siparişini ver; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; pompa, akış, şamandıra, DHT22 breadboard testi; kasa, bidon, toprak, tohum, hortum temini; balkonda yağmur korumalı alan | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
+| **9–15 Kasım** | Siparişi say ve kontrol et; direnc.net siparişini ver; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; pompa, akış, şamandıra, DHT22 breadboard testi; kasa, bidon, toprak, tohum, hortum temini; balkonda yağmur korumalı alan; **15 Kasım Tur 1 ekim** (sensörler gelene kadar mezürle elle sulama ve kayıt) | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
 | **16–22 Kasım** | Kapasitif sensör iki noktalı + gravimetrik kalibrasyon (**E1**, ≈ 18 Kasım); pompa debisi ve YF-S401 darbe/litre kalibrasyonu; MCU güvenlik kilitleri ve **E3** (≈ 21 Kasım); pertinaksa geçiş ve kutulama; **MVP 22 Kasım** | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi. MPU: veri alma + SQLite, Open-Meteo istemcisi, simülatör ilk sürüm, kural tabanlı politika, pano ilk sürüm |
-| **23 Kasım – 3 Aralık** | **E2** bitkisiz kuruma eğrisi (23 Kasım – 3 Aralık); çimlenme denemesi (24–30 Kasım); **E4** anomali enjeksiyonu (≈ 30 Kasım); 3 Aralık'ta dondurma | Model v1, anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
-| **4–27 Aralık** | **E5** A/B deneyi | Dokümantasyon, video |
+| **23 Kasım – 3 Aralık** | Tur 1 kural tabanlı sulama ile sürer; **E2** kuruma eğrileri (19 Kasım – 3 Aralık, Tur 1 yataklarında); **E4** anomali enjeksiyonu (≈ 30 Kasım); 3 Aralık'ta dondurma, yatakların boşaltılması | Model v1, model Tur 1'de gölge modda (≈ 28 Kasım – 3 Aralık), anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
+| **4–27 Aralık** | **Tur 2** ekim ve **E5** A/B deneyi | Dokümantasyon, video |
 
 Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bırakılmıştır).
 
