@@ -1,5 +1,7 @@
 # Suİz — Donanım Temin ve Hazırlık Planı
 
+> **Senkronizasyon:** Bu belge Notion ana dokümanıyla senkron tutulur (bkz. [AGENTS.md](../AGENTS.md)). Notion güncel görev durumunun, bu belge yayınlanacak teknik kaydın ana kaynağıdır.
+>
 > Hazırlayan: donanım ve tesisat sorumlusu · İlk sürüm: 17 Ekim 2026 · Sadeleştirilmiş sürüm: 20 Ekim 2026
 > Fiyatlar 20.10.2026'da robotistan.com ve direnc.net ürün sayfalarında görülen KDV dahil liste fiyatlarıdır. Stok durumu aynı gün ürün sayfalarından tek tek kontrol edildi. Sipariş öncesi sepette tekrar bakılmalıdır.
 
@@ -7,7 +9,7 @@
 
 | Konu | Karar |
 | :--- | :--- |
-| **Hazırlık süresi** | 2–3 hafta (17 Ekim – ~7 Kasım). Bitki yetiştirme dahil toplam süre ~2,5 ay (30 Aralık'a kadar); README takvimi geçerli |
+| **Hazırlık süresi** | Donanım ve MVP için 9–22 Kasım 2026. Bitki yetiştirme dahil toplam süre 30 Aralık'a kadar; güncel takvim README §11 ve Notion'dadır |
 | **Konum** | Adana, balkon |
 | **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Tek istisna kapasitif toprak nem sensörüdür (Robotistan'da yok, bkz. [Bölüm 3](#3-robotistan-dışı-tek-kalem)) |
 | **Bütçe** | 50 USD Robotistan hediye çeki. Çeki aşan kısım ve kargo eşiği ekip tarafından karşılanır |
@@ -16,7 +18,7 @@
 
 ## 2. Robotistan sipariş listesi
 
-Tüm kalemler 20.10.2026'da **stokta**. Fiyatlar KDV dahildir.
+Tüm kalemler 20.10.2026'da **stokta**, sipariş **teslim alındı** (Kasım 2026). Fiyatlar KDV dahildir.
 
 ### 2.1 Çekirdek elektronik
 
@@ -81,6 +83,8 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Kalem | Kaynak | Alınacak | Birim (TL) | Toplam (TL) | Not |
 | :--- | :--- | :-: | --: | --: | :--- |
 | [Kapasitif Toprak Nem Sensörü - Higrometre](https://www.direnc.net/kapasitif-toprak-nem-sensoru) | direnc.net (20.10.2026 stokta) | **6** (4 + 2 yedek) | 50,56 | 303,36 | 3,3–5,5 V, üzerinde regülatör var. Çıkış 0–3 V, yani UNO Q analog girişleri için güvenli |
+
+**Sipariş durumu (9 Kasım 2026): henüz verilmedi.** E1, E2 ve E5 bu sensörlere bağlıdır; sipariş günü belli olunca tarihler güncellenir.
 
 **Neden dışarıdan:** Robotistan'da yalnızca rezistif toprak sensörleri var. Rezistif problar 2,5 ayda korozyona uğrar ve README'deki "korozyona dayanıklı kapasitif sensör" iddiasını bozar. Kart kenarları ve üstteki elektronik oje veya makaronla kaplanır.
 
@@ -167,30 +171,28 @@ UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 - **Sıcaklık ve ışık:** Adana'da don riski düşük; turp ve roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
 - **Sensör yerleşimi:** DHT22 iki yatağın ortasına, gölgelikli bir radyasyon kalkanı içine (beyaz, havalandırmalı küçük kap) yerleştirilir; doğrudan güneşte yanlış yüksek sıcaklık okur.
 
-## 9. Hazırlık takvimi (17 Ekim – 7 Kasım)
+## 9. Hazırlık takvimi (güncel)
 
-| Hafta | Donanım ve tesisat | Yazılım (3 kişi) |
+> Önceki 17 Ekim – 7 Kasım takvimi geçerliliğini yitirdi. Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. **Tur 1 kaldırıldı** (gerekçe README §9.2).
+
+| Dönem | Donanım ve tesisat | Yazılım |
 | :--- | :--- | :--- |
-| **1 · 17–24 Ekim** | Robotistan ve direnc.net siparişi (hemen); kasa, bidon, toprak, tohum, hortum temini. UNO Q + App Lab kurulumu, Bridge "merhaba" testi (**M0**). Multimetre ve lehim alıştırması (yedek pertinaksta) | MCU ↔ MPU mesaj şemasının (JSON alanları, birimler, olay tipleri) birlikte sabitlenmesi; depo iskeleti (`firmware/`, `app/`, `simulation/`) |
-| **2 · 25–31 Ekim** | Sensörlerin breadboard'da tek tek bağlanması; kapasitif sensör iki noktalı kalibrasyon (kuru / doygun) + gravimetrik kontrol (**E1**); pompa debisi ve YF-S401 darbe/litre kalibrasyonu (mezür ile); yatakların kurulması, bitkisiz kuruma eğrisinin (**E2**) başlatılması | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi sayacı. MPU: veri alma + SQLite kaydı, Open-Meteo istemcisi. Simülatör ilk sürüm |
-| **3 · 1–7 Kasım** | MCU güvenlik kilitleri: kuru çalışma, akış yok (3 sn), azami süre (60 sn), heartbeat (**E3** ilk tur); pertinaksa geçiş ve kutulama; **5 Kasım Tur 1 ekim** | Kural tabanlı politika uçtan uca (**M2 / MVP**); pano ilk sürüm (canlı değerler + son kararlar) |
+| **9–15 Kasım** | Siparişi say ve kontrol et; direnc.net siparişini ver; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; pompa, akış, şamandıra, DHT22 breadboard testi; kasa, bidon, toprak, tohum, hortum temini; balkonda yağmur korumalı alan | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
+| **16–22 Kasım** | Kapasitif sensör iki noktalı + gravimetrik kalibrasyon (**E1**, ≈ 18 Kasım); pompa debisi ve YF-S401 darbe/litre kalibrasyonu; MCU güvenlik kilitleri ve **E3** (≈ 21 Kasım); pertinaksa geçiş ve kutulama; **MVP 22 Kasım** | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi. MPU: veri alma + SQLite, Open-Meteo istemcisi, simülatör ilk sürüm, kural tabanlı politika, pano ilk sürüm |
+| **23 Kasım – 3 Aralık** | **E2** bitkisiz kuruma eğrisi (23 Kasım – 3 Aralık); çimlenme denemesi (24–30 Kasım); **E4** anomali enjeksiyonu (≈ 30 Kasım); 3 Aralık'ta dondurma | Model v1, anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
+| **4–27 Aralık** | **E5** A/B deneyi | Dokümantasyon, video |
 
-**Önerilen iş bölümü**
-
-| Kişi | Sorumluluk |
-| :--- | :--- |
-| Donanım sorumlusu | Devre, tesisat, kalibrasyon; MCU firmware'i ve güvenlik denetçisi |
-| Yazılım 1 | Bridge veri alma, kayıt (SQLite/CSV), yerel pano |
-| Yazılım 2 | Simülatör, bütçe politikası, tahmin ve anomali modeli, senaryo motoru, Open-Meteo / Hargreaves ET₀ |
+Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bırakılmıştır).
 
 ## 10. Açık noktalar
 
-- [ ] Hediye çekinin TL karşılığı
+- [ ] direnc.net kapasitif sensör siparişi (6 adet) henüz verilmedi; sipariş günü ve teslim tarihi netleşince E1 ve MVP tarihleri güncellenecek
 - [ ] UNO Q dijital pinlerinin 5 V toleransının ve USB-C güç gereksiniminin resmi datasheet'ten doğrulanması
-- [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (ürünler gelince ölçülecek)
-- [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: pompalar gelince ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
+- [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (parçalar geldi, ölçülecek)
+- [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
 - [ ] Balkonun yönü ve yağmurdan korunan alanın boyutu
 - [ ] Elde havya, multimetre ve lehim teli olup olmadığı (§2.3)
+- [ ] Yayın için GitHub deposu ve lisans (kaynak kod MIT, dokümantasyon ve veri CC BY 4.0 önerildi)
 
 ## Kaynaklar
 
