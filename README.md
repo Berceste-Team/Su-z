@@ -153,7 +153,7 @@ Kök bölgesindeki su dengesi birim alan başına belirlenir. Bu yüzden 0,24 m�
 
 ### 4.3 Prototip su bütçesi
 
-Prototipte bütçe **E5 deneyinin 24 günü** için tanımlanır. İç mekânda bitki su tüketiminin yaklaşık 1–3 mm/gün aralığında olacağı varsayılmıştır; bu değer E2 (kuruma eğrisi) deneyleriyle kalibre edilecektir.
+Prototipte bütçe **Tur 2 (E5) deneyinin 24 günü** için tanımlanır. İç mekânda bitki su tüketiminin yaklaşık 1–3 mm/gün aralığında olacağı varsayılmıştır; bu değer E2 (kuruma eğrisi) deneyleriyle kalibre edilecektir.
 
 | Senaryo | Bütçe (24 gün) | Litre (0,24 m² yatak) | Günlük ortalama |
 | :--- | :--- | :--- | :--- |
@@ -350,7 +350,7 @@ Sulama sonrası gözlenen toprak tepkisi, bu formüldeki etkinlik katsayısını
 
 Kısa geliştirme süresi nedeniyle veri iki kaynaktan oluşur:
 
-1. **Gerçek veri:** E2 (bitkisiz kuruma eğrisi) deneyleri ve sonrasında yataklardan toplanan ölçümler.
+1. **Gerçek veri:** E2 (kuruma eğrisi) deneyleri ve Tur 1 boyunca yataklardan toplanan ölçümler.
 2. **Sentetik veri:** Kök bölgesi su dengesi simülatöründen üretilen veri; farklı hava koşulları, gürültü ve sensör arızaları içerir. Ön eğitim, veri artırma ve anomali enjeksiyonu için kullanılır.
 
 ```text
@@ -503,19 +503,18 @@ Depo hacmi akış sensörünün saydığı hacimden hesaplanır ve her dolumda b
 | Kod | Deney | Dönem | Amaç | Çıktı |
 | :--- | :--- | :--- | :--- | :--- |
 | **E1** | Sensör kalibrasyonu | ≈ 18 Kasım (sensör siparişine bağlı) | İki noktalı (kuru/doygun) ve gravimetrik kalibrasyon | Kalibrasyon eğrileri, ölçüm belirsizliği |
-| **E2** | Kuruma eğrisi (dry-down) | 23 Kasım – 3 Aralık | Bitkisiz iki yatakta, farklı sıcaklık/nem/ışık altında toprak neminin doğal azalışı; ET aralığının kalibrasyonu | Model eğitim verisi, gerçek ET aralığı |
+| **E2** | Kuruma eğrisi (dry-down) | 19 Kasım – 3 Aralık | Tur 1 yataklarında, çimlenme öncesi (fiilen bitkisiz) ve bitkili dönemde, sulamalar arasında; farklı sıcaklık/nem/ışık altında toprak neminin doğal azalışı; ET aralığının kalibrasyonu | Model eğitim verisi, gerçek ET aralığı |
 | **E3** | Aktüatör ve güvenlik testleri | ≈ 21 Kasım (dondurma öncesi tekrar) | Kuru çalışma kilidi, akış yok, hortum kesme, MPU heartbeat kaybı, elektrik kesintisi | Geçti/kaldı tablosu, debi doğrulaması |
 | **E4** | Anomali enjeksiyonu | ≈ 30 Kasım | Sensör sökme, sıçrama, donma, sentetik bozulma | Yakalama oranı, yanlış alarm sayısı |
-| **E5** | A/B sulama deneyi | 4–27 Aralık | Suİz (Yatak B) ile ayarlanmış zamanlayıcının (Yatak A) karşılaştırılması | Su kullanımı, nem kararlılığı, bitki gelişimi |
+| **E5** | A/B sulama deneyi (Tur 2) | 4–27 Aralık | Suİz (Yatak B) ile ayarlanmış zamanlayıcının (Yatak A) karşılaştırılması | Su kullanımı, nem kararlılığı, bitki gelişimi |
 | **E6** | Senaryo motoru doğrulama | ≈ 29 Aralık | Senaryo motorunun tahmin ettiği su kullanımının E5'te ölçülenle karşılaştırılması | MAPE / sapma |
 
-### 9.2 Tek tur yaklaşımı (Tur 1 kaldırıldı)
+### 9.2 İki tur yaklaşımı
 
-Önceki taslakta iki tur vardı (Tur 1: kural tabanlı sulama ve modelin gölge modda denenmesi, aynı zamanda yedek ekim; Tur 2: A/B deneyi). **9 Kasım 2026'da Tur 1 kaldırıldı.** Nedenleri: kapasitif toprak nem sensörlerinin henüz sipariş edilmemiş olması, takvimin geride kalması ve 24 günlük E5'in 30 Aralık yayınından önce bitmesi için en geç 4 Aralık'ta başlaması gerekmesi.
+- **Tur 1 (15 Kasım – 3 Aralık):** İlk ekim. Ekim sensörlerden bağımsızdır; kapasitif sensörler gelene kadar yataklar mezürle ölçülen hacimlerle elle sulanır ve kaydedilir. MVP'den (22 Kasım) itibaren her iki yatakta **kural tabanlı** sulama çalışır. Suİz modeli (≈ 28 Kasım'dan itibaren) **gölge modunda** çalışır: kararlarını üretir ve kaydeder ancak pompayı sürmez. Böylece model, gerçek bitki ve ortamla, risksiz biçimde denenir; "gölge karar" ile "uygulanan karar" karşılaştırılır. Tur 1 aynı zamanda ikinci ekim için yedek ve çimlenme kontrolüdür.
+- **Tur 2 (4–27 Aralık):** Yataklar 3 Aralık'ta boşaltılır, toprak karıştırılıp nemi eşitlenir ve yeni ekim yapılır. Model v1 devrededir; **kod ve donanım 3 Aralık'ta donmuştur**. A/B deneyi (E5) bu turda yürütülür.
 
-- **E2** bitkisiz iki yatakta 23 Kasım – 3 Aralık arasında yapılır; model verisi buradan gelir. Model burada (bitkisiz toprakla) gölge modda çalışabilir.
-- **Tek ekim** E5'te (4–27 Aralık) yapılır. Kod ve donanım 3 Aralık'ta donar.
-- **Bedeli ve önlemler:** yedek ekim yok, bu yüzden 4 Aralık'tan önce çimlenme denemesi yapılır. Bitki katsayısı (Kc) E5 öncesi kalibre edilemez; kontrol yatağının zamanlayıcı dozu bitkisiz kuruma verisinden ayarlanır ve biraz cömert tutulur. Model gerçek bitkiyle gölge modda denenmez; performans yalnızca gerçek veriden ayrılmış test setinde raporlanır.
+> **Takvim notu (9 Kasım 2026):** Plan gerisinde kalındığı ve kapasitif sensörler henüz sipariş edilmediği için Tur 1 kısaltıldı (özgün plan 5 Kasım – 1 Aralık idi). Tur 1 tam hasada ulaşmayabilir (≈ 19 gün); amacı bitki varken kuruma verisi, kural tabanlı sulamanın uçtan uca denenmesi ve modelin gölge modda sınanmasıdır. Model gölge modda yalnızca ≈ 6 gün çalışır; bu sınırlılık raporlanır.
 
 ### 9.3 Ölçütler
 
@@ -578,8 +577,8 @@ Takvim, yarışmanın resmî aşamalarına göre kurgulanmıştır: başvuru 1 E
 | :--- | :--- | :--- |
 | **Eylül – 8 Kasım** | **Hazırlık (plan gerisinde kalındı)** | Tasarım, donanım planı ve Robotistan siparişi; kapasitif sensör siparişi bekliyor |
 | **9 – 22 Kasım** | **Donanım ve MVP** | UNO Q kurulumu, sensör kalibrasyonları (E1), akış ve güvenlik testleri (E3), MCU'da bağımsız acil güvenlik kilitleri, kural tabanlı ilk çalışan sürüm (MVP) |
-| **21 Kasım – 3 Aralık** | **Veri ve model** | Bitkisiz kuruma eğrileri (E2), simülatör verisiyle hafif ML modelinin eğitilmesi, anomali filtreleri, bütçe politikası, pano, senaryo motoru, çimlenme denemesi; 3 Aralık'ta kod ve donanım dondurma |
-| **4 – 27 Aralık** | **A/B doğrulama deneyi (E5)** | Suİz ve klasik zamanlayıcı karşılaştırma testi, su tüketimi ve gelişim metriklerinin toplanması; dokümantasyon taslakları ve video çekimi paralel yürütülür |
+| **15 Kasım – 3 Aralık** | **Veri toplama ve model (Tur 1)** | 1. tur model bitki ekimi (15 Kasım), gerçek kuruma eğrilerinin kaydedilmesi (E2), simülatör verisiyle birleştirilerek hafif ML modelinin eğitilmesi, modelin gölge modda denenmesi, anomali filtreleri, bütçe politikası, pano, senaryo motoru; 3 Aralık'ta kod ve donanım dondurma |
+| **4 – 27 Aralık** | **A/B doğrulama deneyi (Tur 2)** | 2. tur ekim ile Suİz ve klasik zamanlayıcı karşılaştırma testi, su tüketimi ve gelişim metriklerinin toplanması; dokümantasyon taslakları ve video çekimi paralel yürütülür |
 | **27 Aralık – 15 Ocak** | **Belgelendirme ve yayın** | E6, deneysel sonuçların grafikleştirilmesi, proje videosu, GitHub, Arduino Project Hub ve maker.robotistan.com üzerinde açık kaynak dokümantasyon yayını (yayın penceresi 30 Aralık'ta açılır) |
 
 ```mermaid
@@ -600,15 +599,16 @@ gantt
     MCU güvenlik ve E3                      :d3, 2026-11-17, 2026-11-21
     Kural tabanlı MVP                       :milestone, m2, 2026-11-22, 0d
 
-    section 2 Veri ve model
-    E2 bitkisiz kuruma eğrisi               :v1, 2026-11-23, 2026-12-03
+    section 2 Veri ve model Tur 1
+    Tur 1 ekim ve takip                     :v0, 2026-11-15, 2026-12-03
+    E2 kuruma eğrileri                      :v1, 2026-11-19, 2026-12-03
     Model, anomali, politika                :v2, 2026-11-23, 2026-12-01
+    Model gölge modda Tur 1                 :v4, 2026-11-28, 2026-12-03
     Pano ve senaryo motoru                  :v3, 2026-11-20, 2026-12-01
-    Çimlenme denemesi                       :v4, 2026-11-24, 2026-11-30
     Kod ve donanım dondurma                 :milestone, m3, 2026-12-03, 0d
 
-    section 3 A/B doğrulama
-    E5 A/B deneyi                           :e1, 2026-12-04, 2026-12-27
+    section 3 A/B doğrulama Tur 2
+    Tur 2 ekim ve E5 A/B deneyi                           :e1, 2026-12-04, 2026-12-27
     Dokümantasyon ve video                  :e2, 2026-12-04, 2026-12-29
 
     section 4 Yayın
@@ -624,14 +624,14 @@ gantt
 | **M1** | ≈ 20 Kasım | Tüm sensörler MCU'dan okunuyor, Linux tarafında kaydediliyor; kalibrasyon eğrileri hazır (kapasitif sensör teslimine bağlı) |
 | **M2 (MVP)** | 22 Kasım | Kural tabanlı sulama uçtan uca çalışıyor: pompa, akış doğrulama, depo kilidi, azami süre |
 | **M3** | 1 Aralık | Model v1 (tahmin + anomali) gerçek test setinde baz çizgisine karşı raporlandı; pano ve senaryo motoru hazır |
-| **M4** | 3 Aralık | Kod ve donanım donduruldu; E5 (A/B) 4 Aralık'ta başlar |
+| **M4** | 3 Aralık | Kod ve donanım donduruldu; Tur 2 (A/B, E5) 4 Aralık'ta başlar |
 | **M5** | 27 Aralık | Deney ölçümleri tamamlandı |
 | **M6** | 30 Aralık | Proje GitHub, Arduino Project Hub ve maker.robotistan.com'da yayında |
 
 ### Takvim ilkeleri
 
 1. **Dondurma tarihi 3 Aralık'tır.** Sonrasında yalnızca güvenlik hataları düzeltilir; böylece deney tutarlı kalır ve dokümantasyon için zaman açılır.
-2. **Dokümantasyon deneyle paralel yürür.** Proje metni, devre şeması, kod açıklamaları ve video, E5 sürerken hazırlanır; yayın penceresi açıldığında (30 Aralık) içerik hazırdır.
+2. **Dokümantasyon deneyle paralel yürür.** Proje metni, devre şeması, kod açıklamaları ve video, Tur 2 sürerken hazırlanır; yayın penceresi açıldığında (30 Aralık) içerik hazırdır.
 3. **Yayın penceresi etkileşim içindir.** 30 Aralık – 15 Ocak arasında görüntülenme ve beğeni toplanacağından, yükleme mümkün olan en erken tarihte yapılır ve sonuç eklemeleri bu dönemde işlenir.
 4. **Kapsam kesme sırası** (gecikme halinde): Yatak C → yük hücresi → OLED → Isolation Forest karşılaştırması → E6. Kapalı döngü (MVP), güvenlik katmanı ve E5 deneyi asla kesilmez.
 
@@ -643,7 +643,7 @@ gantt
 | :--- | :---: | :--- |
 | **Kart geç teslim edilir** | Orta / Yüksek | Hazırlık dönemindeki simülatör ve veri hattı karttan bağımsızdır. Gerekirse sensör ve pompa katmanı eldeki bir Arduino ile prototiplenir, MPU tarafı bilgisayarda çalıştırılır; kart geldiğinde taşınır |
 | **Gerçek veri yetersiz kalır** | Orta / Orta | Sentetik veri ile ön eğitim; fizik tabanlı özellikler; model baz çizgisini geçemezse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır |
-| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 kaldırıldığı için yedek ekim yoktur: 4 Aralık'tan önce çimlenme denemesi yapılır; turp ↔ roka geçişi, yedek olarak tere |
+| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 çimlenme kontrolü ve ikinci deneme fırsatı verir; turp ↔ roka geçişi, yedek olarak tere |
 | **Kapasitif sensör siparişi gecikir** | Orta / Yüksek | Sensör gerektirmeyen işler (pompa, akış, şamandıra, MCU güvenlik, E3, MPU, simülatör) beklemeden sürer; E1 ve MVP tarihleri sipariş gününe göre güncellenir |
 | **Sensör kayması ve kalibrasyon hatası** | Yüksek / Orta | İki noktalı + gravimetrik kalibrasyon; haftalık kontrol; iki derinlikte çapraz doğrulama; sıcaklık düzeltmesi |
 | **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; her dolumda bidon işaretleriyle elle hacim kontrolü ve isteğe bağlı yük hücresi ile çapraz kontrol |
@@ -709,7 +709,7 @@ suiz/
 - [ ] M1 – Sensörler ve kalibrasyon
 - [ ] M2 – Kural tabanlı MVP
 - [ ] M3 – Model v1, pano ve senaryo motoru
-- [ ] M4 – Dondurma (3 Aralık) ve E5 başlangıcı
+- [ ] M4 – Dondurma (3 Aralık) ve Tur 2 başlangıcı
 - [ ] M5 – Deney ölçümleri
 - [ ] M6 – GitHub / Project Hub / maker.robotistan.com yayını
 
