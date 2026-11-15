@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suİz — su bütçesi kısıtlı akıllı sulama</title>
+<meta name="description" content="Suİz: Arduino UNO Q üzerinde çalışan, su bütçesi kısıtlı, kapalı döngülü sulama karar sistemi. Mimari, bağlantı şeması, deney planı ve güncel durum.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7f6; --ink:#1a211f; --muted:#5d6864; --line:#d6dcd9; --accent:#0b6e68; --paper:#ffffff; --row:#e6eeeb;
+  --a:#b3541e; --b:#0b6e68; --warn:#8a5a00; --warnbg:#fbf3dc;
+  --body:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#111615; --ink:#e4eae7; --muted:#93a09b; --line:#2b3531; --accent:#56c2b7; --paper:#171d1b; --row:#1e2926;
+    --a:#e39a6b; --b:#56c2b7; --warn:#e4c26a; --warnbg:#2a2513; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--body)}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.mono{font-family:var(--mono);font-size:.84em}
+
+/* üst şerit */
+nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:18px;height:48px}
+nav .logo{font-weight:700;font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:.01em}
+nav .logo i{font-style:normal;color:var(--accent)}
+nav ul{display:flex;gap:16px;list-style:none;margin:0;padding:0;overflow-x:auto;white-space:nowrap;flex:1;scrollbar-width:none}
+nav ul::-webkit-scrollbar{display:none}
+nav ul a{font:500 .8rem var(--mono);color:var(--muted);text-decoration:none;padding:4px 0}
+nav ul a:hover{color:var(--ink)}
+
+/* giriş */
+header{padding:56px 0 36px;border-bottom:2px solid var(--ink)}
+.kicker{font:500 .8rem var(--mono);color:var(--muted);margin:0 0 14px}
+h1{font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.02;font-weight:700;margin:0 0 16px;letter-spacing:-.01em;max-width:18ch}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:1.2rem;max-width:62ch;margin:0 0 24px}
+.status{display:inline-flex;gap:10px;align-items:baseline;flex-wrap:wrap;border:1px solid var(--line);border-left:3px solid var(--warn);background:var(--warnbg);padding:8px 12px;border-radius:3px;font-size:.95rem;max-width:100%}
+.status b{font:500 .78rem var(--mono);color:var(--warn);text-transform:uppercase;letter-spacing:.04em}
+
+section{padding:44px 0;border-bottom:1px solid var(--line)}
+h2{font-size:1.6rem;font-weight:600;margin:0 0 6px;line-height:1.15}
+h2 small{display:block;font:500 .78rem var(--mono);color:var(--muted);margin-bottom:8px;letter-spacing:.03em}
+h3{font-size:1.05rem;font-weight:600;margin:0 0 4px}
+p{margin:0 0 12px;max-width:68ch}
+.sub{color:var(--muted);max-width:68ch;margin-bottom:22px}
+
+/* döngü */
+.loop{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin:22px 0 0;padding:0;list-style:none;counter-reset:s;border:1px solid var(--line);background:var(--paper)}
+.loop li{counter-increment:s;padding:14px 12px 16px;border-right:1px solid var(--line);font-size:.93rem;line-height:1.35}
+.loop li:last-child{border-right:0}
+.loop li::before{content:counter(s,decimal-leading-zero);display:block;font:500 .74rem var(--mono);color:var(--accent);margin-bottom:6px}
+.loop b{display:block;font-size:1.05rem;margin-bottom:3px}
+.loop span{color:var(--muted)}
+
+/* kartlar */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.card{background:var(--paper);border:1px solid var(--line);padding:16px 18px;border-radius:3px}
+.card .tag{font:500 .74rem var(--mono);color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.03em}
+.card ul{margin:8px 0 0;padding-left:18px;font-size:.95rem}
+.card li{padding:1px 0}
+.card.a{border-top:3px solid var(--a)} .card.b{border-top:3px solid var(--b)}
+.bridge{grid-column:1/-1;text-align:center;font:500 .82rem var(--mono);color:var(--muted);border:1px dashed var(--line);padding:8px;border-radius:3px}
+.rule{margin-top:18px;border-left:3px solid var(--accent);padding:4px 0 4px 14px;max-width:68ch}
+
+/* tablolar */
+.tw{overflow-x:auto;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:.95rem;min-width:520px}
+th{font:500 .76rem var(--mono);color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--ink);letter-spacing:.03em;white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.m{font:500 .84rem var(--mono);white-space:nowrap}
+tr.past td{color:var(--muted)}
+tr.now td{background:var(--row)}
+tr.now td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+
+/* şema */
+.schema{margin-top:20px;border:1px solid var(--line);background:#fff;border-radius:3px;overflow:hidden}
+.schema iframe{display:block;width:100%;height:min(78vh,760px);border:0}
+.btn{display:inline-block;font:500 .84rem var(--mono);background:var(--ink);color:var(--bg);text-decoration:none;padding:8px 14px;border-radius:3px;margin:14px 10px 0 0}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+
+/* listeler */
+.check{list-style:none;padding:0;margin:14px 0 0;max-width:72ch}
+.check li{padding:6px 0 6px 28px;border-bottom:1px solid var(--line);position:relative;font-size:.97rem}
+.check li::before{position:absolute;left:2px;top:6px;font:500 .9rem var(--mono)}
+.check.yes li::before{content:"✓";color:var(--accent)}
+.check.no li::before{content:"?";color:var(--warn)}
+.check.todo li::before{content:"·";color:var(--muted);font-size:1.4rem;top:-1px;left:5px}
+
+footer{padding:28px 0 48px;font-size:.88rem;color:var(--muted)}
+footer p{max-width:80ch}
+
+@media (max-width:820px){
+  .loop{grid-template-columns:repeat(2,1fr)}
+  .loop li{border-bottom:1px solid var(--line)}
+  .loop li:nth-child(2n){border-right:0}
+  .loop li:nth-last-child(-n+2){border-bottom:0}
+  .grid2,.grid3{grid-template-columns:1fr}
+  header{padding:36px 0 28px}
+  section{padding:34px 0}
+  .schema iframe{height:70vh}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav aria-label="Bölümler">
+  <div class="wrap">
+    <a class="logo" href="#ust">Su<i>İ</i>z</a>
+    <ul>
+      <li><a href="#fikir">Fikir</a></li>
+      <li><a href="#mimari">Mimari</a></li>
+      <li><a href="#kurulum">Kurulum</a></li>
+      <li><a href="#sema">Şema</a></li>
+      <li><a href="#pinler">Pinler</a></li>
+      <li><a href="#guvenlik">Güvenlik</a></li>
+      <li><a href="#deney">Deney</a></li>
+      <li><a href="#takvim">Takvim</a></li>
+      <li><a href="#durum">Durum</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header id="ust">
+  <div class="wrap">
+    <p class="kicker">Arduino UNO Q Türkiye İnovasyon Proje Yarışması · Yapay Zekâ kategorisi</p>
+    <h1>Toprak kuru mu diye değil, <em>su yetecek mi</em> diye sorar.</h1>
+    <p class="lead">Suİz, Arduino UNO Q üzerinde çalışan kapalı döngülü bir sulama sistemidir. Sulama kararını kalan su bütçesine göre verir, pompayı kendisi çalıştırır ve suyun gerçekten gidip gitmediğini sensörlerle kontrol eder.</p>
+    <div class="status"><b>Durum</b><span id="durum-ozet">Kurulum aşamasında. Parçalar elde, devre henüz kurulmadı; bu sayfadaki sonuç bölümleri deney bittikçe dolacak.</span></div>
+  </div>
+</header>
+
+<section id="fikir">
+  <div class="wrap">
+    <h2><small>01 · FİKİR</small>Eşik değil, bütçe</h2>
+    <p class="sub">Klasik otomatik sulama, toprak nemi bir eşiğin altına düşünce pompayı açar. Su kısıtlıyken bu yetmez: bugün verilen su, sezonun kalanından eksilir. Suİz her kararda kalan suyu ve kalan günü hesaba katar.</p>
+    <ol class="loop">
+      <li><b>Ölç</b><span>İki derinlikte toprak nemi, hava sıcaklığı ve nemi</span></li>
+      <li><b>Doğrula</b><span>Sensör verisi tutarlı mı, yoksa şüpheli mi?</span></li>
+      <li><b>Tahmin et</b><span>Toprak nemi önümüzdeki saatlerde nereye gidiyor?</span></li>
+      <li><b>Karar ver</b><span>Tahmin, eşik ve kalan su bütçesi birlikte</span></li>
+      <li><b>Uygula</b><span>Pompa, güvenlik sınırları içinde çalışır</span></li>
+      <li><b>Sonucu doğrula</b><span>Su aktı mı, toprak tepki verdi mi?</span></li>
+    </ol>
+    <p class="rule">Bütçe litre değil <b>mm</b> cinsinden tutulur (1 mm = 1 L/m²). Böylece balkondaki saksı ile bir dekarlık tarla aynı mantıkla ele alınır; büyüdükçe yalnızca pompa ve boru değişir.</p>
+  </div>
+</section>
+
+<section id="mimari">
+  <div class="wrap">
+    <h2><small>02 · MİMARİ</small>Bir kart, iki işlemci, iki ayrı iş</h2>
+    <p class="sub">UNO Q üzerinde gerçek zamanlı bir mikrodenetleyici ile Linux çalıştıran bir işlemci yan yana durur. Suİz bu ayrımı bilerek kullanır.</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="tag">MCU · STM32U585 · Arduino C++</span>
+        <h3>Gerçek zaman ve güvenlik</h3>
+        <ul>
+          <li>Sensörleri okur, medyan filtre uygular</li>
+          <li>Pompayı sürer, akışı sayar</li>
+          <li>Güvenlik denetçisi: depo seviyesi, azami süre, bekleme aralığı</li>
+          <li>Linux yanıt vermezse pompayı kapatır</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">MPU · Qualcomm QRB2210 · Linux, Python</span>
+        <h3>Zekâ ve arayüz</h3>
+        <ul>
+          <li>Ölçümleri kaydeder (SQLite)</li>
+          <li>Toprak nemi tahmin modeli</li>
+          <li>Sensör anomali kontrolü</li>
+          <li>Su bütçesi politikası ve yerel web panosu</li>
+        </ul>
+      </div>
+      <div class="bridge">Bridge (RPC) · MCU → MPU: ölçümler, olaylar, alarmlar · MPU → MCU: sulama isteği ve doz</div>
+    </div>
+    <p class="rule"><b>Yapay zekâ pompayı doğrudan sürmez.</b> Yalnızca MCU'daki güvenlik denetçisine istek gönderir; denetçi isteği kendi kurallarına göre onaylar ya da reddeder. Model yanılsa da pompanın yapabileceği sınırlıdır.</p>
+  </div>
+</section>
+
+<section id="kurulum">
+  <div class="wrap">
+    <h2><small>03 · KURULUM</small>Balkonda iki özdeş saksı</h2>
+    <p class="sub">Adana'da bir balkon masasında, yan yana iki saksıda roka. Aynı toprak, aynı tohum, aynı ışık; tek fark sulama kararını kimin verdiği.</p>
+    <div class="grid2">
+      <div class="card a">
+        <span class="tag">YATAK A · KONTROL</span>
+        <h3>Zamanlayıcı</h3>
+        <p>Günde iki kez sabit doz. Bitkiyi strese sokmayacak şekilde ayarlanmış, adil bir karşılaştırma; kasıtlı kötü bir baz çizgisi değil.</p>
+      </div>
+      <div class="card b">
+        <span class="tag">YATAK B · SUİZ</span>
+        <h3>Tahmin + bütçe</h3>
+        <p>Ne zaman ve ne kadar sulayacağına ölçüme, tahmine ve kalan bütçeye göre karar verir. Daha seyrek, daha büyük dozlarla sulayabilir.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card"><span class="tag">HER YATAKTA</span><ul>
+        <li>2 kapasitif nem sensörü (≈ 5 cm ve ≈ 10 cm)</li>
+        <li>Mini dalgıç pompa + MOSFET sürücü</li>
+        <li>Akış sensörü (YF-S401)</li>
+        <li>Şamandıra ve ayrı su kovası</li></ul></div>
+      <div class="card"><span class="tag">ORTAK</span><ul>
+        <li>Arduino UNO Q</li>
+        <li>DHT22 sıcaklık / nem</li>
+        <li>5 V 2 A adaptör (pompa hattı)</li>
+        <li>Şeffaf kapaklı buat (elektronik kutusu)</li></ul></div>
+      <div class="card"><span class="tag">NEDEN İKİ DERİNLİK?</span>
+        <p style="font-size:.95rem;margin-top:6px">Sulamadan sonra üst sensör alttakinden önce tepki vermelidir. Bu sıra bozulursa sensörlerden biri şüpheli sayılır.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="sema">
+  <div class="wrap">
+    <h2><small>04 · BAĞLANTI ŞEMASI</small>48 kablo, tek tek</h2>
+    <p class="sub">Şema iki görünümden oluşur: <b>Elektrik</b> (hangi kablo nereden nereye) ve <b>Yerleşim</b> (saksılar, kovalar, su hattı). Bir kabloya dokununca öne çıkar; taktığın kabloyu listeden işaretleyebilirsin.</p>
+    <div class="schema"><iframe src="sema/index.html" title="Suİz bağlantı şeması" loading="lazy"></iframe></div>
+    <a class="btn" href="sema/index.html">Şemayı tam sayfa aç</a>
+    <p class="rule" style="border-color:var(--warn)"><b>Taslak.</b> Parça yerleşimleri genel kaynaklara göre çizildi, eldeki parçalarla henüz karşılaştırılmadı. Kartın üzerindeki yazı çizimle çelişirse yazı doğrudur.</p>
+  </div>
+</section>
+
+<section id="pinler">
+  <div class="wrap">
+    <h2><small>05 · PİN PLANI</small>Hangi pin ne iş yapıyor</h2>
+    <div class="tw"><table>
+      <thead><tr><th>İŞ</th><th>YATAK A</th><th>YATAK B</th><th>NOT</th></tr></thead>
+      <tbody>
+        <tr><td>Toprak nemi (üst / alt)</td><td class="m">A0 · A1</td><td class="m">A2 · A3</td><td>3,3 V ile beslenir, çıkış 0–3 V</td></tr>
+        <tr><td>Akış sensörü darbesi</td><td class="m">D2</td><td class="m">D3</td><td>5 V darbe, 10k/20k bölücüyle ≈ 3,3 V'a iner</td></tr>
+        <tr><td>Şamandıra</td><td class="m">D4</td><td class="m">D5</td><td>Dahili pull-up; şamandıra GND'ye kapatır</td></tr>
+        <tr><td>Pompa (MOSFET sürücü)</td><td class="m">D10</td><td class="m">D11</td><td>Açılışta LOW: pompa kapalı başlar</td></tr>
+        <tr><td>DHT22</td><td class="m" colspan="2">D12 (ortak)</td><td>Modül tipi, pull-up kartın üzerinde</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:16px">Güç iki ayrı kaynaktan gelir: UNO Q kendi USB-C adaptöründen, pompalar ve akış sensörleri ayrı 5 V adaptörden. İki kaynağın GND hattı birleşiktir. Breadboard'da üst hatlar 5 V, alt hatlar 3,3 V taşır.</p>
+  </div>
+</section>
+
+<section id="guvenlik">
+  <div class="wrap">
+    <h2><small>06 · GÜVENLİK</small>Yanlış kararın zararını sınırlamak</h2>
+    <p class="sub">Aşağıdaki kurallar mikrodenetleyicide, yapay zekâdan ve Linux'tan bağımsız çalışacak şekilde tasarlandı. Her biri deneyden önce tek tek sınanacak; sonuçlar burada yayımlanacak.</p>
+    <div class="tw"><table>
+      <thead><tr><th>OLAY</th><th>TEPKİ</th></tr></thead>
+      <tbody>
+        <tr><td>Kova boşalır</td><td>Şamandıra düşük seviyeyi bildirir, pompa çalıştırılmaz</td></tr>
+        <tr><td>Pompa çalışır ama su akmaz</td><td>3 saniye içinde akış darbesi gelmezse pompa durur; iki başarısız denemede kilit</td></tr>
+        <tr><td>Aşırı sulama</td><td>Tek sulamada üst sınır, sulamalar arasında en az 20 dakika</td></tr>
+        <tr><td>Linux tarafı donar</td><td>60 saniye sinyal gelmezse pompa kapanır, sınırlı hacimli yedek kural devreye girer</td></tr>
+        <tr><td>Elektrik gidip gelir</td><td>Pompa kapalı başlar; bütçe durumu kayıttan geri yüklenir</td></tr>
+        <tr><td>Sensör saçmalar</td><td>Veri karara alınmaz, sistem güvenli beklemeye geçer</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="deney">
+  <div class="wrap">
+    <h2><small>07 · DENEY</small>Neyi ölçeceğiz, neyi iddia etmeyeceğiz</h2>
+    <p class="sub">Hipotez: Suİz, ayarlanmış zamanlayıcıya kıyasla daha az suyla eşdeğer bitki gelişimi sağlar.</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="tag">ÖLÇÜLECEKLER</span>
+        <ul>
+          <li>Toplam verilen su (L ve mm), sulama sayısı</li>
+          <li>Hedef nem aralığında kalma oranı</li>
+          <li>Hasatta taze ağırlık ve çimlenme oranı</li>
+          <li>Su kullanım verimliliği (g bitki / L su)</li>
+          <li>Tahmin hatası: 1, 3 ve 6 saat ufkunda, basit baz çizgisine karşı</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">SINIRLAR</span>
+        <ul>
+          <li>Her grupta tek saksı var: istatistiksel anlamlılık iddia edilmez</li>
+          <li>Gerçek tarlada denenmiş bir ürün değildir</li>
+          <li>Model başarısı yalnızca gerçek veriden ayrılmış test setinde raporlanır</li>
+          <li>Sonuç olumsuz çıkarsa da olduğu gibi yayımlanır</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="takvim">
+  <div class="wrap">
+    <h2><small>08 · TAKVİM</small>İki tur, 15 Ocak'a kadar</h2>
+    <p class="sub">Tur 1 sistemin kurulduğu ve denendiği turdur; karşılaştırma deneyi Tur 2'de, kod ve donanım dondurulduktan sonra yapılır.</p>
+    <div class="tw"><table id="tk">
+      <thead><tr><th>TARİH</th><th>NE</th></tr></thead>
+      <tbody>
+        <tr data-s="2026-11-19" data-e="2026-11-19"><td class="m">19 Kasım</td><td>Tur 1 ekimi. Sistem kurulana kadar iki saksıya ölçülü, eşit elle sulama</td></tr>
+        <tr data-s="2026-11-20" data-e="2026-11-24"><td class="m">24 Kasım</td><td>Nem sensörleri ve DHT22 toprakta; ölçümler kaydediliyor</td></tr>
+        <tr data-s="2026-11-25" data-e="2026-12-03"><td class="m">3 Aralık</td><td>Yatak B'de kural tabanlı sulama uçtan uca: pompa, akış, şamandıra, kilitler</td></tr>
+        <tr data-s="2026-12-04" data-e="2026-12-08"><td class="m">8 Aralık</td><td>Aynı kurulum Yatak A için, zamanlayıcı moduyla</td></tr>
+        <tr data-s="2026-12-09" data-e="2026-12-11"><td class="m">9–11 Aralık</td><td>Güvenlik testleri</td></tr>
+        <tr data-s="2026-12-12" data-e="2026-12-13"><td class="m">13 Aralık</td><td>Tur 1 hasadı. Kod ve donanım dondurulur</td></tr>
+        <tr data-s="2026-12-14" data-e="2027-01-07"><td class="m">14 Aralık – 7 Ocak</td><td>Tur 2: A/B deneyi, 24 gün</td></tr>
+        <tr data-s="2027-01-08" data-e="2027-01-10"><td class="m">8–10 Ocak</td><td>Analiz ve sonuçların yayını</td></tr>
+        <tr data-s="2027-01-11" data-e="2027-01-15"><td class="m">15 Ocak</td><td>Yarışma yayın döneminin sonu</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="durum">
+  <div class="wrap">
+    <h2><small>09 · DURUM</small>Şu an neredeyiz</h2>
+    <p class="sub">Son güncelleme: 16 Kasım 2026.</p>
+    <div class="grid2">
+      <div>
+        <h3>Tamam</h3>
+        <ul class="check yes">
+          <li>Tasarım, pin planı ve bağlantı şeması taslağı</li>
+          <li>Elektronik parçalar ve kapasitif sensörler teslim alındı</li>
+          <li>UNO Q açıldı, ilk program (Blink) çalıştı</li>
+        </ul>
+        <h3 style="margin-top:22px">Sırada</h3>
+        <ul class="check todo">
+          <li>Şemanın eldeki parçalarla karşılaştırılması</li>
+          <li>Saksı, toprak, tohum, kova ve hortum alışverişi</li>
+          <li>Ekim ve devrenin breadboard'da kurulması</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Henüz doğrulanmadı</h3>
+        <ul class="check no">
+          <li>MOSFET kartı 3,3 V sinyalle tam açılıyor mu</li>
+          <li>Pompa suyu masa yüksekliğine kaldırabiliyor mu</li>
+          <li>Debi, akış sensörünün alt sınırı olan 0,3 L/dk'nın üstünde mi</li>
+          <li>UNO Q dijital pinlerinin 5 V dayanımı (bölücü bu yüzden yerinde)</li>
+          <li>Kesme pinleri ve DHT22 kütüphanesi UNO Q çekirdeğinde çalışıyor mu</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b style="color:var(--ink)">Ekip:</b> Süleyman Kara · Aysima Çil · Hilal Pusa — Çukurova Üniversitesi</p>
+    <p>Kaynak kod ve belgeler: <a href="https://github.com/Berceste-Team/Su-z">github.com/Berceste-Team/Su-z</a>. Kaynak kod MIT, dokümantasyon ve veri CC BY 4.0 lisansıyla paylaşılacaktır.</p>
+  </div>
+</footer>
+
+<script>
+/* Takvimde geçmiş satırları soluklaştır, içinde bulunulan dönemi işaretle. */
+(function(){
+  var t=new Date(); t.setHours(0,0,0,0);
+  [].forEach.call(document.querySelectorAll("#tk tr[data-s]"),function(r){
+    var s=new Date(r.dataset.s+"T00:00:00"), e=new Date(r.dataset.e+"T00:00:00");
+    if(t>e) r.className="past"; else if(t>=s) r.className="now";
+  });
+})();
+</script>
+</body>
+</html>

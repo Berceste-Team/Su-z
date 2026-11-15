@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suİz Bağlantı Şeması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* İki görünüm: Elektrik (kablolar) ve Yerleşim (saksılar, kovalar, su hattı). Çizimler beyaz kâğıtta, sayfa temaya uyar. */
+  --bg:#f6f7f6; --ink:#1a211f; --muted:#66716d; --line:#d6dcd9; --accent:#0b6e68; --paper:#ffffff; --row:#e6eeeb; --done:#2b8a3e;
+  --body:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#111615; --ink:#e4eae7; --muted:#93a09b; --line:#2b3531; --accent:#56c2b7; --paper:#ffffff; --row:#1e2926; --done:#4fb866; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#111615; --ink:#e4eae7; --muted:#93a09b; --line:#2b3531; --accent:#56c2b7; --paper:#ffffff; --row:#1e2926; --done:#4fb866; color-scheme:dark; }
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.35 var(--body)}
+main{max-width:1280px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:6px}
+h1{font-size:1.35rem;font-weight:600;margin:0}
+.top span{font:500 .82rem var(--mono);color:var(--muted)}
+.bar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 8px;align-items:center}
+button{font:500 .82rem var(--mono);color:var(--ink);background:none;border:1px solid var(--line);border-radius:3px;padding:5px 10px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.view{font-size:.9rem;padding:6px 14px}
+button:focus-visible,tr:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sp{flex:1}
+.fig{background:var(--paper);border:1px solid var(--line);overflow:hidden}
+#wrap{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#wrap text{user-select:none;-webkit-user-select:none}
+#wrap.drag{cursor:grabbing}
+#fig{display:block;width:100%;height:auto;aspect-ratio:1200/650}
+#lay{display:block;width:100%;height:auto;min-width:760px}
+.scroll{overflow-x:auto}
+.w,.wl{transition:opacity .15s;cursor:pointer}
+#fig.step .w:not(.in),#fig.step .wl:not(.in){opacity:.08}
+#fig.pick .w,#fig.pick .wl{opacity:.08}
+#fig.pick .w.on,#fig.pick .wl.on{opacity:1}
+#fig .w.on path:nth-of-type(2){stroke-width:5}
+.wl.done rect{fill:#2b8a3e;stroke:#2b8a3e}
+.wl.done text{fill:#fff}
+.ph{cursor:pointer}
+.ph:hover{filter:drop-shadow(0 0 3px #0b6e68)}
+#sel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:5px 8px 5px 10px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;font-size:.88rem;background:var(--row)}
+#sel[hidden]{display:none}
+#sel b{font-weight:600}
+#sel .m{color:var(--muted)}
+#sel button{padding:2px 8px;font-size:.76rem}
+#tip{position:fixed;z-index:20;pointer-events:none;background:var(--ink);color:var(--bg);font:500 .82rem var(--body);padding:5px 9px;border-radius:4px;max-width:260px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#tip small{display:block;font-weight:400;opacity:.75;font-size:.74rem}
+.hint{font-size:.82rem;color:var(--muted);margin:6px 0 0;max-width:90ch}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:14px}
+td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:baseline}
+tr.grp th{font:600 .9rem var(--body);text-align:left;padding:14px 6px 4px;border-bottom:1px solid var(--ink)}
+tr[data-k]{cursor:pointer}
+tr.on{background:var(--row)}
+tr.note td{font-size:.84rem;color:var(--muted);border-bottom:0;padding:3px 6px}
+tr.hide{display:none}
+.m{font:500 .82rem var(--mono)}
+.n{color:var(--muted);font-size:.84rem}
+.sw{display:inline-block;width:20px;height:5px;border-radius:3px;vertical-align:middle;margin-right:6px}
+input[type=checkbox]{width:15px;height:15px;margin:0;accent-color:var(--done);vertical-align:middle}
+tr.done td:nth-child(n+4){color:var(--muted)}
+.tw{overflow-x:auto}
+ol.leg{margin:12px 0 0;padding-left:22px;font-size:.92rem;columns:2;column-gap:32px;max-width:980px}
+ol.leg li{padding:2px 0;break-inside:avoid}
+.lnotes p{font-size:.9rem;margin:8px 0 0;max-width:90ch}
+.foot{font-size:.82rem;color:var(--muted);margin:14px 0 0;max-width:90ch}
+@media (max-width:640px){ol.leg{columns:1}}
+@media (prefers-reduced-motion:reduce){.w,.wl{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><h1><a id="home" href="../index.html" hidden style="color:var(--accent);text-decoration:none;font-weight:500">← Suİz</a> Suİz Bağlantı Şeması</h1><span id="count">taslak · 15 Kasım 2026</span></div>
+  <div class="bar"><button type="button" class="view" data-v="el" aria-pressed="true">Elektrik</button><button type="button" class="view" data-v="ly" aria-pressed="false">Yerleşim</button></div>
+
+  <section id="v-el">
+    <div class="bar" id="bar"><button type="button" class="tab" data-s="0" aria-pressed="true">Hepsi</button><button type="button" class="tab" data-s="1" aria-pressed="false">1 · Güç hatları</button><button type="button" class="tab" data-s="2" aria-pressed="false">2 · Pompalar</button><button type="button" class="tab" data-s="3" aria-pressed="false">3 · Şamandıralar</button><button type="button" class="tab" data-s="4" aria-pressed="false">4 · Akış sensörleri</button><button type="button" class="tab" data-s="5" aria-pressed="false">5 · DHT22</button><span class="sp"></span><button type="button" id="zin" aria-label="Yakınlaştır">+</button><button type="button" id="zout" aria-label="Uzaklaştır">−</button><button type="button" id="zreset">Sığdır</button></div>
+    <div id="sel" hidden aria-live="polite"><span id="selt"></span><span class="sp"></span><button type="button" id="selback" hidden>Yerleşim'e dön</button><button type="button" id="selclr">Seçimi kaldır</button></div>
+    <div class="fig" id="wrap"><svg id="fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-label="Suİz elektrik bağlantıları"><rect width="1200" height="650" fill="#fff"/><rect x="40" y="170" width="343" height="266.7" rx="8" fill="#dfe9e6" stroke="#7d8a86"/>
+<rect x="30" y="240" width="34" height="46" rx="4" fill="#f4f6f5" stroke="#7d8a86"/>
+<text x="70.0" y="267.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="normal" fill="#66716d" text-anchor="start" >USB-C</text>
+<rect x="190" y="265" width="120" height="70" rx="3" fill="none" stroke="#9aa6a2" stroke-dasharray="3 3"/>
+<text x="250.0" y="304.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="normal" fill="#66716d" text-anchor="middle" >LED matrisi</text>
+<text x="58.0" y="320.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a211f" text-anchor="start" >Arduino UNO Q</text>
+<text x="58.0" y="335.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#66716d" text-anchor="start" >üstten, USB-C solda</text>
+<rect x="130.0" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(131.4,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">SCL</text>
+<rect x="142.7" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(144.1,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">SDA</text>
+<rect x="155.4" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(156.8,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">AREF</text>
+<rect x="168.1" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(169.5,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">GND</text>
+<rect x="180.8" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(182.2,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D13</text>
+<rect x="193.5" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(194.9,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D12</text>
+<rect x="206.2" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(207.6,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D11</text>
+<rect x="218.9" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(220.3,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D10</text>
+<rect x="231.6" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(233.0,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D9</text>
+<rect x="244.3" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(245.7,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D8</text>
+<rect x="264.6" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(266.0,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D7</text>
+<rect x="277.3" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(278.7,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D6</text>
+<rect x="290.0" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(291.4,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D5</text>
+<rect x="302.7" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(304.1,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D4</text>
+<rect x="315.4" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(316.8,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D3</text>
+<rect x="328.1" y="178.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(329.5,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">D2</text>
+<rect x="340.8" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(342.2,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D1</text>
+<rect x="353.5" y="178.7" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(354.9,191.7) rotate(90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">D0</text>
+<rect x="175.7" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<rect x="188.4" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(195.0,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">IOREF</text>
+<rect x="201.1" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(207.7,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">RESET</text>
+<rect x="213.8" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(220.4,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">3V3</text>
+<rect x="226.5" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(233.1,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">5V</text>
+<rect x="239.2" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(245.8,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">GND</text>
+<rect x="251.9" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(258.5,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">GND</text>
+<rect x="264.6" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(271.2,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">VIN</text>
+<rect x="290.0" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(296.6,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">A0</text>
+<rect x="302.7" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(309.3,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">A1</text>
+<rect x="315.4" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(322.0,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">A2</text>
+<rect x="328.1" y="420.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.6"/>
+<text transform="translate(334.7,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f">A3</text>
+<rect x="340.8" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(347.4,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">A4</text>
+<rect x="353.5" y="420.0" width="8" height="8" fill="#fff" stroke="#8a9692" stroke-width="0.8"/>
+<text transform="translate(360.1,415.0) rotate(-90)" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#66716d">A5</text>
+<rect x="440" y="170" width="412" height="248" rx="6" fill="#f7f5ee" stroke="#9c9a8f"/>
+<line x1="454" y1="179.7" x2="838" y2="179.7" stroke="#c8372d" stroke-width="0.7" opacity=".55"/>
+<circle cx="474.7" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="186.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="446.0" y="189.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#c8372d" text-anchor="start" >+</text>
+<line x1="454" y1="192.4" x2="838" y2="192.4" stroke="#2a56b0" stroke-width="0.7" opacity=".55"/>
+<circle cx="474.7" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="198.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="446.0" y="201.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#2a56b0" text-anchor="start" >−</text>
+<line x1="454" y1="382.7" x2="838" y2="382.7" stroke="#c8372d" stroke-width="0.7" opacity=".55"/>
+<circle cx="474.7" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="389.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="446.0" y="392.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#c8372d" text-anchor="start" >+</text>
+<line x1="454" y1="395.4" x2="838" y2="395.4" stroke="#2a56b0" stroke-width="0.7" opacity=".55"/>
+<circle cx="474.7" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="401.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="446.0" y="404.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#2a56b0" text-anchor="start" >−</text>
+<text x="447.0" y="226.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >j</text>
+<circle cx="462.0" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="224.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="239.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >i</text>
+<circle cx="462.0" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="236.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="252.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >h</text>
+<circle cx="462.0" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="249.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="264.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >g</text>
+<circle cx="462.0" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="262.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="277.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >f</text>
+<circle cx="462.0" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="274.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="315.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >e</text>
+<circle cx="462.0" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="313.0" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="328.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >d</text>
+<circle cx="462.0" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="325.7" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="341.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >c</text>
+<circle cx="462.0" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="338.4" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="353.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >b</text>
+<circle cx="462.0" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="351.1" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="447.0" y="366.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="normal" fill="#77756b" text-anchor="start" >a</text>
+<circle cx="462.0" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="474.7" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="487.4" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="500.1" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="512.8" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="525.5" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="538.2" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="550.9" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="563.6" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="576.3" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="589.0" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="601.7" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="614.4" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="627.1" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="639.8" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="652.5" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="665.2" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="677.9" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="690.6" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="703.3" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="716.0" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="728.7" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="741.4" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="754.1" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="766.8" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="779.5" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="792.2" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="804.9" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="817.6" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<circle cx="830.3" cy="363.8" r="2.3" fill="#fff" stroke="#8d8b80" stroke-width=".7"/>
+<text x="462.0" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >1</text>
+<text x="462.0" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >1</text>
+<text x="512.8" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >5</text>
+<text x="512.8" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >5</text>
+<text x="576.3" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >10</text>
+<text x="576.3" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >10</text>
+<text x="639.8" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >15</text>
+<text x="639.8" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >15</text>
+<text x="703.3" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >20</text>
+<text x="703.3" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >20</text>
+<text x="766.8" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >25</text>
+<text x="766.8" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >25</text>
+<text x="830.3" y="215.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >30</text>
+<text x="830.3" y="375.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#77756b" text-anchor="middle" >30</text>
+<text x="436.0" y="195.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#c8372d" text-anchor="end" >5 V</text>
+<text x="857.0" y="398.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#e07b00" text-anchor="start" >3,3 V</text>
+<text x="444.0" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="start" >Breadboard</text>
+<rect x="525.2" y="514" width="51.4" height="50" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<path d="M533.2,564 V612 L550.9,624 L568.6,612 V564" fill="#dfe9e6" stroke="#7d8a86"/>
+<line x1="533.2" y1="576" x2="568.6" y2="576" stroke="#1a211f" stroke-dasharray="3 2" stroke-width=".8"/>
+<rect x="534.2" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="538.2" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >A</text>
+<rect x="546.9" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="550.9" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >V</text>
+<rect x="559.6" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="563.6" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >G</text>
+<text x="550.9" y="557.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem A1</text>
+<rect x="601.4" y="514" width="51.4" height="50" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<path d="M609.4,564 V612 L627.1,624 L644.8,612 V564" fill="#dfe9e6" stroke="#7d8a86"/>
+<line x1="609.4" y1="576" x2="644.8" y2="576" stroke="#1a211f" stroke-dasharray="3 2" stroke-width=".8"/>
+<rect x="610.4" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="614.4" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >A</text>
+<rect x="623.1" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="627.1" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >V</text>
+<rect x="635.8" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="639.8" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >G</text>
+<text x="627.1" y="557.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem A2</text>
+<rect x="677.6" y="514" width="51.4" height="50" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<path d="M685.6,564 V612 L703.3,624 L721.0,612 V564" fill="#dfe9e6" stroke="#7d8a86"/>
+<line x1="685.6" y1="576" x2="721.0" y2="576" stroke="#1a211f" stroke-dasharray="3 2" stroke-width=".8"/>
+<rect x="686.6" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="690.6" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >A</text>
+<rect x="699.3" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="703.3" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >V</text>
+<rect x="712.0" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="716.0" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >G</text>
+<text x="703.3" y="557.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem B1</text>
+<rect x="753.8" y="514" width="51.4" height="50" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<path d="M761.8,564 V612 L779.5,624 L797.2,612 V564" fill="#dfe9e6" stroke="#7d8a86"/>
+<line x1="761.8" y1="576" x2="797.2" y2="576" stroke="#1a211f" stroke-dasharray="3 2" stroke-width=".8"/>
+<rect x="762.8" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="766.8" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >A</text>
+<rect x="775.5" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="779.5" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >V</text>
+<rect x="788.2" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="792.2" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >G</text>
+<text x="779.5" y="557.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem B2</text>
+<rect x="474.4" y="514" width="51.4" height="70" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<rect x="483.4" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="487.4" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >out</text>
+<rect x="496.1" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="500.1" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >+</text>
+<rect x="508.8" y="516.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="512.8" y="535.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >−</text>
+<text x="500.1" y="564.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#1a211f" text-anchor="middle" >DHT22</text>
+<rect x="765.5" y="112" width="40.7" height="44" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="785.8" y="126.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >5 V jak</text>
+<rect x="775.5" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="779.5" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="788.2" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="792.2" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<text x="779.5" y="142.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#1a211f" text-anchor="middle" >−</text>
+<text x="792.2" y="142.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#1a211f" text-anchor="middle" >+</text>
+<rect x="536.9" y="122" width="53.4" height="34" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="563.6" y="135.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Akış A</text>
+<rect x="546.9" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="550.9" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="559.6" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="563.6" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="572.3" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="576.3" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="625.8" y="122" width="53.4" height="34" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="652.5" y="135.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >Akış B</text>
+<rect x="635.8" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="639.8" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="648.5" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="652.5" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="661.2" y="146.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="665.2" y="165.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="940" y="170" width="136" height="100" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="950.0" y="232.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="start" >MOSFET A</text>
+<text x="950.0" y="245.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="normal" fill="#66716d" text-anchor="start" >LR7843 kartı</text>
+<rect x="936.0" y="182.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="189.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" >POWER +</text>
+<rect x="936.0" y="194.7" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="201.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" >POWER −</text>
+<rect x="1072.0" y="216.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1068.0" y="223.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="end" >LOAD +</text>
+<rect x="1072.0" y="232.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1068.0" y="239.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="end" >LOAD −</text>
+<rect x="1046.0" y="166.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1050.0" y="185.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="1061.0" y="166.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1065.0" y="185.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<text x="1046.0" y="185.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="end" >GND</text>
+<text x="1061.0" y="197.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="start" >PWM</text>
+<rect x="940" y="300" width="136" height="100" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="950.0" y="362.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="start" >MOSFET B</text>
+<text x="950.0" y="375.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="normal" fill="#66716d" text-anchor="start" >LR7843 kartı</text>
+<rect x="936.0" y="312.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="319.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" >POWER +</text>
+<rect x="936.0" y="325.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="332.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" >POWER −</text>
+<rect x="1072.0" y="326.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1068.0" y="333.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="end" >LOAD +</text>
+<rect x="1072.0" y="342.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1068.0" y="349.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="end" >LOAD −</text>
+<rect x="1046.0" y="396.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1050.0" y="415.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<rect x="1061.0" y="396.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="1065.0" y="415.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" ></text>
+<text x="1046.0" y="391.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="end" >GND</text>
+<text x="1061.0" y="380.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="start" >PWM</text>
+<rect x="1120" y="206" width="58" height="44" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="1149.0" y="228.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="middle" >Pompa A</text>
+<rect x="1120" y="316" width="58" height="44" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="1149.0" y="338.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="middle" >Pompa B</text>
+<rect x="940" y="64" width="96" height="30" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="988.0" y="79.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="middle" >Şamandıra A</text>
+<rect x="936.0" y="68.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="75.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" ></text>
+<rect x="936.0" y="80.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="87.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" ></text>
+<rect x="940" y="32" width="96" height="30" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>
+<text x="988.0" y="47.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="middle" >Şamandıra B</text>
+<rect x="936.0" y="40.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="47.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" ></text>
+<rect x="936.0" y="52.0" width="8" height="8" fill="#fff" stroke="#1a211f" stroke-width="1.4"/>
+<text x="948.0" y="59.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="start" ></text>
+<line x1="576.3" y1="249.4" x2="614.4" y2="249.4" stroke="#7a6a4a" stroke-width="1.6"/><rect x="585.3" y="245.9" width="20" height="7" rx="2.5" fill="#d9c08a" stroke="#7a6a4a"/><circle cx="576.3" cy="249.4" r="2.6" fill="#7a6a4a"/><circle cx="614.4" cy="249.4" r="2.6" fill="#7a6a4a"/><text x="595.3" y="260.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >R1A</text>
+<line x1="614.4" y1="236.7" x2="627.1" y2="198.7" stroke="#7a6a4a" stroke-width="1.6"/><rect x="617.2" y="210.7" width="7" height="14" rx="2.5" fill="#d9c08a" stroke="#7a6a4a"/><circle cx="614.4" cy="236.7" r="2.6" fill="#7a6a4a"/><circle cx="627.1" cy="198.7" r="2.6" fill="#7a6a4a"/><text x="628.8" y="220.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="start" >R2A</text>
+<line x1="665.2" y1="249.4" x2="690.6" y2="249.4" stroke="#7a6a4a" stroke-width="1.6"/><rect x="667.9" y="245.9" width="20" height="7" rx="2.5" fill="#d9c08a" stroke="#7a6a4a"/><circle cx="665.2" cy="249.4" r="2.6" fill="#7a6a4a"/><circle cx="690.6" cy="249.4" r="2.6" fill="#7a6a4a"/><text x="677.9" y="260.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >R1B</text>
+<line x1="690.6" y1="236.7" x2="703.3" y2="198.7" stroke="#7a6a4a" stroke-width="1.6"/><rect x="693.5" y="210.7" width="7" height="14" rx="2.5" fill="#d9c08a" stroke="#7a6a4a"/><circle cx="690.6" cy="236.7" r="2.6" fill="#7a6a4a"/><circle cx="703.3" cy="198.7" r="2.6" fill="#7a6a4a"/><text x="705.0" y="220.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="start" >R2B</text>
+<line x1="741.4" y1="186" x2="741.4" y2="198.7" stroke="#44506a" stroke-width="1.6"/><circle cx="741.4" cy="192.3" r="5" fill="#5d6f96" stroke="#2c3550"/><circle cx="741.4" cy="186" r="2.6" fill="#2c3550"/><circle cx="741.4" cy="198.7" r="2.6" fill="#2c3550"/><text x="741.4" y="211.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >C1</text>
+<line x1="716.0" y1="186" x2="716.0" y2="198.7" stroke="#44506a" stroke-width="1.6"/><circle cx="716.0" cy="192.3" r="5" fill="#5d6f96" stroke="#2c3550"/><circle cx="716.0" cy="186" r="2.6" fill="#2c3550"/><circle cx="716.0" cy="198.7" r="2.6" fill="#2c3550"/><text x="716.0" y="211.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >C2</text>
+<line x1="1088" y1="220" x2="1088" y2="236" stroke="#333" stroke-width="1.4"/><path d="M1084,232.0 L1092,232.0 L1088,225.0 Z" fill="#333"/><line x1="1084" y1="225.0" x2="1092" y2="225.0" stroke="#333" stroke-width="1.8"/><text x="1088.0" y="247.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >D1</text>
+<line x1="1088" y1="330" x2="1088" y2="346" stroke="#333" stroke-width="1.4"/><path d="M1084,342.0 L1092,342.0 L1088,335.0 Z" fill="#333"/><line x1="1084" y1="335.0" x2="1092" y2="335.0" stroke="#333" stroke-width="1.8"/><text x="1088.0" y="357.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7" font-weight="bold" fill="#1a211f" text-anchor="middle" >D2</text>
+<rect x="32" y="544" width="392" height="88" rx="4" fill="#fff" stroke="#d6dcd9"/>
+<text x="44.0" y="560.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#1a211f" text-anchor="start" >Uçtaki işaret bağlantı biçimini gösterir</text>
+<circle cx="48.0" cy="575.0" r="3.4" fill="#1a211f" stroke="#fff" stroke-width="1"/>
+<text x="62.0" y="578.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#1a211f" text-anchor="start" >Yuvarlak: takılır. Jumper ucu deliğe ya da pine girer, alet gerekmez.</text>
+<rect x="43.8" y="588.8" width="8.4" height="8.4" fill="#1a211f" stroke="#fff" stroke-width="1.2"/>
+<text x="62.0" y="596.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#1a211f" text-anchor="start" >Kare: vidalı klemens. Telin ucu soyulur, tornavidayla sıkılır.</text>
+<polygon points="48.0,603.8 49.8,608.5 54.8,608.8 50.9,612.0 52.2,616.8 48.0,614.1 43.8,616.8 45.1,612.0 41.2,608.8 46.2,608.5" fill="#1a211f" stroke="#fff" stroke-width="1.1"/>
+<text x="62.0" y="614.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#1a211f" text-anchor="start" >Yıldız: ek yeri. Parçanın kendi teli uzatılır: lehim ya da geçmeli klemens, üstüne makaron.</text><g class="w" data-k="K1" data-s="1" data-g="guc"><path d="M217.8,424.0 L217.8,466.0 L487.4,466.0 L487.4,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M217.8,424.0 L217.8,466.0 L487.4,466.0 L487.4,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="217.8" cy="424.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="487.4" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K2" data-s="1" data-g="guc"><path d="M243.2,424.0 L243.2,456.0 L474.7,456.0 L474.7,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M243.2,424.0 L243.2,456.0 L474.7,456.0 L474.7,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="243.2" cy="424.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="474.7" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K3" data-s="1" data-g="guc"><path d="M804.9,401.7 L804.9,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M804.9,401.7 L804.9,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="804.9" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="804.9" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K4" data-s="1" data-g="nemA1"><path d="M550.9,520.0 L550.9,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M550.9,520.0 L550.9,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="550.9" cy="520.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="550.9" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K5" data-s="1" data-g="nemA1"><path d="M563.6,520.0 L563.6,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M563.6,520.0 L563.6,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="563.6" cy="520.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="563.6" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K6" data-s="1" data-g="nemA1"><path d="M538.2,520.0 L538.2,363.8" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M538.2,520.0 L538.2,363.8" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="538.2" cy="520.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="538.2" cy="363.8" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K7" data-s="1" data-g="nemA1"><path d="M538.2,313.0 L538.2,304.0 L415.0,304.0 L415.0,446.0 L294.0,446.0 L294.0,424.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M538.2,313.0 L538.2,304.0 L415.0,304.0 L415.0,446.0 L294.0,446.0 L294.0,424.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="538.2" cy="313.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="294.0" cy="424.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K8" data-s="1" data-g="nemA2"><path d="M627.1,520.0 L627.1,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M627.1,520.0 L627.1,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="627.1" cy="520.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="627.1" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K9" data-s="1" data-g="nemA2"><path d="M639.8,520.0 L639.8,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M639.8,520.0 L639.8,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="639.8" cy="520.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="639.8" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K10" data-s="1" data-g="nemA2"><path d="M614.4,520.0 L614.4,363.8" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M614.4,520.0 L614.4,363.8" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="614.4" cy="520.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="614.4" cy="363.8" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K11" data-s="1" data-g="nemA2"><path d="M614.4,313.0 L614.4,297.0 L407.0,297.0 L407.0,441.0 L306.7,441.0 L306.7,424.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M614.4,313.0 L614.4,297.0 L407.0,297.0 L407.0,441.0 L306.7,441.0 L306.7,424.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="614.4" cy="313.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="306.7" cy="424.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K12" data-s="1" data-g="nemB1"><path d="M703.3,520.0 L703.3,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M703.3,520.0 L703.3,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="703.3" cy="520.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="703.3" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K13" data-s="1" data-g="nemB1"><path d="M716.0,520.0 L716.0,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M716.0,520.0 L716.0,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="716.0" cy="520.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="716.0" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K14" data-s="1" data-g="nemB1"><path d="M690.6,520.0 L690.6,363.8" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M690.6,520.0 L690.6,363.8" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="690.6" cy="520.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="690.6" cy="363.8" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K15" data-s="1" data-g="nemB1"><path d="M690.6,313.0 L690.6,290.0 L399.0,290.0 L399.0,436.0 L319.4,436.0 L319.4,424.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M690.6,313.0 L690.6,290.0 L399.0,290.0 L399.0,436.0 L319.4,436.0 L319.4,424.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="690.6" cy="313.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="319.4" cy="424.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K16" data-s="1" data-g="nemB2"><path d="M779.5,520.0 L779.5,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M779.5,520.0 L779.5,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="779.5" cy="520.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="779.5" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K17" data-s="1" data-g="nemB2"><path d="M792.2,520.0 L792.2,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M792.2,520.0 L792.2,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="792.2" cy="520.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="792.2" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K18" data-s="1" data-g="nemB2"><path d="M766.8,520.0 L766.8,363.8" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M766.8,520.0 L766.8,363.8" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="766.8" cy="520.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="766.8" cy="363.8" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K19" data-s="1" data-g="nemB2"><path d="M766.8,313.0 L766.8,283.0 L391.0,283.0 L391.0,431.0 L332.1,431.0 L332.1,424.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M766.8,313.0 L766.8,283.0 L391.0,283.0 L391.0,431.0 L332.1,431.0 L332.1,424.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="766.8" cy="313.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/><circle cx="332.1" cy="424.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K20" data-s="2" data-g="guc"><path d="M792.2,150.0 L792.2,186.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M792.2,150.0 L792.2,186.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="788.0" y="145.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/><circle cx="792.2" cy="186.0" r="3.4" fill="#c8372d" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K21" data-s="2" data-g="guc"><path d="M779.5,150.0 L779.5,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M779.5,150.0 L779.5,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="775.3" y="145.8" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/><circle cx="779.5" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K22" data-s="2" data-g="pompaA"><path d="M830.3,186.0 L940.0,186.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M830.3,186.0 L940.0,186.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="830.3" cy="186.0" r="3.4" fill="#c8372d" stroke="#fff" stroke-width="1"/><rect x="935.8" y="181.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/></g>
+<g class="w" data-k="K23" data-s="2" data-g="pompaA"><path d="M830.3,198.7 L940.0,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M830.3,198.7 L940.0,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="830.3" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><rect x="935.8" y="194.5" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/></g>
+<g class="w" data-k="K24" data-s="2" data-g="pompaB"><path d="M940.0,186.0 L926.0,186.0 L926.0,316.0 L940.0,316.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,186.0 L926.0,186.0 L926.0,316.0 L940.0,316.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="935.8" y="181.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/><rect x="935.8" y="311.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/></g>
+<g class="w" data-k="K25" data-s="2" data-g="pompaB"><path d="M940.0,198.7 L918.0,198.7 L918.0,329.0 L940.0,329.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,198.7 L918.0,198.7 L918.0,329.0 L940.0,329.0" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="935.8" y="194.5" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/><rect x="935.8" y="324.8" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/></g>
+<g class="w" data-k="K26" data-s="2" data-g="pompaA"><path d="M1076.0,220.0 L1120.0,220.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1076.0,220.0 L1120.0,220.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="1071.8" y="215.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/><polygon points="1120.0,212.8 1121.8,217.5 1126.8,217.8 1122.9,221.0 1124.2,225.8 1120.0,223.1 1115.8,225.8 1117.1,221.0 1113.2,217.8 1118.2,217.5" fill="#c8372d" stroke="#fff" stroke-width="1.1"/></g>
+<g class="w" data-k="K27" data-s="2" data-g="pompaA"><path d="M1076.0,236.0 L1120.0,236.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1076.0,236.0 L1120.0,236.0" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="1071.8" y="231.8" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/><polygon points="1120.0,228.8 1121.8,233.5 1126.8,233.8 1122.9,237.0 1124.2,241.8 1120.0,239.1 1115.8,241.8 1117.1,237.0 1113.2,233.8 1118.2,233.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/></g>
+<g class="w" data-k="K28" data-s="2" data-g="pompaB"><path d="M1076.0,330.0 L1120.0,330.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1076.0,330.0 L1120.0,330.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="1071.8" y="325.8" width="8.4" height="8.4" fill="#c8372d" stroke="#fff" stroke-width="1.2"/><polygon points="1120.0,322.8 1121.8,327.5 1126.8,327.8 1122.9,331.0 1124.2,335.8 1120.0,333.1 1115.8,335.8 1117.1,331.0 1113.2,327.8 1118.2,327.5" fill="#c8372d" stroke="#fff" stroke-width="1.1"/></g>
+<g class="w" data-k="K29" data-s="2" data-g="pompaB"><path d="M1076.0,346.0 L1120.0,346.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1076.0,346.0 L1120.0,346.0" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="1071.8" y="341.8" width="8.4" height="8.4" fill="#20262a" stroke="#fff" stroke-width="1.2"/><polygon points="1120.0,338.8 1121.8,343.5 1126.8,343.8 1122.9,347.0 1124.2,351.8 1120.0,349.1 1115.8,351.8 1117.1,347.0 1113.2,343.8 1118.2,343.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/></g>
+<g class="w" data-k="K30" data-s="2" data-g="pompaA"><path d="M222.9,182.7 L222.9,28.0 L1065.0,28.0 L1065.0,170.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M222.9,182.7 L222.9,28.0 L1065.0,28.0 L1065.0,170.0" fill="none" stroke="#1f6fd1" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="222.9" cy="182.7" r="3.4" fill="#1f6fd1" stroke="#fff" stroke-width="1"/><circle cx="1065.0" cy="170.0" r="3.4" fill="#1f6fd1" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K31" data-s="2" data-g="pompaB"><path d="M210.2,182.7 L210.2,16.0 L1190.0,16.0 L1190.0,452.0 L1065.0,452.0 L1065.0,400.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M210.2,182.7 L210.2,16.0 L1190.0,16.0 L1190.0,452.0 L1065.0,452.0 L1065.0,400.0" fill="none" stroke="#1f6fd1" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="210.2" cy="182.7" r="3.4" fill="#1f6fd1" stroke="#fff" stroke-width="1"/><circle cx="1065.0" cy="400.0" r="3.4" fill="#1f6fd1" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K32" data-s="2" data-g="pompaA"><path d="M1050.0,170.0 L1050.0,162.0 L817.6,162.0 L817.6,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1050.0,170.0 L1050.0,162.0 L817.6,162.0 L817.6,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="1050.0" cy="170.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="817.6" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K33" data-s="2" data-g="pompaB"><path d="M1050.0,400.0 L1050.0,440.0 L830.3,440.0 L830.3,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M1050.0,400.0 L1050.0,440.0 L830.3,440.0 L830.3,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="1050.0" cy="400.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="830.3" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K34" data-s="3" data-g="samA"><path d="M940.0,72.0 L306.7,72.0 L306.7,182.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,72.0 L306.7,72.0 L306.7,182.7" fill="none" stroke="#7a3fb5" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="940.0,64.8 941.8,69.5 946.8,69.8 942.9,73.0 944.2,77.8 940.0,75.1 935.8,77.8 937.1,73.0 933.2,69.8 938.2,69.5" fill="#7a3fb5" stroke="#fff" stroke-width="1.1"/><circle cx="306.7" cy="182.7" r="3.4" fill="#7a3fb5" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K35" data-s="3" data-g="samA"><path d="M940.0,84.0 L754.1,84.0 L754.1,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,84.0 L754.1,84.0 L754.1,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="940.0,76.8 941.8,81.5 946.8,81.8 942.9,85.0 944.2,89.8 940.0,87.1 935.8,89.8 937.1,85.0 933.2,81.8 938.2,81.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/><circle cx="754.1" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K36" data-s="3" data-g="samB"><path d="M940.0,44.0 L294.0,44.0 L294.0,182.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,44.0 L294.0,44.0 L294.0,182.7" fill="none" stroke="#7a3fb5" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="940.0,36.8 941.8,41.5 946.8,41.8 942.9,45.0 944.2,49.8 940.0,47.1 935.8,49.8 937.1,45.0 933.2,41.8 938.2,41.5" fill="#7a3fb5" stroke="#fff" stroke-width="1.1"/><circle cx="294.0" cy="182.7" r="3.4" fill="#7a3fb5" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K37" data-s="3" data-g="samB"><path d="M940.0,56.0 L728.7,56.0 L728.7,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M940.0,56.0 L728.7,56.0 L728.7,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="940.0,48.8 941.8,53.5 946.8,53.8 942.9,57.0 944.2,61.8 940.0,59.1 935.8,61.8 937.1,57.0 933.2,53.8 938.2,53.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/><circle cx="728.7" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K38" data-s="4" data-g="akisA"><path d="M550.9,150.0 L550.9,186.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M550.9,150.0 L550.9,186.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="550.9,142.8 552.7,147.5 557.7,147.8 553.8,151.0 555.1,155.8 550.9,153.1 546.7,155.8 548.0,151.0 544.1,147.8 549.1,147.5" fill="#c8372d" stroke="#fff" stroke-width="1.1"/><circle cx="550.9" cy="186.0" r="3.4" fill="#c8372d" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K39" data-s="4" data-g="akisA"><path d="M563.6,150.0 L563.6,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M563.6,150.0 L563.6,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="563.6,142.8 565.4,147.5 570.4,147.8 566.5,151.0 567.8,155.8 563.6,153.1 559.4,155.8 560.7,151.0 556.8,147.8 561.8,147.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/><circle cx="563.6" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K40" data-s="4" data-g="akisA"><path d="M576.3,150.0 L576.3,224.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M576.3,150.0 L576.3,224.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="576.3,142.8 578.1,147.5 583.1,147.8 579.2,151.0 580.5,155.8 576.3,153.1 572.1,155.8 573.4,151.0 569.5,147.8 574.5,147.5" fill="#c9a100" stroke="#fff" stroke-width="1.1"/><circle cx="576.3" cy="224.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K41" data-s="4" data-g="akisA"><path d="M614.4,224.0 L614.4,110.0 L332.1,110.0 L332.1,182.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M614.4,224.0 L614.4,110.0 L332.1,110.0 L332.1,182.7" fill="none" stroke="#2b8a3e" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="614.4" cy="224.0" r="3.4" fill="#2b8a3e" stroke="#fff" stroke-width="1"/><circle cx="332.1" cy="182.7" r="3.4" fill="#2b8a3e" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K42" data-s="4" data-g="akisB"><path d="M639.8,150.0 L639.8,186.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M639.8,150.0 L639.8,186.0" fill="none" stroke="#c8372d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="639.8,142.8 641.6,147.5 646.6,147.8 642.7,151.0 644.0,155.8 639.8,153.1 635.6,155.8 636.9,151.0 633.0,147.8 638.0,147.5" fill="#c8372d" stroke="#fff" stroke-width="1.1"/><circle cx="639.8" cy="186.0" r="3.4" fill="#c8372d" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K43" data-s="4" data-g="akisB"><path d="M652.5,150.0 L652.5,198.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M652.5,150.0 L652.5,198.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="652.5,142.8 654.3,147.5 659.3,147.8 655.4,151.0 656.7,155.8 652.5,153.1 648.3,155.8 649.6,151.0 645.7,147.8 650.7,147.5" fill="#20262a" stroke="#fff" stroke-width="1.1"/><circle cx="652.5" cy="198.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K44" data-s="4" data-g="akisB"><path d="M665.2,150.0 L665.2,224.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M665.2,150.0 L665.2,224.0" fill="none" stroke="#c9a100" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><polygon points="665.2,142.8 667.0,147.5 672.0,147.8 668.1,151.0 669.4,155.8 665.2,153.1 661.0,155.8 662.3,151.0 658.4,147.8 663.4,147.5" fill="#c9a100" stroke="#fff" stroke-width="1.1"/><circle cx="665.2" cy="224.0" r="3.4" fill="#c9a100" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K45" data-s="4" data-g="akisB"><path d="M690.6,224.0 L690.6,98.0 L319.4,98.0 L319.4,182.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M690.6,224.0 L690.6,98.0 L319.4,98.0 L319.4,182.7" fill="none" stroke="#2b8a3e" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="690.6" cy="224.0" r="3.4" fill="#2b8a3e" stroke="#fff" stroke-width="1"/><circle cx="319.4" cy="182.7" r="3.4" fill="#2b8a3e" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K46" data-s="5" data-g="dht"><path d="M500.1,520.0 L500.1,389.0" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M500.1,520.0 L500.1,389.0" fill="none" stroke="#e07b00" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="500.1" cy="520.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/><circle cx="500.1" cy="389.0" r="3.4" fill="#e07b00" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K47" data-s="5" data-g="dht"><path d="M512.8,520.0 L512.8,401.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M512.8,520.0 L512.8,401.7" fill="none" stroke="#20262a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="512.8" cy="520.0" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/><circle cx="512.8" cy="401.7" r="3.4" fill="#20262a" stroke="#fff" stroke-width="1"/></g>
+<g class="w" data-k="K48" data-s="5" data-g="dht"><path d="M487.4,520.0 L487.4,512.0 L16.0,512.0 L16.0,140.0 L197.5,140.0 L197.5,182.7" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/><path d="M487.4,520.0 L487.4,512.0 L16.0,512.0 L16.0,140.0 L197.5,140.0 L197.5,182.7" fill="none" stroke="#5b6b7a" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="487.4" cy="520.0" r="3.4" fill="#5b6b7a" stroke="#fff" stroke-width="1"/><circle cx="197.5" cy="182.7" r="3.4" fill="#5b6b7a" stroke="#fff" stroke-width="1"/></g>
+<g class="wl" data-k="K1" data-s="1" data-g="guc"><rect x="209.1" y="435.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="217.8" y="444.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K1</text>
+<rect x="478.7" y="443.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="487.4" y="452.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K1</text></g>
+<g class="wl" data-k="K2" data-s="1" data-g="guc"><rect x="234.5" y="435.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="243.2" y="444.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K2</text>
+<rect x="466.0" y="433.7" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="474.7" y="442.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K2</text></g>
+<g class="wl" data-k="K3" data-s="1" data-g="guc"><rect x="796.2" y="355.7" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="804.9" y="364.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K3</text>
+<rect x="796.2" y="232.7" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="804.9" y="241.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K3</text></g>
+<g class="wl" data-k="K4" data-s="1" data-g="nemA1"><rect x="542.2" y="482.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="550.9" y="491.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K4</text></g>
+<g class="wl" data-k="K5" data-s="1" data-g="nemA1"><rect x="554.9" y="464.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="563.6" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K5</text></g>
+<g class="wl" data-k="K6" data-s="1" data-g="nemA1"><rect x="529.5" y="500.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="538.2" y="509.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K6</text></g>
+<g class="wl" data-k="K7" data-s="1" data-g="nemA1"><rect x="494.5" y="298.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="503.2" y="307.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K7</text>
+<rect x="406.3" y="414.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="415.0" y="423.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K7</text></g>
+<g class="wl" data-k="K8" data-s="1" data-g="nemA2"><rect x="618.4" y="482.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="627.1" y="491.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K8</text></g>
+<g class="wl" data-k="K9" data-s="1" data-g="nemA2"><rect x="631.1" y="464.0" width="17.4" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="639.8" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K9</text></g>
+<g class="wl" data-k="K10" data-s="1" data-g="nemA2"><rect x="602.6" y="500.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="614.4" y="509.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K10</text></g>
+<g class="wl" data-k="K11" data-s="1" data-g="nemA2"><rect x="570.6" y="291.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="582.4" y="300.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K11</text>
+<rect x="395.2" y="392.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="407.0" y="401.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K11</text></g>
+<g class="wl" data-k="K12" data-s="1" data-g="nemB1"><rect x="691.5" y="482.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="703.3" y="491.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K12</text></g>
+<g class="wl" data-k="K13" data-s="1" data-g="nemB1"><rect x="704.2" y="464.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="716.0" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K13</text></g>
+<g class="wl" data-k="K14" data-s="1" data-g="nemB1"><rect x="678.8" y="500.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="690.6" y="509.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K14</text></g>
+<g class="wl" data-k="K15" data-s="1" data-g="nemB1"><rect x="649.8" y="284.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="661.6" y="293.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K15</text>
+<rect x="387.2" y="370.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="399.0" y="379.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K15</text></g>
+<g class="wl" data-k="K16" data-s="1" data-g="nemB2"><rect x="767.7" y="482.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="779.5" y="491.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K16</text></g>
+<g class="wl" data-k="K17" data-s="1" data-g="nemB2"><rect x="780.4" y="464.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="792.2" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K17</text></g>
+<g class="wl" data-k="K18" data-s="1" data-g="nemB2"><rect x="755.0" y="500.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="766.8" y="509.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K18</text></g>
+<g class="wl" data-k="K19" data-s="1" data-g="nemB2"><rect x="729.0" y="277.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="740.8" y="286.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K19</text>
+<rect x="379.2" y="348.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="391.0" y="357.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K19</text></g>
+<g class="wl" data-k="K20" data-s="2" data-g="guc"><rect x="780.4" y="153.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="792.2" y="162.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K20</text></g>
+<g class="wl" data-k="K21" data-s="2" data-g="guc"><rect x="767.7" y="174.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="779.5" y="183.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K21</text></g>
+<g class="wl" data-k="K22" data-s="2" data-g="pompaA"><rect x="858.5" y="180.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="870.3" y="189.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K22</text></g>
+<g class="wl" data-k="K23" data-s="2" data-g="pompaA"><rect x="884.5" y="192.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="896.3" y="201.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K23</text></g>
+<g class="wl" data-k="K24" data-s="2" data-g="pompaB"><rect x="914.2" y="236.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="926.0" y="245.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K24</text>
+<rect x="918.2" y="310.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="930.0" y="319.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K24</text></g>
+<g class="wl" data-k="K25" data-s="2" data-g="pompaB"><rect x="906.2" y="270.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="918.0" y="279.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K25</text>
+<rect x="918.2" y="323.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="930.0" y="332.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K25</text></g>
+<g class="wl" data-k="K26" data-s="2" data-g="pompaA"><rect x="1094.2" y="214.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="1106.0" y="223.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K26</text></g>
+<g class="wl" data-k="K27" data-s="2" data-g="pompaA"><rect x="1094.2" y="230.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="1106.0" y="239.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K27</text></g>
+<g class="wl" data-k="K28" data-s="2" data-g="pompaB"><rect x="1094.2" y="324.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="1106.0" y="333.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K28</text></g>
+<g class="wl" data-k="K29" data-s="2" data-g="pompaB"><rect x="1094.2" y="340.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="1106.0" y="349.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K29</text></g>
+<g class="wl" data-k="K30" data-s="2" data-g="pompaA"><rect x="211.1" y="159.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#1f6fd1" stroke-width="1"/>
+<text x="222.9" y="168.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K30</text>
+<rect x="1053.2" y="147.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#1f6fd1" stroke-width="1"/>
+<text x="1065.0" y="156.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K30</text></g>
+<g class="wl" data-k="K31" data-s="2" data-g="pompaB"><rect x="198.4" y="140.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#1f6fd1" stroke-width="1"/>
+<text x="210.2" y="149.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K31</text>
+<rect x="1053.2" y="411.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#1f6fd1" stroke-width="1"/>
+<text x="1065.0" y="420.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K31</text></g>
+<g class="wl" data-k="K32" data-s="2" data-g="pompaA"><rect x="986.2" y="156.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="998.0" y="165.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K32</text>
+<rect x="805.8" y="175.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="817.6" y="184.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K32</text></g>
+<g class="wl" data-k="K33" data-s="2" data-g="pompaB"><rect x="998.2" y="434.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="1010.0" y="443.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K33</text>
+<rect x="818.5" y="412.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="830.3" y="421.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K33</text></g>
+<g class="wl" data-k="K34" data-s="3" data-g="samA"><rect x="911.2" y="66.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1"/>
+<text x="923.0" y="75.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K34</text>
+<rect x="294.9" y="159.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1"/>
+<text x="306.7" y="168.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K34</text></g>
+<g class="wl" data-k="K35" data-s="3" data-g="samA"><rect x="880.2" y="78.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="892.0" y="87.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K35</text>
+<rect x="742.3" y="162.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="754.1" y="171.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K35</text></g>
+<g class="wl" data-k="K36" data-s="3" data-g="samB"><rect x="911.2" y="38.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1"/>
+<text x="923.0" y="47.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K36</text>
+<rect x="282.2" y="140.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1"/>
+<text x="294.0" y="149.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K36</text></g>
+<g class="wl" data-k="K37" data-s="3" data-g="samB"><rect x="880.2" y="50.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="892.0" y="59.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K37</text>
+<rect x="716.9" y="140.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="728.7" y="149.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K37</text></g>
+<g class="wl" data-k="K38" data-s="4" data-g="akisA"><rect x="539.1" y="152.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="550.9" y="161.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K38</text></g>
+<g class="wl" data-k="K39" data-s="4" data-g="akisA"><rect x="551.8" y="174.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="563.6" y="183.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K39</text></g>
+<g class="wl" data-k="K40" data-s="4" data-g="akisA"><rect x="564.5" y="200.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="576.3" y="209.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K40</text></g>
+<g class="wl" data-k="K41" data-s="4" data-g="akisA"><rect x="602.6" y="178.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#2b8a3e" stroke-width="1"/>
+<text x="614.4" y="187.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K41</text>
+<rect x="320.3" y="141.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#2b8a3e" stroke-width="1"/>
+<text x="332.1" y="150.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K41</text></g>
+<g class="wl" data-k="K42" data-s="4" data-g="akisB"><rect x="628.0" y="152.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c8372d" stroke-width="1"/>
+<text x="639.8" y="161.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K42</text></g>
+<g class="wl" data-k="K43" data-s="4" data-g="akisB"><rect x="640.7" y="174.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="652.5" y="183.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K43</text></g>
+<g class="wl" data-k="K44" data-s="4" data-g="akisB"><rect x="653.4" y="200.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#c9a100" stroke-width="1"/>
+<text x="665.2" y="209.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K44</text></g>
+<g class="wl" data-k="K45" data-s="4" data-g="akisB"><rect x="678.8" y="178.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#2b8a3e" stroke-width="1"/>
+<text x="690.6" y="187.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K45</text>
+<rect x="307.6" y="122.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#2b8a3e" stroke-width="1"/>
+<text x="319.4" y="131.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K45</text></g>
+<g class="wl" data-k="K46" data-s="5" data-g="dht"><rect x="488.3" y="482.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#e07b00" stroke-width="1"/>
+<text x="500.1" y="491.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K46</text></g>
+<g class="wl" data-k="K47" data-s="5" data-g="dht"><rect x="501.0" y="464.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#20262a" stroke-width="1"/>
+<text x="512.8" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K47</text></g>
+<g class="wl" data-k="K48" data-s="5" data-g="dht"><rect x="423.6" y="506.0" width="23.6" height="12" rx="3" fill="#fff" stroke="#5b6b7a" stroke-width="1"/>
+<text x="435.4" y="515.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K48</text>
+<rect x="185.7" y="159.7" width="23.6" height="12" rx="3" fill="#fff" stroke="#5b6b7a" stroke-width="1"/>
+<text x="197.5" y="168.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#1a211f" text-anchor="middle" >K48</text></g></svg></div>
+    <p class="hint">Bir kabloya ya da listedeki satırına dokun: o kablo öne çıkar. Yakınlaştırmak için trackpad'de iki parmağı aç (kıstırma), farede Ctrl ya da Cmd tuşuyla tekerleği çevir, ya da çift tıkla; + ve − düğmeleri de var. Yakınlaşınca sürükleyerek ya da iki parmakla kaydırarak gezin. Taktığın kabloyu kutusundan işaretle; etiketi yeşile döner.</p>
+    <p class="hint">Kablo ucundaki işaret bağlantı biçimidir: yuvarlak takılır (jumper), kare vidalı klemense sıkılır, yıldız ek yeridir (lehim ya da geçmeli klemens).</p>
+    <div class="tw"><table><tbody id="rows"><tr class="grp" data-s="1"><th colspan="6">Adım 1 · Güç hatları ve nem sensörleri</th></tr>
+<tr data-k="K1" data-s="1" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-K1" aria-label="K1 takıldı"></td><td class="m">K1</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>UNO Q 3V3</td><td>alt + hattı, 3. sıra</td><td class="n">alt + hattı artık 3,3 V</td></tr>
+<tr data-k="K2" data-s="1" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-K2" aria-label="K2 takıldı"></td><td class="m">K2</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>UNO Q GND (5V&#x27;un yanındaki)</td><td>alt − hattı, 2. sıra</td><td class="n"></td></tr>
+<tr data-k="K3" data-s="1" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-K3" aria-label="K3 takıldı"></td><td class="m">K3</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>alt − hattı, 28. sıra</td><td>üst − hattı, 28. sıra</td><td class="n">iki GND hattını birleştirir</td></tr>
+<tr data-k="K4" data-s="1" data-g="nemA1" tabindex="0"><td><input type="checkbox" id="c-K4" aria-label="K4 takıldı"></td><td class="m">K4</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>Nem A1 VCC (kırmızı tel)</td><td>alt + hattı, 8. sıra</td><td class="n"></td></tr>
+<tr data-k="K5" data-s="1" data-g="nemA1" tabindex="0"><td><input type="checkbox" id="c-K5" aria-label="K5 takıldı"></td><td class="m">K5</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Nem A1 GND (siyah tel)</td><td>alt − hattı, 9. sıra</td><td class="n"></td></tr>
+<tr data-k="K6" data-s="1" data-g="nemA1" tabindex="0"><td><input type="checkbox" id="c-K6" aria-label="K6 takıldı"></td><td class="m">K6</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Nem A1 AOUT (sarı tel)</td><td>Breadboard a7 deliği</td><td class="n"></td></tr>
+<tr data-k="K7" data-s="1" data-g="nemA1" tabindex="0"><td><input type="checkbox" id="c-K7" aria-label="K7 takıldı"></td><td class="m">K7</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Breadboard e7 deliği</td><td>UNO Q A0</td><td class="n">Yatak A, 5 cm sensörü</td></tr>
+<tr data-k="K8" data-s="1" data-g="nemA2" tabindex="0"><td><input type="checkbox" id="c-K8" aria-label="K8 takıldı"></td><td class="m">K8</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>Nem A2 VCC (kırmızı tel)</td><td>alt + hattı, 14. sıra</td><td class="n"></td></tr>
+<tr data-k="K9" data-s="1" data-g="nemA2" tabindex="0"><td><input type="checkbox" id="c-K9" aria-label="K9 takıldı"></td><td class="m">K9</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Nem A2 GND (siyah tel)</td><td>alt − hattı, 15. sıra</td><td class="n"></td></tr>
+<tr data-k="K10" data-s="1" data-g="nemA2" tabindex="0"><td><input type="checkbox" id="c-K10" aria-label="K10 takıldı"></td><td class="m">K10</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Nem A2 AOUT (sarı tel)</td><td>Breadboard a13 deliği</td><td class="n"></td></tr>
+<tr data-k="K11" data-s="1" data-g="nemA2" tabindex="0"><td><input type="checkbox" id="c-K11" aria-label="K11 takıldı"></td><td class="m">K11</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Breadboard e13 deliği</td><td>UNO Q A1</td><td class="n">Yatak A, 10 cm sensörü</td></tr>
+<tr data-k="K12" data-s="1" data-g="nemB1" tabindex="0"><td><input type="checkbox" id="c-K12" aria-label="K12 takıldı"></td><td class="m">K12</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>Nem B1 VCC (kırmızı tel)</td><td>alt + hattı, 20. sıra</td><td class="n"></td></tr>
+<tr data-k="K13" data-s="1" data-g="nemB1" tabindex="0"><td><input type="checkbox" id="c-K13" aria-label="K13 takıldı"></td><td class="m">K13</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Nem B1 GND (siyah tel)</td><td>alt − hattı, 21. sıra</td><td class="n"></td></tr>
+<tr data-k="K14" data-s="1" data-g="nemB1" tabindex="0"><td><input type="checkbox" id="c-K14" aria-label="K14 takıldı"></td><td class="m">K14</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Nem B1 AOUT (sarı tel)</td><td>Breadboard a19 deliği</td><td class="n"></td></tr>
+<tr data-k="K15" data-s="1" data-g="nemB1" tabindex="0"><td><input type="checkbox" id="c-K15" aria-label="K15 takıldı"></td><td class="m">K15</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Breadboard e19 deliği</td><td>UNO Q A2</td><td class="n">Yatak B, 5 cm sensörü</td></tr>
+<tr data-k="K16" data-s="1" data-g="nemB2" tabindex="0"><td><input type="checkbox" id="c-K16" aria-label="K16 takıldı"></td><td class="m">K16</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>Nem B2 VCC (kırmızı tel)</td><td>alt + hattı, 26. sıra</td><td class="n"></td></tr>
+<tr data-k="K17" data-s="1" data-g="nemB2" tabindex="0"><td><input type="checkbox" id="c-K17" aria-label="K17 takıldı"></td><td class="m">K17</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Nem B2 GND (siyah tel)</td><td>alt − hattı, 27. sıra</td><td class="n"></td></tr>
+<tr data-k="K18" data-s="1" data-g="nemB2" tabindex="0"><td><input type="checkbox" id="c-K18" aria-label="K18 takıldı"></td><td class="m">K18</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Nem B2 AOUT (sarı tel)</td><td>Breadboard a25 deliği</td><td class="n"></td></tr>
+<tr data-k="K19" data-s="1" data-g="nemB2" tabindex="0"><td><input type="checkbox" id="c-K19" aria-label="K19 takıldı"></td><td class="m">K19</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Breadboard e25 deliği</td><td>UNO Q A3</td><td class="n">Yatak B, 10 cm sensörü</td></tr>
+<tr class="note" data-s="1"><td></td><td colspan="5">Her nem sensörünün üç teli breadboard&#x27;a girer: VCC ve GND alt hatlara, AOUT a sırasına. Aynı sıranın e deliğinden çıkan kablo sinyali UNO Q&#x27;ya taşır.</td></tr>
+<tr class="note" data-s="1"><td></td><td colspan="5">Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5&#x27;e 3,3 V&#x27;tan fazlası verilmez.</td></tr>
+<tr class="grp" data-s="2"><th colspan="6">Adım 2 · Pompalar, MOSFET kartları, adaptör</th></tr>
+<tr data-k="K20" data-s="2" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-K20" aria-label="K20 takıldı"></td><td class="m">K20</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>Adaptör jakı + klemensi</td><td>üst + hattı, 27. sıra</td><td class="n">üst + hattı artık 5 V</td></tr>
+<tr data-k="K21" data-s="2" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-K21" aria-label="K21 takıldı"></td><td class="m">K21</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Adaptör jakı − klemensi</td><td>üst − hattı, 26. sıra</td><td class="n"></td></tr>
+<tr data-k="K22" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K22" aria-label="K22 takıldı"></td><td class="m">K22</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>üst + hattı, 30. sıra</td><td>MOSFET A POWER +</td><td class="n"></td></tr>
+<tr data-k="K23" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K23" aria-label="K23 takıldı"></td><td class="m">K23</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>üst − hattı, 30. sıra</td><td>MOSFET A POWER −</td><td class="n"></td></tr>
+<tr data-k="K24" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K24" aria-label="K24 takıldı"></td><td class="m">K24</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>MOSFET A POWER +</td><td>MOSFET B POWER +</td><td class="n">aynı klemense ikinci tel</td></tr>
+<tr data-k="K25" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K25" aria-label="K25 takıldı"></td><td class="m">K25</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>MOSFET A POWER −</td><td>MOSFET B POWER −</td><td class="n">aynı klemense ikinci tel</td></tr>
+<tr data-k="K26" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K26" aria-label="K26 takıldı"></td><td class="m">K26</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>MOSFET A LOAD +</td><td>Pompa A kırmızı teli</td><td class="n"></td></tr>
+<tr data-k="K27" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K27" aria-label="K27 takıldı"></td><td class="m">K27</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>MOSFET A LOAD −</td><td>Pompa A siyah teli</td><td class="n"></td></tr>
+<tr data-k="K28" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K28" aria-label="K28 takıldı"></td><td class="m">K28</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>MOSFET B LOAD +</td><td>Pompa B kırmızı teli</td><td class="n"></td></tr>
+<tr data-k="K29" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K29" aria-label="K29 takıldı"></td><td class="m">K29</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>MOSFET B LOAD −</td><td>Pompa B siyah teli</td><td class="n"></td></tr>
+<tr data-k="K30" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K30" aria-label="K30 takıldı"></td><td class="m">K30</td><td><span class="sw" style="background:#1f6fd1"></span>mavi</td><td>UNO Q D10</td><td>MOSFET A PWM (tetik) pini</td><td class="n">Pompa A sinyali</td></tr>
+<tr data-k="K31" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K31" aria-label="K31 takıldı"></td><td class="m">K31</td><td><span class="sw" style="background:#1f6fd1"></span>mavi</td><td>UNO Q D11</td><td>MOSFET B PWM (tetik) pini</td><td class="n">Pompa B sinyali</td></tr>
+<tr data-k="K32" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-K32" aria-label="K32 takıldı"></td><td class="m">K32</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>MOSFET A sinyal GND pini</td><td>üst − hattı, 29. sıra</td><td class="n"></td></tr>
+<tr data-k="K33" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-K33" aria-label="K33 takıldı"></td><td class="m">K33</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>MOSFET B sinyal GND pini</td><td>alt − hattı, 30. sıra</td><td class="n"></td></tr>
+<tr data-k="D1" data-s="2" data-g="pompaA" tabindex="0"><td><input type="checkbox" id="c-D1" aria-label="D1 takıldı"></td><td class="m">D1</td><td>1N5819</td><td>MOSFET A LOAD + (çizgili uç)</td><td>MOSFET A LOAD −</td><td class="n">pompa telleriyle aynı klemense</td></tr>
+<tr data-k="D2" data-s="2" data-g="pompaB" tabindex="0"><td><input type="checkbox" id="c-D2" aria-label="D2 takıldı"></td><td class="m">D2</td><td>1N5819</td><td>MOSFET B LOAD + (çizgili uç)</td><td>MOSFET B LOAD −</td><td class="n">pompa telleriyle aynı klemense</td></tr>
+<tr data-k="C1" data-s="2" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-C1" aria-label="C1 takıldı"></td><td class="m">C1</td><td>1000 µF</td><td>üst + hattı, 23. sıra (uzun bacak)</td><td>üst − hattı, 23. sıra</td><td class="n">ters takılmaz</td></tr>
+<tr data-k="C2" data-s="2" data-g="guc" tabindex="0"><td><input type="checkbox" id="c-C2" aria-label="C2 takıldı"></td><td class="m">C2</td><td>1000 µF</td><td>üst + hattı, 21. sıra (uzun bacak)</td><td>üst − hattı, 21. sıra</td><td class="n">ters takılmaz</td></tr>
+<tr class="note" data-s="2"><td></td><td colspan="5">Önkoşul: güç hatları kurulu. Adaptörü prize en son tak; pompalar yalnızca suyun içindeyken çalıştırılır.</td></tr>
+<tr class="note" data-s="2"><td></td><td colspan="5">Klemens yazıları kartta farklıysa (DC+/DC−, OUT+/OUT−, TRIG) karttaki yazıya uy. MOSFET kartlarının pin yerleri çizimde temsilidir.</td></tr>
+<tr class="grp" data-s="3"><th colspan="6">Adım 3 · Şamandıralar</th></tr>
+<tr data-k="K34" data-s="3" data-g="samA" tabindex="0"><td><input type="checkbox" id="c-K34" aria-label="K34 takıldı"></td><td class="m">K34</td><td><span class="sw" style="background:#7a3fb5"></span>mor</td><td>Şamandıra A teli 1</td><td>UNO Q D4</td><td class="n">kodda INPUT_PULLUP</td></tr>
+<tr data-k="K35" data-s="3" data-g="samA" tabindex="0"><td><input type="checkbox" id="c-K35" aria-label="K35 takıldı"></td><td class="m">K35</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Şamandıra A teli 2</td><td>üst − hattı, 24. sıra</td><td class="n"></td></tr>
+<tr data-k="K36" data-s="3" data-g="samB" tabindex="0"><td><input type="checkbox" id="c-K36" aria-label="K36 takıldı"></td><td class="m">K36</td><td><span class="sw" style="background:#7a3fb5"></span>mor</td><td>Şamandıra B teli 1</td><td>UNO Q D5</td><td class="n">kodda INPUT_PULLUP</td></tr>
+<tr data-k="K37" data-s="3" data-g="samB" tabindex="0"><td><input type="checkbox" id="c-K37" aria-label="K37 takıldı"></td><td class="m">K37</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Şamandıra B teli 2</td><td>üst − hattı, 22. sıra</td><td class="n"></td></tr>
+<tr class="note" data-s="3"><td></td><td colspan="5">Kontrol: multimetre süreklilik kademesinde, şamandırayı oynatınca bir konumda bip, diğerinde sessiz. Tellerin yönü fark etmez.</td></tr>
+<tr class="grp" data-s="4"><th colspan="6">Adım 4 · Akış sensörleri ve bölücüler</th></tr>
+<tr data-k="K38" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-K38" aria-label="K38 takıldı"></td><td class="m">K38</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>Akış A kırmızı tel</td><td>üst + hattı (5 V), 8. sıra</td><td class="n"></td></tr>
+<tr data-k="K39" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-K39" aria-label="K39 takıldı"></td><td class="m">K39</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Akış A siyah tel</td><td>üst − hattı, 9. sıra</td><td class="n"></td></tr>
+<tr data-k="K40" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-K40" aria-label="K40 takıldı"></td><td class="m">K40</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Akış A sarı tel (sinyal)</td><td>Breadboard j10 deliği</td><td class="n">doğrudan UNO Q&#x27;ya takılmaz</td></tr>
+<tr data-k="R1A" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-R1A" aria-label="R1A takıldı"></td><td class="m">R1A</td><td>10 kΩ</td><td>Breadboard h10</td><td>Breadboard h13</td><td class="n">10. sıradan 13. sıraya</td></tr>
+<tr data-k="R2A" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-R2A" aria-label="R2A takıldı"></td><td class="m">R2A</td><td>20 kΩ</td><td>Breadboard i13</td><td>üst − hattı, 14. sıra</td><td class="n">13. sıradan GND&#x27;ye</td></tr>
+<tr data-k="K41" data-s="4" data-g="akisA" tabindex="0"><td><input type="checkbox" id="c-K41" aria-label="K41 takıldı"></td><td class="m">K41</td><td><span class="sw" style="background:#2b8a3e"></span>yeşil</td><td>Breadboard j13 (orta nokta)</td><td>UNO Q D2</td><td class="n">darbe burada 3,3 V&#x27;a inmiş olur</td></tr>
+<tr data-k="K42" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-K42" aria-label="K42 takıldı"></td><td class="m">K42</td><td><span class="sw" style="background:#c8372d"></span>kırmızı</td><td>Akış B kırmızı tel</td><td>üst + hattı (5 V), 15. sıra</td><td class="n"></td></tr>
+<tr data-k="K43" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-K43" aria-label="K43 takıldı"></td><td class="m">K43</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>Akış B siyah tel</td><td>üst − hattı, 16. sıra</td><td class="n"></td></tr>
+<tr data-k="K44" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-K44" aria-label="K44 takıldı"></td><td class="m">K44</td><td><span class="sw" style="background:#c9a100"></span>sarı</td><td>Akış B sarı tel (sinyal)</td><td>Breadboard j17 deliği</td><td class="n">doğrudan UNO Q&#x27;ya takılmaz</td></tr>
+<tr data-k="R1B" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-R1B" aria-label="R1B takıldı"></td><td class="m">R1B</td><td>10 kΩ</td><td>Breadboard h17</td><td>Breadboard h19</td><td class="n">17. sıradan 19. sıraya</td></tr>
+<tr data-k="R2B" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-R2B" aria-label="R2B takıldı"></td><td class="m">R2B</td><td>20 kΩ</td><td>Breadboard i19</td><td>üst − hattı, 20. sıra</td><td class="n">19. sıradan GND&#x27;ye</td></tr>
+<tr data-k="K45" data-s="4" data-g="akisB" tabindex="0"><td><input type="checkbox" id="c-K45" aria-label="K45 takıldı"></td><td class="m">K45</td><td><span class="sw" style="background:#2b8a3e"></span>yeşil</td><td>Breadboard j19 (orta nokta)</td><td>UNO Q D3</td><td class="n">darbe burada 3,3 V&#x27;a inmiş olur</td></tr>
+<tr class="note" data-s="4"><td></td><td colspan="5">Aynı sıradaki f–j delikleri kendi içinde bağlıdır; bölücü buna dayanır. Sarı tel hiçbir zaman doğrudan UNO Q&#x27;ya takılmaz.</td></tr>
+<tr class="note" data-s="4"><td></td><td colspan="5">Kontrol: yeşil kabloyu takmadan önce orta nokta ile GND arasını ölç; pervane dönerken 0 V ile yaklaşık 3,3 V arası, 3,4 V&#x27;u geçmemeli.</td></tr>
+<tr class="grp" data-s="5"><th colspan="6">Adım 5 · DHT22</th></tr>
+<tr data-k="K46" data-s="5" data-g="dht" tabindex="0"><td><input type="checkbox" id="c-K46" aria-label="K46 takıldı"></td><td class="m">K46</td><td><span class="sw" style="background:#e07b00"></span>turuncu</td><td>DHT22 + pini</td><td>alt + hattı (3,3 V), 4. sıra</td><td class="n"></td></tr>
+<tr data-k="K47" data-s="5" data-g="dht" tabindex="0"><td><input type="checkbox" id="c-K47" aria-label="K47 takıldı"></td><td class="m">K47</td><td><span class="sw" style="background:#20262a"></span>siyah</td><td>DHT22 − pini</td><td>alt − hattı, 5. sıra</td><td class="n"></td></tr>
+<tr data-k="K48" data-s="5" data-g="dht" tabindex="0"><td><input type="checkbox" id="c-K48" aria-label="K48 takıldı"></td><td class="m">K48</td><td><span class="sw" style="background:#5b6b7a"></span>gri</td><td>DHT22 out pini</td><td>UNO Q D12</td><td class="n"></td></tr>
+<tr class="note" data-s="5"><td></td><td colspan="5">Pin sırası modülden modüle değişir; +, out, − yazılarını modülün üzerinden oku.</td></tr></tbody></table></div>
+  </section>
+
+  <section id="v-ly" hidden>
+    <div class="fig scroll"><svg id="lay" xmlns="http://www.w3.org/2000/svg" viewBox="0 160 1200 400" role="img" aria-label="Suİz yerleşim: saksılar, kovalar ve su hattı"><rect y="160" width="1200" height="400" fill="#fff"/>
+<line x1="14" y1="303" x2="1186" y2="303" stroke="#1f6fd1" stroke-width="1" stroke-dasharray="6 4" opacity=".7"/>
+<text x="600.0" y="178.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" font-weight="normal" fill="#1f6fd1" text-anchor="middle" >Kesik mavi çizgi hortumun çıkış seviyesidir: kovalardaki su hep bu çizginin altında kalmalı.</text>
+<rect x="150" y="404" width="900" height="12" fill="#c9b79a" stroke="#8f7f63"/>
+<rect x="170" y="416" width="12" height="130" fill="#c9b79a" stroke="#8f7f63"/><rect x="1018" y="416" width="12" height="130" fill="#c9b79a" stroke="#8f7f63"/>
+<text x="600.0" y="448.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="normal" fill="#66716d" text-anchor="middle" >balkon masası (duvar tarafı arkada)</text>
+<rect x="200" y="398" width="300" height="6" fill="#b9c4c0" stroke="#7d8a86"/>
+<path d="M210,290 H490 L480,398 H220 Z" fill="#eef2f0" stroke="#7d8a86"/>
+<path d="M211.5,306 H488.5 L480,398 H220 Z" fill="#b89b7a" opacity=".75"/>
+<text x="350.0" y="384.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff" text-anchor="middle" >Yatak A · zamanlayıcı (kontrol)</text>
+<path d="M240,305 q-5,-12 -9,-12 M240,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M262,305 q-5,-12 -9,-12 M262,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M284,305 q-5,-12 -9,-12 M284,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M306,305 q-5,-12 -9,-12 M306,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M328,305 q-5,-12 -9,-12 M328,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M350,305 q-5,-12 -9,-12 M350,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M372,305 q-5,-12 -9,-12 M372,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M394,305 q-5,-12 -9,-12 M394,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M416,305 q-5,-12 -9,-12 M416,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M438,305 q-5,-12 -9,-12 M438,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M460,305 q-5,-12 -9,-12 M460,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<g class="ph" data-g="nemA1" data-n="Nem sensörü A1" data-h="Tıkla: kablolarını göster"><path d="M272,258 H288 V352 L280,364 L272,352 Z" fill="#2f3a36" stroke="#111"/><rect x="270" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/><line x1="268" y1="300" x2="292" y2="300" stroke="#fff" stroke-width="1.2"/><text x="280.0" y="240.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem A1</text></g>
+<g class="ph" data-g="nemA2" data-n="Nem sensörü A2" data-h="Tıkla: kablolarını göster"><path d="M412,258 H428 V352 L420,364 L412,352 Z" fill="#2f3a36" stroke="#111"/><rect x="410" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/><line x1="408" y1="300" x2="432" y2="300" stroke="#fff" stroke-width="1.2"/><text x="420.0" y="240.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem A2</text></g>
+<rect x="18" y="500" width="104" height="8" fill="#c9b79a" stroke="#8f7f63"/><rect x="24" y="508" width="8" height="40" fill="#c9b79a" stroke="#8f7f63"/><rect x="108" y="508" width="8" height="40" fill="#c9b79a" stroke="#8f7f63"/>
+<g class="tp" data-n="Kova A (su deposu)"><path d="M30,372 H110 L104,500 H36 Z" fill="#f4f6f5" stroke="#7d8a86"/><path d="M31.6,404 H108.4 L104,500 H36 Z" fill="#9cc4ee" opacity=".65"/></g>
+<text x="84.0" y="394.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Kova A</text>
+<g class="ph" data-g="pompaA" data-n="Pompa A" data-h="Tıkla: kablolarını göster"><rect x="44" y="474" width="30" height="22" rx="3" fill="#44506a" stroke="#222"/><text x="59.0" y="488.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#fff" text-anchor="middle" >P</text></g>
+<g class="ph" data-g="samA" data-n="Şamandıra A" data-h="Tıkla: kablolarını göster"><rect x="84" y="464" width="12" height="20" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1.6"/><line x1="90" y1="484" x2="90" y2="496" stroke="#7a3fb5" stroke-width="1.6"/><text x="90.0" y="458.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#7a3fb5" text-anchor="middle" >Ş</text></g>
+<path d="M59,474 V200 H350 V300" fill="none" stroke="#3a7fc4" stroke-width="5" stroke-linejoin="round"/>
+<path d="M59,474 V200 H350 V300" fill="none" stroke="#cfe3f7" stroke-width="2" stroke-linejoin="round"/>
+<g class="tp" data-n="Delikli hortum A"><path d="M250,302 H450" fill="none" stroke="#3a7fc4" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/><path d="M250,302 H450" fill="none" stroke="#3a7fc4" stroke-width="1.5"/><path d="M250,302 H450" fill="none" stroke="#000" stroke-opacity="0" stroke-width="12"/></g>
+<g class="ph" data-g="akisA" data-n="Akış sensörü A (YF-S401)" data-h="Tıkla: kablolarını göster"><rect x="107" y="188" width="44" height="24" rx="4" fill="#dfe9e6" stroke="#1a211f"/><path d="M119,200 H139 m-5,-4 l5,4 l-5,4" fill="none" stroke="#1a211f" stroke-width="1.6"/></g>
+<g class="tp" data-n="Redüksiyon A"><path d="M172,193 L190,197 V203 L172,207 Z" fill="#fff" stroke="#1a211f"/></g>
+<g class="tp" data-n="Çekvalf A"><rect x="206" y="192" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M212,200 H226 m-4,-3.5 l4,3.5 l-4,3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/></g>
+<g class="tp" data-n="T-parça A"><circle cx="350" cy="300" r="6" fill="#fff" stroke="#1a211f"/></g>
+<circle cx="37" cy="470" r="8" fill="#1a211f"/><text x="37.0" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >1</text>
+<circle cx="41" cy="300" r="8" fill="#1a211f"/><text x="41.0" y="303.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >2</text>
+<circle cx="129" cy="176" r="8" fill="#1a211f"/><text x="129.0" y="179.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >3</text>
+<circle cx="181" cy="178" r="8" fill="#1a211f"/><text x="181.0" y="181.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >4</text>
+<circle cx="219" cy="178" r="8" fill="#1a211f"/><text x="219.0" y="181.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >5</text>
+<circle cx="306" cy="184" r="8" fill="#1a211f"/><text x="306.0" y="187.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >6</text>
+<circle cx="366" cy="284" r="8" fill="#1a211f"/><text x="366.0" y="287.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >7</text>
+<circle cx="460" cy="318" r="8" fill="#1a211f"/><text x="460.0" y="321.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >8</text>
+<path d="M280,246 C280,226 570,250 570,352" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<path d="M420,246 C420,226 570,270 570,352" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<path d="M70,372 L116,426 H586 V404" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<rect x="700" y="398" width="300" height="6" fill="#b9c4c0" stroke="#7d8a86"/>
+<path d="M710,290 H990 L980,398 H720 Z" fill="#eef2f0" stroke="#7d8a86"/>
+<path d="M711.5,306 H988.5 L980,398 H720 Z" fill="#b89b7a" opacity=".75"/>
+<text x="850.0" y="384.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff" text-anchor="middle" >Yatak B · Suİz</text>
+<path d="M740,305 q-5,-12 -9,-12 M740,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M762,305 q-5,-12 -9,-12 M762,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M784,305 q-5,-12 -9,-12 M784,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M806,305 q-5,-12 -9,-12 M806,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M828,305 q-5,-12 -9,-12 M828,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M850,305 q-5,-12 -9,-12 M850,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M872,305 q-5,-12 -9,-12 M872,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M894,305 q-5,-12 -9,-12 M894,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M916,305 q-5,-12 -9,-12 M916,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M938,305 q-5,-12 -9,-12 M938,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M960,305 q-5,-12 -9,-12 M960,305 q4,-14 9,-13" fill="none" stroke="#2b8a3e" stroke-width="1.6" stroke-linecap="round"/>
+<g class="ph" data-g="nemB1" data-n="Nem sensörü B1" data-h="Tıkla: kablolarını göster"><path d="M772,258 H788 V352 L780,364 L772,352 Z" fill="#2f3a36" stroke="#111"/><rect x="770" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/><line x1="768" y1="300" x2="792" y2="300" stroke="#fff" stroke-width="1.2"/><text x="780.0" y="240.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem B1</text></g>
+<g class="ph" data-g="nemB2" data-n="Nem sensörü B2" data-h="Tıkla: kablolarını göster"><path d="M912,258 H928 V352 L920,364 L912,352 Z" fill="#2f3a36" stroke="#111"/><rect x="910" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/><line x1="908" y1="300" x2="932" y2="300" stroke="#fff" stroke-width="1.2"/><text x="920.0" y="240.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Nem B2</text></g>
+<rect x="1078" y="500" width="104" height="8" fill="#c9b79a" stroke="#8f7f63"/><rect x="1084" y="508" width="8" height="40" fill="#c9b79a" stroke="#8f7f63"/><rect x="1168" y="508" width="8" height="40" fill="#c9b79a" stroke="#8f7f63"/>
+<g class="tp" data-n="Kova B (su deposu)"><path d="M1090,372 H1170 L1164,500 H1096 Z" fill="#f4f6f5" stroke="#7d8a86"/><path d="M1091.6,404 H1168.4 L1164,500 H1096 Z" fill="#9cc4ee" opacity=".65"/></g>
+<text x="1116.0" y="394.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >Kova B</text>
+<g class="ph" data-g="pompaB" data-n="Pompa B" data-h="Tıkla: kablolarını göster"><rect x="1126" y="474" width="30" height="22" rx="3" fill="#44506a" stroke="#222"/><text x="1141.0" y="488.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" font-weight="bold" fill="#fff" text-anchor="middle" >P</text></g>
+<g class="ph" data-g="samB" data-n="Şamandıra B" data-h="Tıkla: kablolarını göster"><rect x="1104" y="464" width="12" height="20" rx="3" fill="#fff" stroke="#7a3fb5" stroke-width="1.6"/><line x1="1110" y1="484" x2="1110" y2="496" stroke="#7a3fb5" stroke-width="1.6"/><text x="1110.0" y="458.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="bold" fill="#7a3fb5" text-anchor="middle" >Ş</text></g>
+<path d="M1141,474 V200 H850 V300" fill="none" stroke="#3a7fc4" stroke-width="5" stroke-linejoin="round"/>
+<path d="M1141,474 V200 H850 V300" fill="none" stroke="#cfe3f7" stroke-width="2" stroke-linejoin="round"/>
+<g class="tp" data-n="Delikli hortum B"><path d="M750,302 H950" fill="none" stroke="#3a7fc4" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/><path d="M750,302 H950" fill="none" stroke="#3a7fc4" stroke-width="1.5"/><path d="M750,302 H950" fill="none" stroke="#000" stroke-opacity="0" stroke-width="12"/></g>
+<g class="ph" data-g="akisB" data-n="Akış sensörü B (YF-S401)" data-h="Tıkla: kablolarını göster"><rect x="1049" y="188" width="44" height="24" rx="4" fill="#dfe9e6" stroke="#1a211f"/><path d="M1081,200 H1061 m5,-4 l-5,4 l5,4" fill="none" stroke="#1a211f" stroke-width="1.6"/></g>
+<g class="tp" data-n="Redüksiyon B"><path d="M1028,193 L1010,197 V203 L1028,207 Z" fill="#fff" stroke="#1a211f"/></g>
+<g class="tp" data-n="Çekvalf B"><rect x="968" y="192" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M988,200 H974 m4,-3.5 l-4,3.5 l4,3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/></g>
+<g class="tp" data-n="T-parça B"><circle cx="850" cy="300" r="6" fill="#fff" stroke="#1a211f"/></g>
+<circle cx="1163" cy="470" r="8" fill="#1a211f"/><text x="1163.0" y="473.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >1</text>
+<circle cx="1159" cy="300" r="8" fill="#1a211f"/><text x="1159.0" y="303.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >2</text>
+<circle cx="1071" cy="176" r="8" fill="#1a211f"/><text x="1071.0" y="179.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >3</text>
+<circle cx="1019" cy="178" r="8" fill="#1a211f"/><text x="1019.0" y="181.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >4</text>
+<circle cx="981" cy="178" r="8" fill="#1a211f"/><text x="981.0" y="181.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >5</text>
+<circle cx="894" cy="184" r="8" fill="#1a211f"/><text x="894.0" y="187.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >6</text>
+<circle cx="866" cy="284" r="8" fill="#1a211f"/><text x="866.0" y="287.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >7</text>
+<circle cx="960" cy="318" r="8" fill="#1a211f"/><text x="960.0" y="321.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle" >8</text>
+<path d="M780,246 C780,226 630,250 630,352" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<path d="M920,246 C920,226 630,270 630,352" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<path d="M1130,372 L1084,426 H614 V404" fill="none" stroke="#66716d" stroke-width="1.2" stroke-dasharray="4 3"/>
+<g class="ph" data-g="buat" data-n="Buat: UNO Q ve breadboard" data-h="Tıkla: Elektrik görünümünü aç"><rect x="545" y="352" width="110" height="52" rx="4" fill="#f4f6f5" stroke="#1a211f" stroke-width="1.4"/><text x="600.0" y="374.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a211f" text-anchor="middle" >Buat</text><text x="600.0" y="388.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8" font-weight="normal" fill="#66716d" text-anchor="middle" >UNO Q + breadboard</text></g>
+<g class="ph" data-g="dht" data-n="DHT22 sıcaklık ve nem modülü" data-h="Tıkla: kablolarını göster"><line x1="600" y1="352" x2="600" y2="334" stroke="#66716d" stroke-width="1.2"/><rect x="584" y="312" width="32" height="22" rx="3" fill="#fff" stroke="#1a211f"/><text x="600.0" y="327.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >DHT22</text></g>
+<path d="M600,404 V470 H690" fill="none" stroke="#1a211f" stroke-width="1.4"/>
+<rect x="690" y="458" width="46" height="24" rx="3" fill="#fff" stroke="#1a211f"/>
+<text x="713.0" y="474.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#1a211f" text-anchor="middle" >priz</text>
+<text x="744.0" y="474.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#66716d" text-anchor="start" >USB-C adaptör + 5 V adaptör; topraklı, sudan uzak ve kuru</text></svg></div>
+    <p class="hint">Bir parçanın üstüne gel: adı görünür. Tıkla ya da dokun (nem sensörü, pompa, şamandıra, akış sensörü, DHT22): Elektrik görünümü açılır ve o parçanın kabloları öne çıkar.</p>
+    <ol class="leg"><li>Mini pompa: kovanın dibinde, tamamen suyun içinde.</li><li>Kalın hortum: pompanın 7,5 mm çıkışından akış sensörüne.</li><li>Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.</li><li>Redüksiyon: kalın hortumdan 4×6 mm ince hortuma geçiş.</li><li>Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.</li><li>İnce hortum (4×6 mm): saksının üstüne kadar.</li><li>T-parça: hattı saksının ortasında ikiye ayırır.</li><li>Delikli hortum: toprağın üstünde, iki ucu kapalı, iğneyle delinmiş.</li></ol>
+    <div class="lnotes"><p>Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır.</p><p>Şamandıra kovanın dibine yakın durur: su onun altına inince pompa kilitlenir. Kovalar sandalyede, su seviyesi kesik mavi çizginin altında.</p><p>İki saksı eşit ışık alacak şekilde yan yana; buat ve DHT22 gölgede. Kesik gri çizgiler kablo demetlerini gösterir, ayrıntısı Elektrik görünümünde.</p></div>
+  </section>
+
+  <p class="foot">Yerleşimler internetteki genel kaynaklara göre çizildi, eldeki parçalarla henüz karşılaştırılmadı. Kartın ya da modülün üzerindeki yazı çizimle çelişirse yazıya uy. İşaretler yalnızca bu tarayıcıda saklanır.</p>
+</main>
+<div id="tip" hidden></div>
+<script>
+(function(){
+  var svg=document.getElementById("fig"), wrap=document.getElementById("wrap");
+  var q=function(s,r){return [].slice.call((r||document).querySelectorAll(s));};
+  var rows=q("#rows tr[data-k]"), tabs=q(".tab"), views=q(".view"), cur=null, step="0";
+  /* Proje sitesinde /sema/ altında, tam sayfa açıkken ana sayfaya dönüş bağlantısı görünür. */
+  if(/\/sema\/(index\.html)?$/.test(location.pathname) && window.top===window) document.getElementById("home").hidden=false;
+  var KEY="suiz-baglanti-v2", done={};
+  try{ done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ done={}; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(done)); }catch(e){} }
+  function hit(el){ return !!cur && (cur.k ? el.dataset.k===cur.k : el.dataset.g===cur.g); }
+  function paint(){
+    svg.classList.toggle("pick",!!cur); svg.classList.toggle("step",step!=="0"&&!cur);
+    q(".w,.wl",svg).forEach(function(g){
+      g.classList.toggle("on",hit(g)); g.classList.toggle("in",g.dataset.s===step);
+      if(g.classList.contains("wl")) g.classList.toggle("done",!!done[g.dataset.k]);
+    });
+    var n=0, tot=0;
+    rows.forEach(function(r){
+      r.classList.toggle("on",hit(r)); r.classList.toggle("done",!!done[r.dataset.k]);
+      r.querySelector("input").checked=!!done[r.dataset.k]; tot++; if(done[r.dataset.k]) n++;
+    });
+    q("#rows tr").forEach(function(r){ r.classList.toggle("hide",step!=="0"&&r.dataset.s!==step); });
+    tabs.forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.s===step?"true":"false"); });
+    document.getElementById("count").textContent=n+" / "+tot+" takıldı";
+    // seçim bilgisi
+    var sel=document.getElementById("sel"), st=document.getElementById("selt");
+    sel.hidden=!cur; document.getElementById("selback").hidden=!(cur&&cur.g);
+    if(cur){
+      st.textContent="";
+      var b=document.createElement("b"), m=document.createElement("span"); m.className="m";
+      if(cur.g){
+        var ks=rows.filter(function(r){return r.dataset.g===cur.g;}).map(function(r){return r.dataset.k;});
+        b.textContent=names[cur.g]||cur.g; m.textContent=" · "+ks.length+" bağlantı: "+ks.join(", ");
+      } else {
+        var r=rows.filter(function(x){return x.dataset.k===cur.k;})[0], c=r?r.children:null;
+        b.textContent=cur.k; m.textContent=c?(" · "+c[3].textContent+" → "+c[4].textContent+(names[r.dataset.g]&&r.dataset.g!=="guc"?" ("+names[r.dataset.g]+")":"")):"";
+      }
+      st.appendChild(b); st.appendChild(m);
+    }
+  }
+  var names={guc:"Güç hatları"};
+  q(".ph").forEach(function(p){ names[p.dataset.g]=p.dataset.n; });
+  document.getElementById("selclr").addEventListener("click",function(){ cur=null; paint(); });
+  document.getElementById("selback").addEventListener("click",function(){ show("ly"); });
+  function pick(k){ cur=(cur&&cur.k===k)?null:{k:k}; paint(); }
+  function show(v){
+    document.getElementById("v-el").hidden = v!=="el"; document.getElementById("v-ly").hidden = v!=="ly";
+    views.forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.v===v?"true":"false"); });
+  }
+  rows.forEach(function(r){
+    r.addEventListener("click",function(e){ if(e.target.tagName==="INPUT") return; pick(r.dataset.k); });
+    r.addEventListener("keydown",function(e){ if(e.key==="Enter"){ pick(r.dataset.k); } });
+    r.querySelector("input").addEventListener("change",function(e){ if(e.target.checked) done[r.dataset.k]=1; else delete done[r.dataset.k]; save(); paint(); });
+  });
+  tabs.forEach(function(b){ b.addEventListener("click",function(){ step=b.dataset.s; cur=null; paint(); }); });
+  views.forEach(function(b){ b.addEventListener("click",function(){ show(b.dataset.v); }); });
+  q(".ph").forEach(function(p){
+    p.addEventListener("click",function(){
+      var g=p.dataset.g; step="0"; cur=(g==="buat")?null:{g:g}; show("el"); paint();
+    });
+  });
+
+  // yakınlaştırma ve kaydırma
+  var W=1200, Hh=650, vb=[0,0,W,Hh], pts={}, moved=false, last=null, pinch=0;
+  function setVB(){ svg.setAttribute("viewBox",vb.join(" ")); }
+  function clamp(){ vb[0]=Math.max(0,Math.min(W-vb[2],vb[0])); vb[1]=Math.max(0,Math.min(Hh-vb[3],vb[1])); }
+  function zoom(f,cx,cy){
+    var nw=Math.min(W,Math.max(W/8,vb[2]*f)), k=nw/vb[2], nh=vb[3]*k;
+    vb[0]=cx-(cx-vb[0])*k; vb[1]=cy-(cy-vb[1])*k; vb[2]=nw; vb[3]=nh; clamp(); setVB();
+  }
+  function toSvg(e){ var r=svg.getBoundingClientRect(); return [vb[0]+(e.clientX-r.left)/r.width*vb[2], vb[1]+(e.clientY-r.top)/r.height*vb[3]]; }
+  // Kıstırma (trackpad) ve Ctrl/Cmd + tekerlek yakınlaştırır; iki parmakla kaydırma, yakınlaşmışken çizimi gezdirir.
+  wrap.addEventListener("wheel",function(e){
+    var r=svg.getBoundingClientRect(), unit=e.deltaMode===1?16:(e.deltaMode===2?r.height:1);
+    var dx=e.deltaX*unit, dy=e.deltaY*unit;
+    if(e.ctrlKey||e.metaKey){
+      e.preventDefault(); var p=toSvg(e);
+      zoom(Math.exp(Math.max(-60,Math.min(60,dy))*0.012),p[0],p[1]); return;
+    }
+    if(vb[2]>=W-0.5) return;               // sığdırılmışken sayfa normal kayar
+    e.preventDefault();
+    vb[0]+=dx/r.width*vb[2]; vb[1]+=dy/r.height*vb[3]; clamp(); setVB();
+  },{passive:false});
+  wrap.addEventListener("dblclick",function(e){ e.preventDefault(); var p=toSvg(e); zoom(e.shiftKey?1.7:1/1.7,p[0],p[1]); });
+  wrap.addEventListener("pointerdown",function(e){
+    if(e.pointerType==="mouse") e.preventDefault();
+    try{ wrap.setPointerCapture(e.pointerId); }catch(err){}
+    pts[e.pointerId]=[e.clientX,e.clientY]; moved=false; last=[e.clientX,e.clientY]; pinch=0;
+  });
+  wrap.addEventListener("pointermove",function(e){
+    if(!pts[e.pointerId]) return;
+    pts[e.pointerId]=[e.clientX,e.clientY];
+    var ids=Object.keys(pts), r=svg.getBoundingClientRect();
+    if(ids.length===2){
+      var a=pts[ids[0]], b=pts[ids[1]], d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      if(pinch){ var p=toSvg({clientX:(a[0]+b[0])/2,clientY:(a[1]+b[1])/2}); zoom(pinch/d,p[0],p[1]); }
+      pinch=d; moved=true; return;
+    }
+    var dx=e.clientX-last[0], dy=e.clientY-last[1];
+    if(Math.abs(dx)+Math.abs(dy)>3){ moved=true; wrap.classList.add("drag"); }
+    if(moved){ vb[0]-=dx/r.width*vb[2]; vb[1]-=dy/r.height*vb[3]; clamp(); setVB(); last=[e.clientX,e.clientY]; }
+  });
+  function up(e){ delete pts[e.pointerId]; pinch=0; wrap.classList.remove("drag"); }
+  wrap.addEventListener("pointerup",function(e){
+    var wasMoved=moved; up(e);
+    if(wasMoved) return;
+    var el=document.elementFromPoint(e.clientX,e.clientY), g=el&&el.closest ? el.closest("#fig [data-k]") : null;
+    if(g) pick(g.dataset.k); else if(cur){ cur=null; paint(); }
+  });
+  wrap.addEventListener("pointercancel",up);
+  document.getElementById("zin").addEventListener("click",function(){ zoom(1/1.4,vb[0]+vb[2]/2,vb[1]+vb[3]/2); });
+  document.getElementById("zout").addEventListener("click",function(){ zoom(1.4,vb[0]+vb[2]/2,vb[1]+vb[3]/2); });
+  document.getElementById("zreset").addEventListener("click",function(){ vb=[0,0,W,Hh]; setVB(); });
+  // Yerleşim: parçanın üstüne gelince adını göster
+  var tip=document.getElementById("tip"), lay=document.getElementById("lay");
+  function tipAt(e){
+    var el=e.target.closest ? e.target.closest("[data-n]") : null;
+    if(!el || e.pointerType==="touch"){ tip.hidden=true; return; }
+    tip.textContent=el.dataset.n;
+    if(el.dataset.h){ var s=document.createElement("small"); s.textContent=el.dataset.h; tip.appendChild(s); }
+    tip.hidden=false;
+    var w=tip.offsetWidth, h=tip.offsetHeight, x=e.clientX+14, y=e.clientY+16;
+    if(x+w>window.innerWidth-6) x=e.clientX-w-10;
+    if(y+h>window.innerHeight-6) y=e.clientY-h-10;
+    tip.style.left=x+"px"; tip.style.top=y+"px";
+  }
+  lay.addEventListener("pointermove",tipAt);
+  lay.addEventListener("pointerleave",function(){ tip.hidden=true; });
+  lay.addEventListener("click",function(){ tip.hidden=true; });
+  paint();
+})();
+</script>
+</body>
+</html>
