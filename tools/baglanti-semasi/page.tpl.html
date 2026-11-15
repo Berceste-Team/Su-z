@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suİz Bağlantı Şeması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* İki görünüm: Elektrik (kablolar) ve Yerleşim (saksılar, kovalar, su hattı). Çizimler beyaz kâğıtta, sayfa temaya uyar. */
+  --bg:#f6f7f6; --ink:#1a211f; --muted:#66716d; --line:#d6dcd9; --accent:#0b6e68; --paper:#ffffff; --row:#e6eeeb; --done:#2b8a3e;
+  --body:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#111615; --ink:#e4eae7; --muted:#93a09b; --line:#2b3531; --accent:#56c2b7; --paper:#ffffff; --row:#1e2926; --done:#4fb866; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#111615; --ink:#e4eae7; --muted:#93a09b; --line:#2b3531; --accent:#56c2b7; --paper:#ffffff; --row:#1e2926; --done:#4fb866; color-scheme:dark; }
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.35 var(--body)}
+main{max-width:1280px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:6px}
+h1{font-size:1.35rem;font-weight:600;margin:0}
+.top span{font:500 .82rem var(--mono);color:var(--muted)}
+.bar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 8px;align-items:center}
+button{font:500 .82rem var(--mono);color:var(--ink);background:none;border:1px solid var(--line);border-radius:3px;padding:5px 10px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.view{font-size:.9rem;padding:6px 14px}
+button:focus-visible,tr:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sp{flex:1}
+.fig{background:var(--paper);border:1px solid var(--line);overflow:hidden}
+#wrap{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#wrap text{user-select:none;-webkit-user-select:none}
+#wrap.drag{cursor:grabbing}
+#fig{display:block;width:100%;height:auto;aspect-ratio:1200/650}
+#lay{display:block;width:100%;height:auto;min-width:760px}
+.scroll{overflow-x:auto}
+.w,.wl{transition:opacity .15s;cursor:pointer}
+#fig.step .w:not(.in),#fig.step .wl:not(.in){opacity:.08}
+#fig.pick .w,#fig.pick .wl{opacity:.08}
+#fig.pick .w.on,#fig.pick .wl.on{opacity:1}
+#fig .w.on path:nth-of-type(2){stroke-width:5}
+.wl.done rect{fill:#2b8a3e;stroke:#2b8a3e}
+.wl.done text{fill:#fff}
+.ph{cursor:pointer}
+.ph:hover{filter:drop-shadow(0 0 3px #0b6e68)}
+#sel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:5px 8px 5px 10px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;font-size:.88rem;background:var(--row)}
+#sel[hidden]{display:none}
+#sel b{font-weight:600}
+#sel .m{color:var(--muted)}
+#sel button{padding:2px 8px;font-size:.76rem}
+#tip{position:fixed;z-index:20;pointer-events:none;background:var(--ink);color:var(--bg);font:500 .82rem var(--body);padding:5px 9px;border-radius:4px;max-width:260px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#tip small{display:block;font-weight:400;opacity:.75;font-size:.74rem}
+.hint{font-size:.82rem;color:var(--muted);margin:6px 0 0;max-width:90ch}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:14px}
+td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:baseline}
+tr.grp th{font:600 .9rem var(--body);text-align:left;padding:14px 6px 4px;border-bottom:1px solid var(--ink)}
+tr[data-k]{cursor:pointer}
+tr.on{background:var(--row)}
+tr.note td{font-size:.84rem;color:var(--muted);border-bottom:0;padding:3px 6px}
+tr.hide{display:none}
+.m{font:500 .82rem var(--mono)}
+.n{color:var(--muted);font-size:.84rem}
+.sw{display:inline-block;width:20px;height:5px;border-radius:3px;vertical-align:middle;margin-right:6px}
+input[type=checkbox]{width:15px;height:15px;margin:0;accent-color:var(--done);vertical-align:middle}
+tr.done td:nth-child(n+4){color:var(--muted)}
+.tw{overflow-x:auto}
+ol.leg{margin:12px 0 0;padding-left:22px;font-size:.92rem;columns:2;column-gap:32px;max-width:980px}
+ol.leg li{padding:2px 0;break-inside:avoid}
+.lnotes p{font-size:.9rem;margin:8px 0 0;max-width:90ch}
+.foot{font-size:.82rem;color:var(--muted);margin:14px 0 0;max-width:90ch}
+@media (max-width:640px){ol.leg{columns:1}}
+@media (prefers-reduced-motion:reduce){.w,.wl{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><h1><a id="home" href="../index.html" hidden style="color:var(--accent);text-decoration:none;font-weight:500">← Suİz</a> Suİz Bağlantı Şeması</h1><span id="count">taslak · 15 Kasım 2026</span></div>
+  <div class="bar"><button type="button" class="view" data-v="el" aria-pressed="true">Elektrik</button><button type="button" class="view" data-v="ly" aria-pressed="false">Yerleşim</button></div>
+
+  <section id="v-el">
+    <div class="bar" id="bar">__TABS__<span class="sp"></span><button type="button" id="zin" aria-label="Yakınlaştır">+</button><button type="button" id="zout" aria-label="Uzaklaştır">−</button><button type="button" id="zreset">Sığdır</button></div>
+    <div id="sel" hidden aria-live="polite"><span id="selt"></span><span class="sp"></span><button type="button" id="selback" hidden>Yerleşim'e dön</button><button type="button" id="selclr">Seçimi kaldır</button></div>
+    <div class="fig" id="wrap">__FIG__</div>
+    <p class="hint">Bir kabloya ya da listedeki satırına dokun: o kablo öne çıkar. Yakınlaştırmak için trackpad'de iki parmağı aç (kıstırma), farede Ctrl ya da Cmd tuşuyla tekerleği çevir, ya da çift tıkla; + ve − düğmeleri de var. Yakınlaşınca sürükleyerek ya da iki parmakla kaydırarak gezin. Taktığın kabloyu kutusundan işaretle; etiketi yeşile döner.</p>
+    <p class="hint">Kablo ucundaki işaret bağlantı biçimidir: yuvarlak takılır (jumper), kare vidalı klemense sıkılır, yıldız ek yeridir (lehim ya da geçmeli klemens).</p>
+    <div class="tw"><table><tbody id="rows">__ROWS__</tbody></table></div>
+  </section>
+
+  <section id="v-ly" hidden>
+    <div class="fig scroll">__LAY__</div>
+    <p class="hint">Bir parçanın üstüne gel: adı görünür. Tıkla ya da dokun (nem sensörü, pompa, şamandıra, akış sensörü, DHT22): Elektrik görünümü açılır ve o parçanın kabloları öne çıkar.</p>
+    <ol class="leg">__LEGEND__</ol>
+    <div class="lnotes">__LNOTES__</div>
+  </section>
+
+  <p class="foot">Yerleşimler internetteki genel kaynaklara göre çizildi, eldeki parçalarla henüz karşılaştırılmadı. Kartın ya da modülün üzerindeki yazı çizimle çelişirse yazıya uy. İşaretler yalnızca bu tarayıcıda saklanır.</p>
+</main>
+<div id="tip" hidden></div>
+<script>
+(function(){
+  var svg=document.getElementById("fig"), wrap=document.getElementById("wrap");
+  var q=function(s,r){return [].slice.call((r||document).querySelectorAll(s));};
+  var rows=q("#rows tr[data-k]"), tabs=q(".tab"), views=q(".view"), cur=null, step="0";
+  /* Proje sitesinde /sema/ altında, tam sayfa açıkken ana sayfaya dönüş bağlantısı görünür. */
+  if(/\/sema\/(index\.html)?$/.test(location.pathname) && window.top===window) document.getElementById("home").hidden=false;
+  var KEY="suiz-baglanti-v2", done={};
+  try{ done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ done={}; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(done)); }catch(e){} }
+  function hit(el){ return !!cur && (cur.k ? el.dataset.k===cur.k : el.dataset.g===cur.g); }
+  function paint(){
+    svg.classList.toggle("pick",!!cur); svg.classList.toggle("step",step!=="0"&&!cur);
+    q(".w,.wl",svg).forEach(function(g){
+      g.classList.toggle("on",hit(g)); g.classList.toggle("in",g.dataset.s===step);
+      if(g.classList.contains("wl")) g.classList.toggle("done",!!done[g.dataset.k]);
+    });
+    var n=0, tot=0;
+    rows.forEach(function(r){
+      r.classList.toggle("on",hit(r)); r.classList.toggle("done",!!done[r.dataset.k]);
+      r.querySelector("input").checked=!!done[r.dataset.k]; tot++; if(done[r.dataset.k]) n++;
+    });
+    q("#rows tr").forEach(function(r){ r.classList.toggle("hide",step!=="0"&&r.dataset.s!==step); });
+    tabs.forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.s===step?"true":"false"); });
+    document.getElementById("count").textContent=n+" / "+tot+" takıldı";
+    // seçim bilgisi
+    var sel=document.getElementById("sel"), st=document.getElementById("selt");
+    sel.hidden=!cur; document.getElementById("selback").hidden=!(cur&&cur.g);
+    if(cur){
+      st.textContent="";
+      var b=document.createElement("b"), m=document.createElement("span"); m.className="m";
+      if(cur.g){
+        var ks=rows.filter(function(r){return r.dataset.g===cur.g;}).map(function(r){return r.dataset.k;});
+        b.textContent=names[cur.g]||cur.g; m.textContent=" · "+ks.length+" bağlantı: "+ks.join(", ");
+      } else {
+        var r=rows.filter(function(x){return x.dataset.k===cur.k;})[0], c=r?r.children:null;
+        b.textContent=cur.k; m.textContent=c?(" · "+c[3].textContent+" → "+c[4].textContent+(names[r.dataset.g]&&r.dataset.g!=="guc"?" ("+names[r.dataset.g]+")":"")):"";
+      }
+      st.appendChild(b); st.appendChild(m);
+    }
+  }
+  var names={guc:"Güç hatları"};
+  q(".ph").forEach(function(p){ names[p.dataset.g]=p.dataset.n; });
+  document.getElementById("selclr").addEventListener("click",function(){ cur=null; paint(); });
+  document.getElementById("selback").addEventListener("click",function(){ show("ly"); });
+  function pick(k){ cur=(cur&&cur.k===k)?null:{k:k}; paint(); }
+  function show(v){
+    document.getElementById("v-el").hidden = v!=="el"; document.getElementById("v-ly").hidden = v!=="ly";
+    views.forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.v===v?"true":"false"); });
+  }
+  rows.forEach(function(r){
+    r.addEventListener("click",function(e){ if(e.target.tagName==="INPUT") return; pick(r.dataset.k); });
+    r.addEventListener("keydown",function(e){ if(e.key==="Enter"){ pick(r.dataset.k); } });
+    r.querySelector("input").addEventListener("change",function(e){ if(e.target.checked) done[r.dataset.k]=1; else delete done[r.dataset.k]; save(); paint(); });
+  });
+  tabs.forEach(function(b){ b.addEventListener("click",function(){ step=b.dataset.s; cur=null; paint(); }); });
+  views.forEach(function(b){ b.addEventListener("click",function(){ show(b.dataset.v); }); });
+  q(".ph").forEach(function(p){
+    p.addEventListener("click",function(){
+      var g=p.dataset.g; step="0"; cur=(g==="buat")?null:{g:g}; show("el"); paint();
+    });
+  });
+
+  // yakınlaştırma ve kaydırma
+  var W=__W__, Hh=__H__, vb=[0,0,W,Hh], pts={}, moved=false, last=null, pinch=0;
+  function setVB(){ svg.setAttribute("viewBox",vb.join(" ")); }
+  function clamp(){ vb[0]=Math.max(0,Math.min(W-vb[2],vb[0])); vb[1]=Math.max(0,Math.min(Hh-vb[3],vb[1])); }
+  function zoom(f,cx,cy){
+    var nw=Math.min(W,Math.max(W/8,vb[2]*f)), k=nw/vb[2], nh=vb[3]*k;
+    vb[0]=cx-(cx-vb[0])*k; vb[1]=cy-(cy-vb[1])*k; vb[2]=nw; vb[3]=nh; clamp(); setVB();
+  }
+  function toSvg(e){ var r=svg.getBoundingClientRect(); return [vb[0]+(e.clientX-r.left)/r.width*vb[2], vb[1]+(e.clientY-r.top)/r.height*vb[3]]; }
+  // Kıstırma (trackpad) ve Ctrl/Cmd + tekerlek yakınlaştırır; iki parmakla kaydırma, yakınlaşmışken çizimi gezdirir.
+  wrap.addEventListener("wheel",function(e){
+    var r=svg.getBoundingClientRect(), unit=e.deltaMode===1?16:(e.deltaMode===2?r.height:1);
+    var dx=e.deltaX*unit, dy=e.deltaY*unit;
+    if(e.ctrlKey||e.metaKey){
+      e.preventDefault(); var p=toSvg(e);
+      zoom(Math.exp(Math.max(-60,Math.min(60,dy))*0.012),p[0],p[1]); return;
+    }
+    if(vb[2]>=W-0.5) return;               // sığdırılmışken sayfa normal kayar
+    e.preventDefault();
+    vb[0]+=dx/r.width*vb[2]; vb[1]+=dy/r.height*vb[3]; clamp(); setVB();
+  },{passive:false});
+  wrap.addEventListener("dblclick",function(e){ e.preventDefault(); var p=toSvg(e); zoom(e.shiftKey?1.7:1/1.7,p[0],p[1]); });
+  wrap.addEventListener("pointerdown",function(e){
+    if(e.pointerType==="mouse") e.preventDefault();
+    try{ wrap.setPointerCapture(e.pointerId); }catch(err){}
+    pts[e.pointerId]=[e.clientX,e.clientY]; moved=false; last=[e.clientX,e.clientY]; pinch=0;
+  });
+  wrap.addEventListener("pointermove",function(e){
+    if(!pts[e.pointerId]) return;
+    pts[e.pointerId]=[e.clientX,e.clientY];
+    var ids=Object.keys(pts), r=svg.getBoundingClientRect();
+    if(ids.length===2){
+      var a=pts[ids[0]], b=pts[ids[1]], d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      if(pinch){ var p=toSvg({clientX:(a[0]+b[0])/2,clientY:(a[1]+b[1])/2}); zoom(pinch/d,p[0],p[1]); }
+      pinch=d; moved=true; return;
+    }
+    var dx=e.clientX-last[0], dy=e.clientY-last[1];
+    if(Math.abs(dx)+Math.abs(dy)>3){ moved=true; wrap.classList.add("drag"); }
+    if(moved){ vb[0]-=dx/r.width*vb[2]; vb[1]-=dy/r.height*vb[3]; clamp(); setVB(); last=[e.clientX,e.clientY]; }
+  });
+  function up(e){ delete pts[e.pointerId]; pinch=0; wrap.classList.remove("drag"); }
+  wrap.addEventListener("pointerup",function(e){
+    var wasMoved=moved; up(e);
+    if(wasMoved) return;
+    var el=document.elementFromPoint(e.clientX,e.clientY), g=el&&el.closest ? el.closest("#fig [data-k]") : null;
+    if(g) pick(g.dataset.k); else if(cur){ cur=null; paint(); }
+  });
+  wrap.addEventListener("pointercancel",up);
+  document.getElementById("zin").addEventListener("click",function(){ zoom(1/1.4,vb[0]+vb[2]/2,vb[1]+vb[3]/2); });
+  document.getElementById("zout").addEventListener("click",function(){ zoom(1.4,vb[0]+vb[2]/2,vb[1]+vb[3]/2); });
+  document.getElementById("zreset").addEventListener("click",function(){ vb=[0,0,W,Hh]; setVB(); });
+  // Yerleşim: parçanın üstüne gelince adını göster
+  var tip=document.getElementById("tip"), lay=document.getElementById("lay");
+  function tipAt(e){
+    var el=e.target.closest ? e.target.closest("[data-n]") : null;
+    if(!el || e.pointerType==="touch"){ tip.hidden=true; return; }
+    tip.textContent=el.dataset.n;
+    if(el.dataset.h){ var s=document.createElement("small"); s.textContent=el.dataset.h; tip.appendChild(s); }
+    tip.hidden=false;
+    var w=tip.offsetWidth, h=tip.offsetHeight, x=e.clientX+14, y=e.clientY+16;
+    if(x+w>window.innerWidth-6) x=e.clientX-w-10;
+    if(y+h>window.innerHeight-6) y=e.clientY-h-10;
+    tip.style.left=x+"px"; tip.style.top=y+"px";
+  }
+  lay.addEventListener("pointermove",tipAt);
+  lay.addEventListener("pointerleave",function(){ tip.hidden=true; });
+  lay.addEventListener("click",function(){ tip.hidden=true; });
+  paint();
+})();
+</script>
+</body>
+</html>
