@@ -226,7 +226,7 @@ footer p{max-width:80ch}
     <p class="sub">Şema iki görünümden oluşur: <b>Elektrik</b> (hangi kablo nereden nereye) ve <b>Yerleşim</b> (saksılar, kovalar, su hattı). Bir kabloya dokununca öne çıkar; taktığın kabloyu listeden işaretleyebilirsin.</p>
     <div class="schema"><iframe src="sema/index.html" title="Suİz bağlantı şeması" loading="lazy"></iframe></div>
     <a class="btn" href="sema/index.html">Şemayı tam sayfa aç</a>
-    <p class="rule" style="border-color:var(--warn)"><b>Taslak.</b> Parça yerleşimleri genel kaynaklara göre çizildi, eldeki parçalarla henüz karşılaştırılmadı. Kartın üzerindeki yazı çizimle çelişirse yazı doğrudur.</p>
+    <p class="rule" style="border-color:var(--warn)"><b>Taslak.</b> MOSFET kartı, akış sensörü, pompa ve şamandıra 16 Kasım 2026'da eldeki parçalarla karşılaştırıldı ve şema düzeltildi; kapasitif nem sensörleri (v2.0) de parçadan doğrulandı. MOSFET kartı üç klemenslidir: çizimde sıra +, −, LOAD; gerçek kartta −, LOAD, +. Kartın üzerindeki yazı çizimle çelişirse yazı doğrudur.</p>
   </div>
 </section>
 
@@ -238,8 +238,8 @@ footer p{max-width:80ch}
       <tbody>
         <tr><td>Toprak nemi (üst / alt)</td><td class="m">A0 · A1</td><td class="m">A2 · A3</td><td>3,3 V ile beslenir, çıkış 0–3 V</td></tr>
         <tr><td>Akış sensörü darbesi</td><td class="m">D2</td><td class="m">D3</td><td>5 V darbe, 10k/20k bölücüyle ≈ 3,3 V'a iner</td></tr>
-        <tr><td>Şamandıra</td><td class="m">D4</td><td class="m">D5</td><td>Dahili pull-up; şamandıra GND'ye kapatır</td></tr>
-        <tr><td>Pompa (MOSFET sürücü)</td><td class="m">D10</td><td class="m">D11</td><td>Açılışta LOW: pompa kapalı başlar</td></tr>
+        <tr><td>Şamandıra</td><td class="m">D4</td><td class="m">D5</td><td>Dahili pull-up; şamandıra GND'ye kapatır. Su varken kontak kapalı: tel koparsa pompa kilitlenir</td></tr>
+        <tr><td>Pompa (MOSFET sürücü)</td><td class="m">D10</td><td class="m">D11</td><td>Açılışta LOW: pompa kapalı başlar. Pompa kartın + ve LOAD klemensleri arasındadır</td></tr>
         <tr><td>DHT22</td><td class="m" colspan="2">D12 (ortak)</td><td>Modül tipi, pull-up kartın üzerinde</td></tr>
       </tbody>
     </table></div>
@@ -323,12 +323,15 @@ footer p{max-width:80ch}
         <h3>Tamam</h3>
         <ul class="check yes">
           <li>Tasarım, pin planı ve bağlantı şeması taslağı</li>
-          <li>Elektronik parçalar ve kapasitif sensörler teslim alındı</li>
+          <li>Elektronik parçalar ve 6 kapasitif nem sensörü (v2.0) teslim alındı</li>
           <li>UNO Q açıldı, ilk program (Blink) çalıştı</li>
+          <li>MOSFET kartı, akış sensörü, pompa ve şamandıra şemayla karşılaştırıldı; şema düzeltildi</li>
+          <li>İlk MOSFET kartı lehimlendi (üç karttan biri)</li>
         </ul>
         <h3 style="margin-top:22px">Sırada</h3>
         <ul class="check todo">
-          <li>Şemanın eldeki parçalarla karşılaştırılması</li>
+          <li>Nem sensörlerinin kart kenarlarına şeffaf oje sürülmesi (toprağa girmeden önce)</li>
+          <li>Kalan iki MOSFET kartının lehimi; kart, pompa, şamandıra ve akış sensörü testleri</li>
           <li>Saksı, toprak, tohum, kova ve hortum alışverişi</li>
           <li>Ekim ve devrenin breadboard'da kurulması</li>
         </ul>
@@ -337,6 +340,8 @@ footer p{max-width:80ch}
         <h3>Henüz doğrulanmadı</h3>
         <ul class="check no">
           <li>MOSFET kartı 3,3 V sinyalle tam açılıyor mu</li>
+          <li>Şamandıra kontağı hangi konumda kapanıyor</li>
+          <li>Akış sensörünün gövdesindeki yön oku</li>
           <li>Pompa suyu masa yüksekliğine kaldırabiliyor mu</li>
           <li>Debi, akış sensörünün alt sınırı olan 0,3 L/dk'nın üstünde mi</li>
           <li>UNO Q dijital pinlerinin 5 V dayanımı (bölücü bu yüzden yerinde)</li>

@@ -14,7 +14,8 @@ exec(src)
 W, H = 1200, 650
 STEPS = {1: "Güç hatları ve nem sensörleri", 2: "Pompalar, MOSFET kartları, adaptör", 3: "Şamandıralar", 4: "Akış sensörleri ve bölücüler", 5: "DHT22"}
 TP, TM, BP, BM = ROWY["T+"], ROWY["T-"], ROWY["B+"], ROWY["B-"]
-ma, mb = (940, 170), (940, 300)          # MOSFET A ve B kutuları (136 x 100)
+ma, mb = (960, 156), (960, 312)          # MOSFET A ve B kutuları (116 x 88)
+MW = 116
 
 WIRES, ROWS = [], []
 _n = [0]
@@ -29,7 +30,7 @@ def X(name, step, what, a, b, note="", g="guc"):
 # ---- Adım 1: güç hatları ve nem sensörleri ----
 K(1, "v33", [U("3V3"), (U("3V3")[0], 466), (RX(3), 466), B("B+", 3)], "UNO Q 3V3", "alt + hattı, 3. sıra", "alt + hattı artık 3,3 V", (17, 60))
 K(1, "gnd", [(UX+1600*0.127, YB), (UX+1600*0.127, 456), (RX(2), 456), B("B-", 2)], "UNO Q GND (5V'un yanındaki)", "alt − hattı, 2. sıra", "", (17, 38))
-K(1, "gnd", [B("B-", 28), B("T-", 28)], "alt − hattı, 28. sıra", "üst − hattı, 28. sıra", "iki GND hattını birleştirir", (40, 40))
+K(1, "gnd", [B("B-", 23), B("T-", 23)], "alt − hattı, 23. sıra", "üst − hattı, 23. sıra", "iki GND hattını birleştirir", (40, 40))
 SENS = [("A1", 7, "A0", 415, 304, 446), ("A2", 13, "A1", 407, 297, 441), ("B1", 19, "A2", 399, 290, 436), ("B2", 25, "A3", 391, 283, 431)]
 for i, (nm, r, pin, lane, gy, yb) in enumerate(SENS):
     g = "nem" + nm; px = U(pin)[0]
@@ -42,21 +43,22 @@ for i, (nm, r, pin, lane, gy, yb) in enumerate(SENS):
 # ---- Adım 2: pompalar ----
 K(2, "v5", [(RX(27), 150), B("T+", 27)], "Adaptör jakı + klemensi", "üst + hattı, 27. sıra", "üst + hattı artık 5 V", (9, None), e=('vida', 'pin'))
 K(2, "gnd", [(RX(26), 150), B("T-", 26)], "Adaptör jakı − klemensi", "üst − hattı, 26. sıra", "", (30, None), e=('vida', 'pin'))
-K(2, "v5", [B("T+", 30), (ma[0], TP)], "üst + hattı, 30. sıra", "MOSFET A POWER +", "", (40, None), "pompaA", e=('pin', 'vida'))
-K(2, "gnd", [B("T-", 30), (ma[0], TM)], "üst − hattı, 30. sıra", "MOSFET A POWER −", "", (66, None), "pompaA", e=('pin', 'vida'))
-K(2, "v5", [(ma[0], TP), (926, TP), (926, 316), (mb[0], 316)], "MOSFET A POWER +", "MOSFET B POWER +", "aynı klemense ikinci tel", (70, 10), "pompaB", e=('vida', 'vida'))
-K(2, "gnd", [(ma[0], TM), (918, TM), (918, 329), (mb[0], 329)], "MOSFET A POWER −", "MOSFET B POWER −", "aynı klemense ikinci tel", (100, 10), "pompaB", e=('vida', 'vida'))
-K(2, "v5", [(ma[0]+136, 220), (1120, 220)], "MOSFET A LOAD +", "Pompa A kırmızı teli", "", (30, None), "pompaA", e=('vida', 'ek'))
-K(2, "gnd", [(ma[0]+136, 236), (1120, 236)], "MOSFET A LOAD −", "Pompa A siyah teli", "", (30, None), "pompaA", e=('vida', 'ek'))
-K(2, "v5", [(mb[0]+136, 330), (1120, 330)], "MOSFET B LOAD +", "Pompa B kırmızı teli", "", (30, None), "pompaB", e=('vida', 'ek'))
-K(2, "gnd", [(mb[0]+136, 346), (1120, 346)], "MOSFET B LOAD −", "Pompa B siyah teli", "", (30, None), "pompaB", e=('vida', 'ek'))
-K(2, "mavi", [U("D10"), (U("D10")[0], 28), (ma[0]+125, 28), (ma[0]+125, ma[1])], "UNO Q D10", "MOSFET A PWM (tetik) pini", "Pompa A sinyali", (17, 17), "pompaA")
-K(2, "mavi", [U("D11"), (U("D11")[0], 16), (1190, 16), (1190, 452), (mb[0]+125, 452), (mb[0]+125, mb[1]+100)], "UNO Q D11", "MOSFET B PWM (tetik) pini", "Pompa B sinyali", (36, 17), "pompaB")
-K(2, "gnd", [(ma[0]+110, ma[1]), (ma[0]+110, 162), (RX(29), 162), B("T-", 29)], "MOSFET A sinyal GND pini", "üst − hattı, 29. sıra", "", (60, 17), "pompaA")
-K(2, "gnd", [(mb[0]+110, mb[1]+100), (mb[0]+110, 440), (RX(30), 440), B("B-", 30)], "MOSFET B sinyal GND pini", "alt − hattı, 30. sıra", "", (80, 17), "pompaB")
-X("D1", 2, "1N5819", "MOSFET A LOAD + (çizgili uç)", "MOSFET A LOAD −", "pompa telleriyle aynı klemense", "pompaA")
-X("D2", 2, "1N5819", "MOSFET B LOAD + (çizgili uç)", "MOSFET B LOAD −", "pompa telleriyle aynı klemense", "pompaB")
-X("C1", 2, "1000 µF", "üst + hattı, 23. sıra (uzun bacak)", "üst − hattı, 23. sıra", "ters takılmaz")
+# LR7843 kartı üç klemenslidir (−, LOAD, +): + ve − adaptörden gelir, pompa + ile LOAD arasına bağlanır;
+# kart pompanın eksi tarafını anahtarlar. Çizimde klemens sırası +, −, LOAD (kablolar kesişmesin diye).
+K(2, "v5", [B("T+", 30), (ma[0], TP)], "üst + hattı, 30. sıra", "MOSFET A + klemensi", "", (40, None), "pompaA", e=('pin', 'vida'))
+K(2, "gnd", [B("T-", 30), (ma[0], TM)], "üst − hattı, 30. sıra", "MOSFET A − klemensi", "", (66, None), "pompaA", e=('pin', 'vida'))
+K(2, "v5", [B("T+", 29), (RX(29), 166), (884, 166), (884, mb[1]+30), (mb[0], mb[1]+30)], "üst + hattı, 29. sıra", "MOSFET B + klemensi", "", (44, 24), "pompaB", e=('pin', 'vida'))
+K(2, "gnd", [B("B-", 30), (RX(30), 436), (900, 436), (900, mb[1]+42.7), (mb[0], mb[1]+42.7)], "alt − hattı, 30. sıra", "MOSFET B − klemensi", "K3 üzerinden adaptöre döner", (52, 24), "pompaB", e=('pin', 'vida'))
+for _nm, _m, _py in (("A", ma, 264), ("B", mb, 420)):
+    K(2, "v5", [(960, _py+27), (936, _py+27), (936, _m[1]+30), (_m[0], _m[1]+30)], f"Pompa {_nm} kırmızı teli", f"MOSFET {_nm} + klemensi", "ya da doğrudan üst + hattına", (40, None), "pompa"+_nm, e=('ek', 'vida'))
+    K(2, "gnd", [(960, _py+13), (948, _py+13), (948, _m[1]+68), (_m[0], _m[1]+68)], f"Pompa {_nm} siyah teli", f"MOSFET {_nm} LOAD klemensi", "", (36, None), "pompa"+_nm, e=('ek', 'vida'))
+K(2, "mavi", [U("D10"), (U("D10")[0], 28), (1100, 28), (1100, ma[1]+40), (ma[0]+MW, ma[1]+40)], "UNO Q D10", "MOSFET A PWM", "Pompa A sinyali", (17, 40), "pompaA")
+K(2, "mavi", [U("D11"), (U("D11")[0], 16), (1190, 16), (1190, mb[1]+70), (mb[0]+MW, mb[1]+70)], "UNO Q D11", "MOSFET B PWM", "Pompa B sinyali", (36, 60), "pompaB")
+K(2, "gnd", [(ma[0]+MW, ma[1]+70), (1136, ma[1]+70), (1136, 486), (RX(28), 486), B("B-", 28)], "MOSFET A GND (PWM'in yanındaki)", "alt − hattı, 28. sıra", "", (36, 17), "pompaA")
+K(2, "gnd", [(mb[0]+MW, mb[1]+40), (1124, mb[1]+40), (1124, 474), (RX(29), 474), B("B-", 29)], "MOSFET B GND (PWM'in yanındaki)", "alt − hattı, 29. sıra", "", (30, 40), "pompaB")
+X("D1", 2, "1N5819", "MOSFET A + klemensi (çizgili uç)", "MOSFET A LOAD klemensi", "pompa telleriyle aynı klemenslere", "pompaA")
+X("D2", 2, "1N5819", "MOSFET B + klemensi (çizgili uç)", "MOSFET B LOAD klemensi", "pompa telleriyle aynı klemenslere", "pompaB")
+X("C1", 2, "1000 µF", "üst + hattı, 12. sıra (uzun bacak)", "üst − hattı, 12. sıra", "ters takılmaz")
 X("C2", 2, "1000 µF", "üst + hattı, 21. sıra (uzun bacak)", "üst − hattı, 21. sıra", "ters takılmaz")
 
 # ---- Adım 3: şamandıralar ----
@@ -68,9 +70,9 @@ K(3, "gnd", [(940, 56), (RX(22), 56), B("T-", 22)], "Şamandıra B teli 2", "üs
 # ---- Adım 4: akış sensörleri ----
 for nm, r0, rt, pin, cy, dd in (("A", 8, 13, "D2", 110, 17), ("B", 15, 19, "D3", 98, 36)):
     g = "akis" + nm
-    K(4, "v5", [(RX(r0), 150), B("T+", r0)], f"Akış {nm} kırmızı tel", f"üst + hattı (5 V), {r0}. sıra", "", (8, None), g, e=('ek', 'pin'))
-    K(4, "gnd", [(RX(r0+1), 150), B("T-", r0+1)], f"Akış {nm} siyah tel", f"üst − hattı, {r0+1}. sıra", "", (30, None), g, e=('ek', 'pin'))
-    K(4, "sari", [(RX(r0+2), 150), B("j", r0+2)], f"Akış {nm} sarı tel (sinyal)", f"Breadboard j{r0+2} deliği", "doğrudan UNO Q'ya takılmaz", (56, None), g, e=('ek', 'pin'))
+    K(4, "v5", [(RX(r0), 150), B("T+", r0)], f"Akış {nm} kırmızı tel", f"üst + hattı (5 V), {r0}. sıra", "JST konnektöre erkek jumper", (8, None), g)
+    K(4, "gnd", [(RX(r0+1), 150), B("T-", r0+1)], f"Akış {nm} siyah tel", f"üst − hattı, {r0+1}. sıra", "", (30, None), g)
+    K(4, "sari", [(RX(r0+2), 150), B("j", r0+2)], f"Akış {nm} sarı tel (sinyal)", f"Breadboard j{r0+2} deliği", "doğrudan UNO Q'ya takılmaz", (56, None), g)
     X(f"R1{nm}", 4, "10 kΩ", f"Breadboard h{r0+2}", f"Breadboard h{rt}", f"{r0+2}. sıradan {rt}. sıraya", g)
     X(f"R2{nm}", 4, "20 kΩ", f"Breadboard i{rt}", f"üst − hattı, {rt+1}. sıra", f"{rt}. sıradan GND'ye", g)
     K(4, "yesil", [B("j", rt), (RX(rt), cy), (U(pin)[0], cy), U(pin)], f"Breadboard j{rt} (orta nokta)", f"UNO Q {pin}", "darbe burada 3,3 V'a inmiş olur", (40, dd + 18), g)
@@ -84,9 +86,11 @@ NOTES = {
  1: ["Her nem sensörünün üç teli breadboard'a girer: VCC ve GND alt hatlara, AOUT a sırasına. Aynı sıranın e deliğinden çıkan kablo sinyali UNO Q'ya taşır.",
      "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez."],
  2: ["Önkoşul: güç hatları kurulu. Adaptörü prize en son tak; pompalar yalnızca suyun içindeyken çalıştırılır.",
-     "Klemens yazıları kartta farklıysa (DC+/DC−, OUT+/OUT−, TRIG) karttaki yazıya uy. MOSFET kartlarının pin yerleri çizimde temsilidir."],
+     "MOSFET kartı üç klemenslidir (+, LOAD, −): pompa + ile LOAD arasına bağlanır. Yazılar kartın arka yüzündedir; çizimdeki klemens sırası temsilidir, yazıya uy.",
+     "Pompadan önce test: yalnızca adaptör bağlıyken + ile LOAD arası 0 V; PWM'e 3,3 V verince yaklaşık 5 V ve kart LED'i yanar."],
  3: ["Kontrol: multimetre süreklilik kademesinde, şamandırayı oynatınca bir konumda bip, diğerinde sessiz. Tellerin yönü fark etmez."],
- 4: ["Aynı sıradaki f–j delikleri kendi içinde bağlıdır; bölücü buna dayanır. Sarı tel hiçbir zaman doğrudan UNO Q'ya takılmaz.",
+ 4: ["Akış sensörünün telleri 3'lü dişi JST konnektörle biter (sıra: sarı, siyah, kırmızı). Erkek jumper konnektöre doğrudan girer; lehim gerekmez, bantla sabitle.",
+     "Aynı sıradaki f–j delikleri kendi içinde bağlıdır; bölücü buna dayanır. Sarı tel hiçbir zaman doğrudan UNO Q'ya takılmaz.",
      "Kontrol: yeşil kabloyu takmadan önce orta nokta ile GND arasını ölç; pervane dönerken 0 V ile yaklaşık 3,3 V arası, 3,4 V'u geçmemeli."],
  5: ["Pin sırası modülden modüle değişir; +, out, − yazılarını modülün üzerinden oku."],
 }
@@ -114,14 +118,13 @@ def diode(x, y0, y1, name):
             f'<path d="M{x-4},{my_+4} L{x+4},{my_+4} L{x},{my_-3} Z" fill="#333"/><line x1="{x-4}" y1="{my_-3}" x2="{x+4}" y2="{my_-3}" stroke="#333" stroke-width="1.8"/>'
             + t(x, y1+11, name, 7, "bold", anchor="middle"))
 
-def mosfet(x, y, nm, pins_top, ly=30):
-    py = y if pins_top else y + 100
-    o = [f'<rect x="{x}" y="{y}" width="136" height="100" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>',
-         t(x+10, y+62, f"MOSFET {nm}", 10, "bold"), t(x+10, y+75, "LR7843 kartı", 8, fill="#66716d"),
-         pinmark(x, y+16, "POWER +", "r"), pinmark(x, y+28.7 if nm == "A" else y+29, "POWER −", "r"),
-         pinmark(x+136, y+ly, "LOAD +", "l"), pinmark(x+136, y+ly+16, "LOAD −", "l"),
-         pinmark(x+110, py, "", "d"), pinmark(x+125, py, "", "d"),
-         t(x+106, py + (15 if pins_top else -9), "GND", 7, "bold", anchor="end"), t(x+121, py + (27 if pins_top else -20), "PWM", 7, "bold")]
+def mosfet(x, y, nm, dname, pwm_top):
+    # Sol kenar: +, −, LOAD klemensleri. Sağ kenar: PWM ve GND. Diyot + ile LOAD arasında, çizgili ucu +'da.
+    sig = [pinmark(x+MW, y+40, "PWM" if pwm_top else "GND", "l"), pinmark(x+MW, y+70, "GND" if pwm_top else "PWM", "l")]
+    o = [f'<rect x="{x}" y="{y}" width="{MW}" height="88" rx="5" fill="#dfe9e6" stroke="#7d8a86"/>',
+         t(x+MW/2, y+11, f"MOSFET {nm} · LR7843", 8, "bold", anchor="middle"),
+         pinmark(x, y+30, "+", "r"), pinmark(x, y+42.7, "−", "r"), pinmark(x, y+68, "LOAD", "r"),
+         *sig, diode(x+MW//2, y+32, y+66, dname)]
     return "\n".join(o)
 
 def parts():
@@ -130,19 +133,20 @@ def parts():
     dx = RX(3)
     o += [f'<rect x="{dx-13:.1f}" y="514" width="51.4" height="70" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
           pinmark(dx, 520, "out", "d"), pinmark(dx+12.7, 520, "+", "d"), pinmark(dx+25.4, 520, "−", "d"), t(dx+12.7, 564, "DHT22", 9, "bold", anchor="middle"),
-          f'<rect x="{RX(26)-14:.1f}" y="112" width="40.7" height="44" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
-          t(RX(26)+6.3, 126, "5 V jak", 7.5, "bold", anchor="middle"), pinmark(RX(26), 150, "", "d"), pinmark(RX(27), 150, "", "d"),
+          f'<rect x="{RX(26)-14:.1f}" y="112" width="36" height="44" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
+          t(RX(26)+4, 126, "5 V jak", 7.5, "bold", anchor="middle"), pinmark(RX(26), 150, "", "d"), pinmark(RX(27), 150, "", "d"),
           t(RX(26), 142, "−", 9, "bold", anchor="middle"), t(RX(27), 142, "+", 9, "bold", anchor="middle")]
     for nm, r0 in (("A", 8), ("B", 15)):
         o += [f'<rect x="{RX(r0)-14:.1f}" y="122" width="53.4" height="34" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
               t(RX(r0+1), 135, f"Akış {nm}", 8, "bold", anchor="middle"), pinmark(RX(r0), 150, "", "d"), pinmark(RX(r0+1), 150, "", "d"), pinmark(RX(r0+2), 150, "", "d")]
-    o += [mosfet(*ma, "A", True, 50), mosfet(*mb, "B", False),
-          box(1120, 206, 58, 44, "Pompa A"), box(1120, 316, 58, 44, "Pompa B"),
+    o += [mosfet(*ma, "A", "D1", True), mosfet(*mb, "B", "D2", False),
+          box(960, 264, 90, 40, "Pompa A"), pinmark(960, 277, "", "r"), pinmark(960, 291, "", "r"),
+          box(960, 420, 90, 40, "Pompa B"), pinmark(960, 433, "", "r"), pinmark(960, 447, "", "r"),
           box(940, 64, 96, 30, "Şamandıra A"), pinmark(940, 72, "", "r"), pinmark(940, 84, "", "r"),
           box(940, 32, 96, 30, "Şamandıra B"), pinmark(940, 44, "", "r"), pinmark(940, 56, "", "r"),
           resistor(B("h", 10), B("h", 13), "R1A"), resistor(B("i", 13), B("T-", 14), "R2A"),
           resistor(B("h", 17), B("h", 19), "R1B"), resistor(B("i", 19), B("T-", 20), "R2B"),
-          cap(23, "C1"), cap(21, "C2"), diode(1088, 220, 236, "D1"), diode(1088, 330, 346, "D2"), legend_marks()]
+          cap(12, "C1"), cap(21, "C2"), legend_marks()]
     return "\n".join(o)
 
 import math
