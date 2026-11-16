@@ -9,7 +9,7 @@
 
 | Konu | Karar |
 | :--- | :--- |
-| **Hazırlık süresi** | Donanım ve MVP için 9–22 Kasım 2026. Bitki yetiştirme dahil toplam süre 30 Aralık'a kadar; güncel takvim README §11 ve Notion'dadır |
+| **Hazırlık süresi** | Donanım ve MVP için 9 Kasım – 8 Aralık 2026. Bitki yetiştirme ve A/B deneyi dahil toplam süre 15 Ocak 2027'ye kadar (16 Kasım 2026'da uzatıldı); güncel takvim README §11 ve Notion'dadır |
 | **Konum** | Adana, balkon |
 | **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Tek istisna kapasitif toprak nem sensörüdür (Robotistan'da yok, bkz. [Bölüm 3](#3-robotistan-dışı-tek-kalem)) |
 | **Bütçe** | 50 USD Robotistan hediye çeki. Çeki aşan kısım ve kargo eşiği ekip tarafından karşılanır |
@@ -24,10 +24,10 @@ Tüm kalemler 20.10.2026'da **stokta**, sipariş **teslim alındı** (Kasım 202
 
 | # | Ürün (Robotistan adı) | Kullanılan | Alınacak | Birim (TL) | Toplam (TL) | Rolü / not |
 | :-: | :--- | :-: | :-: | --: | --: | :--- |
-| 1 | [Su Akış Sensörü YF-S401 Debimetre 0.3-6L/Min 3.5mm - Beyaz](https://www.robotistan.com/yfs401-akis-sensoru-3mm) | 2 | **3** | 226,33 | 678,99 | Yatak başına akış ve hacim. Depo hacmi de bundan hesaplanır |
-| 2 | [Mini Dalgıç Su Pompası 6V 120 Litre/Saat](https://www.robotistan.com/mini-dalgic-pompa-6v-120-litresaat) | 2 | **4** | 50,09 | 200,36 | 2,5–6 V, 130–220 mA. Giriş 4,7 mm, çıkış 7,5 mm. 5 V ile doğrudan çalışır |
-| 3 | [LR7843 MOSFET Sürücü Kartı](https://www.robotistan.com/lr7843-mosfet-kontrol-modulu) | 2 | **3** | 48,89 | 146,67 | Optokuplörlü, 3,3–5 V sinyalle tetiklenir |
-| 4 | [Su Seviye Sensörü (91x24 mm) - ZP7510](https://www.robotistan.com/su-seviye-sensoru-91x24-mm-zp7510) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi |
+| 1 | [Su Akış Sensörü YF-S401 Debimetre 0.3-6L/Min 3.5mm - Beyaz](https://www.robotistan.com/yfs401-akis-sensoru-3mm) | 2 | **3** | 226,33 | 678,99 | Yatak başına akış ve hacim. Depo hacmi de bundan hesaplanır. Üç tel 3'lü dişi JST konnektörle biter (sarı sinyal, siyah GND, kırmızı 5 V); erkek jumper doğrudan girer |
+| 2 | [Mini Dalgıç Su Pompası 6V 120 Litre/Saat](https://www.robotistan.com/mini-dalgic-pompa-6v-120-litresaat) | 2 | **4** | 50,09 | 200,36 | 2,5–6 V, 130–220 mA. Giriş 4,7 mm, çıkış 7,5 mm. 5 V ile doğrudan çalışır. Tek siyah kılıfta ince kırmızı ve siyah tel; uçlar soyulup klemense sıkılır |
+| 3 | [LR7843 MOSFET Sürücü Kartı](https://www.robotistan.com/lr7843-mosfet-kontrol-modulu) | 2 | **3** | 48,89 | 146,67 | Optokuplörlü, 3,3–5 V sinyalle tetiklenir (3,3 V ile açıldığı henüz ölçülmedi). Lehimsiz gelir; üç klemensli: −, LOAD, + (bkz. §6.1) |
+| 4 | Şamandıra, dik tip (Robotistan ürün kodu 18584) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi. Dik tip, iki sarı tel, polarite yok; kovanın iç duvarına sarkıtılan şeride takılır (bkz. §6.1) |
 | 5 | [DHT22 Dijital Sıcaklık ve Nem Sensörü Modülü](https://www.robotistan.com/dht22-sicaklik-nem-sensoru-modulu) | 1 | **2** | 105,62 | 211,24 | Modül tipi (3,3–5 V). Ortam sıcaklık/nem, VPD ve ET₀ hesabı |
 | 6 | [5V 2A DC Adaptör 5.5mm x 2.1mm - 1 Metre Kablo](https://www.robotistan.com/5v-2a-dc-adaptor-55mm-x-21mm-1-metre-kablo) | 1 | **1** | 142,44 | 142,44 | Pompa ve sensör hattı. UNO Q ayrı beslenir (bkz. §6) |
 | 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi |
@@ -84,7 +84,7 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | :--- | :--- | :-: | --: | --: | :--- |
 | [Kapasitif Toprak Nem Sensörü - Higrometre](https://www.direnc.net/kapasitif-toprak-nem-sensoru) | direnc.net (20.10.2026 stokta) | **6** (4 + 2 yedek) | 50,56 | 303,36 | 3,3–5,5 V, üzerinde regülatör var. Çıkış 0–3 V, yani UNO Q analog girişleri için güvenli |
 
-**Sipariş durumu (9 Kasım 2026): henüz verilmedi.** E1, E2 ve E5 bu sensörlere bağlıdır; sipariş günü belli olunca tarihler güncellenir.
+**Durum (16 Kasım 2026): 6 kapasitif sensör teslim alındı ve parçadan doğrulandı.** Sipariş direnc.net yerine başka bir siteden verildi. Gelen sensör "Capacitive Soil Moisture Sensor v2.0" (HW-390): tek parça siyah bıçak, üç pin (GND, VCC, AOUT), 3'lü JST kablo (siyah GND, kırmızı VCC, sarı AOUT). 3,3 V'tan beslenir; bıçak yalnızca beyaz çizgiye kadar toprağa girer. **Toprağa girmeden önce yapılacak:** kart kenarlarına şeffaf oje sürülür (kesik kenarlar nem çekip okumayı kaydırır), elektronik kısım oje ya da makaronla korunur. İlk test: AOUT–GND arası havada ve suda ölçülür; iki değer belirgin farklı olmalıdır. Elde ayrıca dirençli tip sensörler (iki bacaklı çıplak metal çatal, dört pinli karşılaştırıcı kartla) var; toprakta haftalar içinde paslandıkları için deneyde kullanılmazlar, yalnızca tezgâh denemesi içindir.
 
 **Neden dışarıdan:** Robotistan'da yalnızca rezistif toprak sensörleri var. Rezistif problar 2,5 ayda korozyona uğrar ve README'deki "korozyona dayanıklı kapasitif sensör" iddiasını bozar. Kart kenarları ve üstteki elektronik oje veya makaronla kaplanır.
 
@@ -125,9 +125,10 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 ```text
 USB-C şarj aleti (5 V 3 A) ──> UNO Q USB-C
 
-5 V 2 A adaptör ─> Barrel jack ─┬─> Pompa A (+) ─ LR7843 A ─ GND   [1N5819 pompa uçlarına ters]
-                                ├─> Pompa B (+) ─ LR7843 B ─ GND
+5 V 2 A adaptör ─> Barrel jack ─┬─> LR7843 A "+" ─> Pompa A ─> LR7843 A "LOAD"   [1N5819: + ile LOAD arasında, çizgili uç +'da]
+                                ├─> LR7843 B "+" ─> Pompa B ─> LR7843 B "LOAD"
                                 └─> YF-S401 A/B VCC
+Adaptör GND ──> LR7843 A/B "−" (kart pompanın eksi tarafını anahtarlar)
 Ortak GND: 5 V adaptör GND'si ile UNO Q GND'si birleştirilir (akış sinyali için şart)
 UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 ```
@@ -143,6 +144,46 @@ UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 | D12 | DHT22 veri | Modül tipi; pull-up kartın üzerinde |
 
 > **UNO Q gerilim uyarısı:** MCU tarafı 3,3 V mantıktadır. Analog girişlere 3,3 V'tan yüksek gerilim uygulanmamalı. Dijital pinlerin 5 V toleransı resmi datasheet ile doğrulanana kadar akış darbe hatlarında bölücü kullanılır. Bölücü çıkışı, sensör UNO Q'ya bağlanmadan önce multimetreyle ölçülür.
+
+### 6.1 Parçalar masada: doğrulananlar (16 Kasım 2026)
+
+Parçalar açılıp şemayla karşılaştırıldı. İlk şemadaki dört klemensli MOSFET çizimi (POWER +, POWER −, LOAD +, LOAD −) yanlıştı; şema ve kablo listesi düzeltildi ([tools/baglanti-semasi/](../tools/baglanti-semasi/), sitede `docs/sema/`).
+
+**MOSFET kartı (LR7843)**
+
+- Lehimsiz gelir: kartla birlikte 3'lü mavi vidalı klemens, 2'li yeşil vidalı klemens ve 2'li pin çıkar. Yazılar kartın arka yüzündedir; klemensler ön yüze takılıp arkadan lehimlenir.
+- Bir kısa kenarda üç ped: −, LOAD, + (bu sırayla). Karşı kenarda iki ped: GND, PWM. PWM/GND tarafına da yeşil vidalı klemens takıldı.
+- `+` adaptörün 5 V'u, `−` adaptörün GND'si. Pompa `+` ile `LOAD` arasına bağlanır (pompa kırmızı → `+`, pompa siyah → `LOAD`). Kart pompanın eksi tarafını anahtarlar.
+- Flyback diyodu (1N5819) `+` ile `LOAD` arasında, çizgili ucu `+`'da.
+- Her kartın `+` klemensine üç şey girer (güç teli, pompa kırmızısı, diyot bacağı). Sığmazsa pompanın kırmızı teli doğrudan 5 V hattına takılabilir.
+- MOSFET B gücünü A'nın klemensinden değil doğrudan breadboard'dan alır. B'nin `−` ucu alt GND hattına gider; pompa B'nin dönüş akımı iki GND hattını birleştiren K3 kablosundan adaptöre döner, yani K3 kritiktir.
+- Şemada klemens sırası +, −, LOAD çizildi (kablolar kesişmesin diye); gerçek kartta sıra −, LOAD, +. Bağlarken karttaki yazı esastır.
+
+**Akış sensörü (YF-S401)**
+
+- Üç tel 3'lü dişi JST konnektörle biter; konnektördeki sıra sarı, siyah, kırmızı (siyah ortada). Kırmızı 5 V, siyah GND, sarı sinyal.
+- Erkek jumper konnektöre doğrudan girer; lehim ya da ek gerekmez, yalnızca bantla sabitlenir.
+- Gövdedeki akış yönü oku henüz kontrol edilmedi.
+
+**Pompa (mini dalgıç)**
+
+- Tek siyah kılıf içinde ince kırmızı ve siyah tel; uçlar neredeyse soyulmamış gelir. Dış kılıf yaklaşık 3 cm, iç teller 6–7 mm soyulup katlanarak klemense sıkılır.
+
+**Şamandıra (dik tip)**
+
+- Vidalı gövde, somun ve turuncu conta; iki sarı tel, polarite yok.
+- Dik çalışır: vidalı uç ve teller yukarıda, şamandıra gövdesi aşağıda. Çubuk kısa olduğu için kovanın kapağına değil, kovanın iç duvarına sarkıtılan bir şeride monte edilir; kova delinmez.
+- Hedef mantık: su varken kontak kapalı, su bitince açık. Böylece tel koparsa "su yok" okunur ve pompa kilitlenir. Hangi konumda kapandığı multimetreyle henüz ölçülmedi; tersse gövde çubukta ters çevrilir.
+
+**Sırada bekleyen testler**
+
+1. MOSFET kartı, pompasız: yalnızca adaptör bağlıyken `+` ile `LOAD` arası yaklaşık 0 V; PWM'e 3,3 V ve karttaki GND'ye UNO Q GND verilince yaklaşık 5 V olmalı ve kart LED'i yanmalı. Bu test kartın 3,3 V sinyalle açılıp açılmadığını da gösterir.
+2. Lehim kontrolü: komşu pedler arasında süreklilik olmamalı; klemens vidasından pede süreklilik olmalı.
+3. Pompa tek başına: suyun içinde, doğrudan adaptöre 2–3 saniye.
+4. Şamandıra: hangi konumda kontak kapanıyor.
+5. Akış sensörü: bölücünün orta noktası ile GND arası 0–3,3 V arasında gidip gelmeli, 3,4 V'u geçmemeli; ancak ondan sonra D2/D3'e bağlanır.
+
+Durum: üç MOSFET kartından biri lehimlendi (bir GND lehimi soğuk kalmış olabilir, kontrol edilecek); kalan ikisi lehimlenmedi.
 
 **İlk kez kuranlar için sıra:** her modül önce breadboard üzerinde tek başına denenir (önce multimetreyle gerilim kontrolü, sonra kod). Pompa ve şamandıra timsah kabloyla denenir. Hepsi çalıştıktan sonra pertinaksa lehimlenir ve klemenslerle kutuya taşınır.
 
@@ -162,7 +203,7 @@ UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 
 ## 8. Balkon kurulumu — Adana
 
-- **Yağmur deneyi bozar.** Yağmur ölçülmeyen bir su girdisidir (P); su bütçesini ve A/B karşılaştırmasını geçersiz kılar. Adana'da yağışlı dönem Kasım–Şubat'tır ve Tur 2 (Aralık) tam bu döneme denk gelir. Yataklar yağmur almamalı:
+- **Yağmur deneyi bozar.** Yağmur ölçülmeyen bir su girdisidir (P); su bütçesini ve A/B karşılaştırmasını geçersiz kılar. Adana'da yağışlı dönem Kasım–Şubat'tır ve Tur 2 (14 Aralık – 7 Ocak) tam bu döneme denk gelir. Yataklar yağmur almamalı:
   - saçak / kapalı balkon bölümü, **veya**
   - şeffaf PE / polikarbonat örtü (yanları havalandırmalı), **veya**
   - raflı mini balkon serası (~2.000 TL; ılık havada kapağı açık tutulmalı, aşırı ısınmaya dikkat).
@@ -173,20 +214,23 @@ UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
 
 ## 9. Hazırlık takvimi (güncel)
 
-> Önceki 17 Ekim – 7 Kasım takvimi geçerliliğini yitirdi. Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. İki tur korunur; **Tur 1 kısaltıldı** (15 Kasım – 3 Aralık, README §9.2).
+> Önceki takvimler (17 Ekim – 7 Kasım; ardından 30 Aralık'ta biten 9 Kasım planı) geçerliliğini yitirdi. Takvim 16 Kasım 2026'da 15 Ocak 2027'ye kadar uzatıldı (gerekçe README §9.2). Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. İki tur korunur.
 
 | Dönem | Donanım ve tesisat | Yazılım |
 | :--- | :--- | :--- |
-| **9–15 Kasım** | Siparişi say ve kontrol et; direnc.net siparişini ver; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; pompa, akış, şamandıra, DHT22 breadboard testi; kasa, bidon, toprak, tohum, hortum temini; balkonda yağmur korumalı alan; **15 Kasım Tur 1 ekim** (sensörler gelene kadar mezürle elle sulama ve kayıt) | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
-| **16–22 Kasım** | Kapasitif sensör iki noktalı + gravimetrik kalibrasyon (**E1**, ≈ 18 Kasım); pompa debisi ve YF-S401 darbe/litre kalibrasyonu; MCU güvenlik kilitleri ve **E3** (≈ 21 Kasım); pertinaksa geçiş ve kutulama; **MVP 22 Kasım** | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi. MPU: veri alma + SQLite, Open-Meteo istemcisi, simülatör ilk sürüm, kural tabanlı politika, pano ilk sürüm |
-| **23 Kasım – 3 Aralık** | Tur 1 kural tabanlı sulama ile sürer; **E2** kuruma eğrileri (19 Kasım – 3 Aralık, Tur 1 yataklarında); **E4** anomali enjeksiyonu (≈ 30 Kasım); 3 Aralık'ta dondurma, yatakların boşaltılması | Model v1, model Tur 1'de gölge modda (≈ 28 Kasım – 3 Aralık), anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
-| **4–27 Aralık** | **Tur 2** ekim ve **E5** A/B deneyi | Dokümantasyon, video |
+| **9–19 Kasım** | Siparişi say ve kontrol et; parçaları şemayla karşılaştır (§6.1); MOSFET kartlarını lehimle; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; MOSFET, pompa, akış, şamandıra testleri; saksı, kova, toprak, tohum, hortum temini; balkonda yağmur korumalı alan; **19 Kasım Tur 1 ekim** (sistem kurulana kadar mezürle eşit elle sulama ve kayıt) | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
+| **20 Kasım – 8 Aralık** | Nem sensörleri ve DHT22 toprakta, ölçümler kayıtta (**24 Kasım**; önce kart kenarlarına oje); kalibrasyon (**E1**); pompa debisi ve YF-S401 darbe/litre kalibrasyonu; kural tabanlı sulama **3 Aralık**'a kadar Yatak B'de, **8 Aralık**'a kadar Yatak A'da (zamanlayıcı) uçtan uca; **E2** kuruma eğrileri | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi, güvenlik kilitleri. MPU: veri alma + SQLite, Open-Meteo istemcisi, simülatör ilk sürüm, kural tabanlı politika, pano ilk sürüm |
+| **9–13 Aralık** | **E3** güvenlik testleri (9–11 Aralık); **E4** anomali enjeksiyonu (tarih netleşecek); **13 Aralık** Tur 1 hasadı, dondurma, yatakların boşaltılması | Model v1, model Tur 1'de gölge modda, anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
+| **14 Aralık – 7 Ocak** | **Tur 2** ekim ve **E5** A/B deneyi (24 gün) | Dokümantasyon, video |
+| **8–15 Ocak** | Analiz ve sonuçların yayını (8–10 Ocak); yayın dönemi 15 Ocak'ta biter | **E6**, grafikler, yayın |
 
 Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bırakılmıştır).
 
 ## 10. Açık noktalar
 
-- [ ] direnc.net kapasitif sensör siparişi (6 adet) henüz verilmedi; sipariş günü ve teslim tarihi netleşince E1 ve MVP tarihleri güncellenecek
+- [ ] **Oje (unutma):** 6 kapasitif nem sensörünün kart kenarlarına şeffaf oje sürülecek, elektronik kısım korunacak; sensörler toprağa girmeden önce (hedef 24 Kasım) bitmeli (bkz. §3)
+- [ ] Kapasitif sensörlerin ilk testi: AOUT–GND havada ve suda ölçülecek (bkz. §3)
+- [ ] MOSFET kartının 3,3 V sinyalle tam açılıp açılmadığı, şamandıranın hangi konumda kapandığı, akış sensörünün yön oku (bkz. §6.1 testleri)
 - [ ] UNO Q dijital pinlerinin 5 V toleransının ve USB-C güç gereksiniminin resmi datasheet'ten doğrulanması
 - [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (parçalar geldi, ölçülecek)
 - [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
