@@ -84,7 +84,8 @@ K(5, "gri", [(RX(3), 520), (RX(3), 512), (16, 512), (16, 140), (U("D12")[0], 140
 
 NOTES = {
  1: ["Her nem sensörünün üç teli breadboard'a girer: VCC ve GND alt hatlara, AOUT a sırasına. Aynı sıranın e deliğinden çıkan kablo sinyali UNO Q'ya taşır.",
-     "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez."],
+     "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez.",
+     "Oje: sensör toprağa girmeden önce kartın kesik kenarlarına şeffaf oje sür, kurumasını bekle; üstteki elektronik kısmı oje ya da makaronla koru. Ojesiz kenar nem çeker ve okuma kayar."],
  2: ["Önkoşul: güç hatları kurulu. Adaptörü prize en son tak; pompalar yalnızca suyun içindeyken çalıştırılır.",
      "MOSFET kartı üç klemenslidir (+, LOAD, −): pompa + ile LOAD arasına bağlanır. Yazılar kartın arka yüzündedir; çizimdeki klemens sırası temsilidir, yazıya uy.",
      "Pompadan önce test: yalnızca adaptör bağlıyken + ile LOAD arası 0 V; PWM'e 3,3 V verince yaklaşık 5 V ve kart LED'i yanar."],
@@ -272,7 +273,7 @@ LEGEND = ["Mini pompa: kovanın dibinde, tamamen suyun içinde.", "Kalın hortum
           "Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.", "Redüksiyon: kalın hortumdan 4×6 mm ince hortuma geçiş.",
           "Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.", "İnce hortum (4×6 mm): saksının üstüne kadar.",
           "T-parça: hattı saksının ortasında ikiye ayırır.", "Delikli hortum: toprağın üstünde, iki ucu kapalı, iğneyle delinmiş."]
-LNOTES = ["Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır.",
+LNOTES = ["Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır. Toprağa girmeden önce kart kenarlarına şeffaf oje sürülür.",
           "Şamandıra kovanın dibine yakın durur: su onun altına inince pompa kilitlenir. Kovalar sandalyede, su seviyesi kesik mavi çizginin altında.",
           "İki saksı eşit ışık alacak şekilde yan yana; buat ve DHT22 gölgede. Kesik gri çizgiler kablo demetlerini gösterir, ayrıntısı Elektrik görünümünde."]
 
@@ -284,7 +285,7 @@ def pdfpage(no, tot, title, sub, body, h=PH):
     return "\n".join([f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}">',
         f'<rect width="{W}" height="{h}" fill="#fff"/>', t(40, 30, title, 17, "bold"), t(40, 46, sub, 9.5, fill="#66716d"),
         t(W-40, 30, f"Suİz bağlantı şeması · {no}/{tot}", 9, fill="#66716d", anchor="end"),
-        t(W-40, 44, "15 Kasım 2026 · taslak, parçalarla doğrulanmadı", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
+        t(W-40, 44, "17 Kasım 2026 · taslak; parçalar 16 Kasım'da karşılaştırıldı, testler bekliyor", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
 def rows_for(s): return [(k, col, a, b, n) for k, st, col, a, b, n, g in ROWS if st == s]
 TOT = 8
 fig_g = lambda only=None: '<g transform="translate(0,40)">' + parts() + wires_svg(only=only) + '</g>'

@@ -10,7 +10,7 @@
 
 </div>
 
-> **Senkronizasyon notu:** Bu depo ile Notion ana dokümanı ve görev tahtası senkron tutulur. Notion güncel görev durumunun, bu depo ise yayınlanacak teknik belgelerin ana kaynağıdır; ikisinde de aynı karar ve tarihler yer alır. Biri değiştirilirse diğeri de güncellenmelidir (kurallar için [AGENTS.md](AGENTS.md)).
+> **Kaynak notu:** Projenin güncel bilgisi (durum, takvim, kurulum, bağlantı şeması) tek yerde tutulur: [proje sitesi](https://berceste-team.github.io/Su-z/) (kaynağı bu depodaki `docs/`). Bu README ve [docs/donanim-plani.md](docs/donanim-plani.md) ayrıntılı teknik kayıttır ve siteyle aynı karar ve tarihleri içerir. Notion yalnızca görev tahtası için kullanılır (kurallar için [AGENTS.md](AGENTS.md)).
 
 ---
 
@@ -26,7 +26,7 @@
 | **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitkiler (turp / roka, 3–4 hafta) |
 | **Yayın** | GitHub, Arduino Project Hub ve maker.robotistan.com (yayın penceresi: 30 Aralık 2026 – 15 Ocak 2027) |
 | **Durum** | Robotistan siparişi ve 6 kapasitif nem sensörü (v2.0, 4 + 2 yedek) teslim alındı; sensörler 16 Kasım 2026'da parçadan doğrulandı. Donanım ve MVP aşaması 9 Kasım 2026'da başladı; deney takvimi 15 Ocak 2027'ye kadar uzar (§9.2, §11) |
-| **Güncel takip** | Notion (ana doküman ve görev tahtası) ile senkron tutulur, bkz. aşağıdaki not ve [AGENTS.md](AGENTS.md) |
+| **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler Notion tahtasında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
 
 ## 📑 İçindekiler
 
@@ -275,18 +275,19 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 | Bileşen | Adet | Teknik rolü |
 | :--- | :---: | :--- |
 | **Arduino® UNO™ Q** (2 GB veya 4 GB) | 1 | MCU + MPU: sensör okuma, pompa kontrolü, Edge AI, pano |
-| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog, 3,3–5,5 V) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından tek dış alım kalemi* |
+| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog, 3,3–5,5 V) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından dışarıdan (Robocombo) alındı; gelen kart v2.0 (HW-390)* |
 | **Sıcaklık / nem sensörü** (DHT22 modülü) | 1 (+1 yedek) | Ortam koşulları; VPD ve ET₀ hesabı |
 | **Düşük debili akış sensörü** (YF-S401, 0,3–6 L/dk, Hall etkili) | 2 (+1 yedek) | Sulama sırasında gerçek su akışının ve hacminin ölçümü; depo hacmi de bundan hesaplanır |
 | **Mini DC dalgıç pompa** (6 V, 120 L/sa) | 2 (+2 yedek) | Depoya daldırılmış, yatak başına sulama; 5 V hattan beslenir |
 | **Opto-izoleli MOSFET sürücü** (LR7843) + flyback diyot (1N5819) | 2 (+1 yedek) | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması. Kart üç klemenslidir (−, LOAD, +): pompa + ile LOAD arasına bağlanır, kart pompanın eksi tarafını anahtarlar |
 | **Şamandıra (float) anahtarı** (dik tip, Robotistan ürün kodu 18584) | 2 (+1 yedek) | Yazılımdan bağımsız, donanımsal düşük seviye kilidi. Su varken kontak kapalı olacak şekilde takılır: tel koparsa "su yok" okunur ve pompa kilitlenir |
 | **5 V 2 A DC adaptör** | 1 | Pompa ve akış sensörü hattı. UNO Q, USB-C şarj aletinden ayrı beslenir |
+| **1000 µF 16 V elektrolitik kondansatör** | 2 | 5 V pompa hattında, MOSFET kartlarının yanında; pompa açılışındaki gerilim düşüşünün analog nem okumalarını bozmasını önler |
 | **Depo, 20 L** (ışık geçirmeyen, kapaklı, litre işaretli) | 2 | Bütçeli su kaynağı |
 | **Bitki yatağı kasası** (≈ 60 × 40 × 20 cm, drenaj delikli), toprak, tohum | 2 | Test yatakları |
-| **Sulama hattı** (8×5 mm ve 4/6 mm hortum, redüksiyon, damlatıcı) | 2 set | Kontrollü su uygulaması |
+| **Sulama hattı** (8×5 mm ve 4/6 mm hortum, redüksiyon, çekvalf, T-parça, damlatıcı) | 2 set | Kontrollü su uygulaması |
 | Breadboard, pertinaks, klemens, jumper ve montaj kablosu, makaron, gerilim bölücü dirençler | — | Deneme, kalıcı kurulum ve bağlantı |
-| Kapaklı plastik saklama kabı | 1 | Elektronik kutusu |
+| Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Elektronik kutusu (ilk plandaki saklama kabının yerine) |
 | Toprak sıcaklık sensörü (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |
 | Yük hücresi + HX711 *(opsiyonel)* | 2 | Depo ağırlığından bağımsız hacim çapraz doğrulaması |
 
@@ -300,7 +301,7 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 - Kapasitif sensörler her yatak toprağı için **iki noktalı kalibrasyon** (kuru/doygun) ve gravimetrik kontrol ile kalibre edilir. Kart kenarları ve elektroniği nemden korunur.
 - YF-S401'in ölçüm aralığı (0,3–6 L/dk) pompa debisini kapsar. Litre başına darbe sayısı satıcıya göre değiştiğinden mezürle kalibre edilir ve E3 deneyinde doğrulanır.
 - **Hacim doğrulamasında akış sensörü birincildir.** Depo hacmi akıştan hesaplanır, her dolumda bidon işaretleriyle elle sıfırlanır; alt sınır kilidi şamandıradadır.
-- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu (kapaklı saklama kabı) yağmur ve doğrudan güneş almayan yere konur.
+- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu (şeffaf kapaklı buat) yağmur ve doğrudan güneş almayan yere konur.
 
 ---
 
@@ -643,7 +644,6 @@ gantt
 | **Kart geç teslim edilir** | Orta / Yüksek | Hazırlık dönemindeki simülatör ve veri hattı karttan bağımsızdır. Gerekirse sensör ve pompa katmanı eldeki bir Arduino ile prototiplenir, MPU tarafı bilgisayarda çalıştırılır; kart geldiğinde taşınır |
 | **Gerçek veri yetersiz kalır** | Orta / Orta | Sentetik veri ile ön eğitim; fizik tabanlı özellikler; model baz çizgisini geçemezse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır |
 | **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 çimlenme kontrolü ve ikinci deneme fırsatı verir; turp ↔ roka geçişi, yedek olarak tere |
-| **Kapasitif sensör siparişi gecikir** | Orta / Yüksek | Sensör gerektirmeyen işler (pompa, akış, şamandıra, MCU güvenlik, E3, MPU, simülatör) beklemeden sürer; E1 ve MVP tarihleri sipariş gününe göre güncellenir |
 | **Sensör kayması ve kalibrasyon hatası** | Yüksek / Orta | İki noktalı + gravimetrik kalibrasyon; haftalık kontrol; iki derinlikte çapraz doğrulama; sıcaklık düzeltmesi |
 | **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; her dolumda bidon işaretleriyle elle hacim kontrolü ve isteğe bağlı yük hücresi ile çapraz kontrol |
 | **Bütçe/zaman aşımı** | Orta / Orta | Kapsam kesme sırası (Bölüm 11); MVP'nin M2'de tamamlanması |
@@ -696,14 +696,15 @@ suiz/
 ├── data/                # ham ve işlenmiş veriler
 ├── notebooks/           # eğitim, doğrulama ve deney analizleri
 ├── hardware/            # devre şeması, bağlantı planı, malzeme listesi
-├── docs/                # deney protokolleri, görseller, video
+├── docs/                # proje sitesi (index.html, sema/), donanım planı, deney protokolleri, görseller
+├── tools/               # bağlantı şeması üreteci (baglanti-semasi/)
 └── tests/
 ```
 
 ### İlerleme
 
 - [x] Proje tasarımı ve kapsam tanımı
-- [ ] Yarışma başvurusu (son tarih: 1 Ekim 2026)
+- [x] Yarışma başvurusu (son tarih: 1 Ekim 2026)
 - [ ] M0 – UNO Q kurulumu
 - [ ] M1 – Sensörler ve kalibrasyon
 - [ ] M2 – Kural tabanlı MVP
