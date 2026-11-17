@@ -99,13 +99,13 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Kasa (~60 × 40 × 20 cm) | 2 (özdeş) | Balıkçı (strafor), pazar, ambalajcı, Trendyol | Bkz. §7 |
 | Naylon astar + drenaj tepsisi | 2 | Hırdavat / market | Süzülen suyu ölçmek için tepsi |
 | Bidon, 20 L, ışık geçirmeyen, kapaklı | 2 | Hırdavat | Şamandıra kapağa değil, iç duvara sarkıtılan şeride takılır; delik açılmaz (bkz. §6.1) |
-| Hortum **8 × 5 mm** (iç çap 5 mm) | ~5 m | Akvaryumcu | Pompa çıkışı 7,5 mm. Robotistan'ın pompaya önerdiği ölçü budur (orada tükenmiş) |
-| Hortum 4/6 mm + redüksiyon + T-parça + çekvalf | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Çekvalf pompa durunca hortumdaki suyun geri kaçmasını önler. Redüksiyon ölçüsü ürünler gelince ölçülerek alınır. 12 Kasım 2026: 2 × 3 m silikon 4×6 mm hortum, T-parça ve çekvalf alındı |
+| Hortum 4/6 mm + T-parça + çekvalf | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Çekvalf pompa durunca hortumdaki suyun geri kaçmasını önler. Redüksiyon gerekmedi (17 Kasım 2026: 4×6 mm hortum pompaya doğrudan uyuyor). 12 Kasım 2026: 2 × 3 m silikon 4×6 mm hortum, T-parça ve çekvalf alındı |
 | Damlatıcı veya kılcal boru | 2 set | Akvaryumcu / ziraat bayi | |
 | Toprak, torf, perlit | 2 yatak için tek torba karışım | Fidancı / ziraat bayi | İki yatak aynı karışımla doldurulur |
 | Turp veya roka tohumu | 2 paket (Tur 1 + Tur 2) | Ziraat bayi | |
 | Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Trendyol (12 Kasım 2026'da sipariş edildi) | Elektronik kutusu. İlk plandaki kapaklı saklama kabının yerine alındı |
-| Şeffaf PE örtü ya da mini balkon serası | 1 | Hırdavat / Idefix | Yağmur koruması, bkz. §8 |
+| Şeffaf PE örtü | 1 | Hırdavat | Yağmur koruması, bkz. §8. 17 Kasım 2026: mini sera yerine şeffaf örtü seçildi; henüz alınmadı |
+| Sensör uzatma kablosu | — | Evde | Cat6 kablo evde var; yetmezse kırmızı ve siyah montaj kablosu (§2.2) uzatma olarak kullanılır, teller etiketlenir |
 | Radyasyon kalkanı için beyaz, havalandırmalı küçük kap | 1 | Market | DHT22 doğrudan güneşte yanlış okur |
 | Şeffaf oje veya silikon | 1 | Market / hırdavat | Kapasitif sensör kenarları ve kablo girişleri |
 | Mezür (1 L, ml işaretli) | 1 | Market | Akış sensörü kalibrasyonu |
@@ -236,7 +236,7 @@ Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bıra
 - [ ] Kapasitif sensörlerin ilk testi: AOUT–GND havada ve suda ölçülecek (bkz. §3)
 - [ ] MOSFET kartının 3,3 V sinyalle tam açılıp açılmadığı, şamandıranın hangi konumda kapandığı, akış sensörünün yön oku (bkz. §6.1 testleri)
 - [ ] UNO Q dijital pinlerinin 5 V toleransının ve USB-C güç gereksiniminin resmi datasheet'ten doğrulanması
-- [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (parçalar geldi, ölçülecek)
+- [ ] 4×6 mm hortumun YF-S401 ağızlarına uyumu sulama hattı kurulurken denenecek (pompaya uyduğu 17 Kasım'da görüldü; kalın hortum ve redüksiyon alınmayacak)
 - [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
 - [ ] Balkonun yönü ve yağmurdan korunan alanın boyutu
 - [ ] Yayın için GitHub deposu ve lisans (kaynak kod MIT, dokümantasyon ve veri CC BY 4.0 önerildi)

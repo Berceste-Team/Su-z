@@ -285,7 +285,7 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 | **1000 µF 16 V elektrolitik kondansatör** | 2 | 5 V pompa hattında, MOSFET kartlarının yanında; pompa açılışındaki gerilim düşüşünün analog nem okumalarını bozmasını önler |
 | **Depo, 20 L** (ışık geçirmeyen, kapaklı, litre işaretli) | 2 | Bütçeli su kaynağı |
 | **Bitki yatağı kasası** (≈ 60 × 40 × 20 cm, drenaj delikli), toprak, tohum | 2 | Test yatakları |
-| **Sulama hattı** (8×5 mm ve 4/6 mm hortum, redüksiyon, çekvalf, T-parça, damlatıcı) | 2 set | Kontrollü su uygulaması |
+| **Sulama hattı** (4×6 mm silikon hortum, çekvalf, T-parça, delikli hortum) | 2 set | Kontrollü su uygulaması |
 | Breadboard, pertinaks, klemens, jumper ve montaj kablosu, makaron, gerilim bölücü dirençler | — | Deneme, kalıcı kurulum ve bağlantı |
 | Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Elektronik kutusu (ilk plandaki saklama kabının yerine) |
 | Toprak sıcaklık sensörü (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |

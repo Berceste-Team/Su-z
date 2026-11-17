@@ -253,10 +253,9 @@ def layout(web=False):
               tip(f"Delikli hortum {nm}", f'<path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#3a7fc4" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/><path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#3a7fc4" stroke-width="1.5"/><path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#000" stroke-opacity="0" stroke-width="12"/>')]
         fx = hx + d*70; rx_ = hx + d*122; cx = hx + d*160
         o.append(grp(f"akis{nm}", f'<rect x="{fx-22}" y="{hy-12}" width="44" height="24" rx="4" fill="#dfe9e6" stroke="#1a211f"/><path d="M{fx-d*10},{hy} H{fx+d*10} m{-d*5},-4 l{d*5},4 l{-d*5},4" fill="none" stroke="#1a211f" stroke-width="1.6"/>'))
-        o += [tip(f"Redüksiyon {nm}", f'<path d="M{rx_-d*9},{hy-7} L{rx_+d*9},{hy-3} V{hy+3} L{rx_-d*9},{hy+7} Z" fill="#fff" stroke="#1a211f"/>'),
-              tip(f"Çekvalf {nm}", f'<rect x="{cx-13}" y="{hy-8}" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M{cx-d*7},{hy} H{cx+d*7} m{-d*4},-3.5 l{d*4},3.5 l{-d*4},3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/>'),
+        o += [tip(f"Çekvalf {nm}", f'<rect x="{cx-13}" y="{hy-8}" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M{cx-d*7},{hy} H{cx+d*7} m{-d*4},-3.5 l{d*4},3.5 l{-d*4},3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/>'),
               tip(f"T-parça {nm}", f'<circle cx="{tx}" cy="300" r="6" fill="#fff" stroke="#1a211f"/>'),
-              num(hx - d*22, 470, 1), num(hx - d*18, 300, 2), num(fx, hy-24, 3), num(rx_, hy-22, 4), num(cx, hy-22, 5), num(tx - d*44, hy-16, 6), num(tx + 16, 284, 7), num(x0+250, 318, 8)]
+              num(hx - d*22, 470, 1), num(hx - d*18, 300, 2), num(fx, hy-24, 3), num(cx, hy-22, 4), num(tx + 16, 284, 5), num(x0+250, 318, 6)]
         # kablo demetleri (kesik çizgi)
         bxc = 600
         ex = bxc - side*30
@@ -269,9 +268,9 @@ def layout(web=False):
     o += [f'<path d="M600,404 V470 H690" fill="none" stroke="#1a211f" stroke-width="1.4"/>', f'<rect x="690" y="458" width="46" height="24" rx="3" fill="#fff" stroke="#1a211f"/>',
           t(713, 474, "priz", 8.5, "bold", anchor="middle"), t(744, 474, "USB-C adaptör + 5 V adaptör; topraklı, sudan uzak ve kuru", 8.5, fill="#66716d")]
     return "\n".join(o)
-LEGEND = ["Mini pompa: kovanın dibinde, tamamen suyun içinde.", "Kalın hortum: pompanın 7,5 mm çıkışından akış sensörüne.",
-          "Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.", "Redüksiyon: kalın hortumdan 4×6 mm ince hortuma geçiş.",
-          "Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.", "İnce hortum (4×6 mm): saksının üstüne kadar.",
+LEGEND = ["Mini pompa: kovanın dibinde, tamamen suyun içinde.", "Hortum (4×6 mm silikon): pompa çıkışından akış sensörüne, oradan saksının üstüne kadar tek ölçü.",
+          "Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.",
+          "Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.",
           "T-parça: hattı saksının ortasında ikiye ayırır.", "Delikli hortum: toprağın üstünde, iki ucu kapalı, iğneyle delinmiş."]
 LNOTES = ["Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır. Toprağa girmeden önce kart kenarlarına şeffaf oje sürülür.",
           "Şamandıra kovanın dibine yakın durur: su onun altına inince pompa kilitlenir. Kovalar sandalyede, su seviyesi kesik mavi çizginin altında.",
