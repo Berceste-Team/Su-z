@@ -97,8 +97,8 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Kalem | Adet | Nereden | Not |
 | :--- | :-: | :--- | :--- |
 | Kasa (~60 × 40 × 20 cm) | 2 (özdeş) | Balıkçı (strafor), pazar, ambalajcı, Trendyol | Bkz. §7 |
-| Naylon astar + drenaj tepsisi | 2 | Hırdavat / market | Süzülen suyu ölçmek için tepsi |
-| Bidon, 20 L, ışık geçirmeyen, kapaklı | 2 | Hırdavat | Şamandıra kapağa değil, iç duvara sarkıtılan şeride takılır; delik açılmaz (bkz. §6.1) |
+| Drenaj tepsisi (+ kasa delikliyse naylon astar) | 2 | Hırdavat / market | Süzülen suyu tutar ve ölçmeye yarar; masadaki elektroniğe su akmasını önler. Alınacak |
+| Kova (su kabı), kapaklı ve ışık geçirmeyen | 2 | Ayarlanacak | 17 Kasım 2026: 20 L bidon yerine kova seçildi (geniş ağız; pompa ve şamandıra yerleşimi kolay). Şamandıra iç duvara sarkıtılan şeride takılır; delik açılmaz (bkz. §6.1). Hacim netleşince README'deki 20 L değeri güncellenecek |
 | Hortum 4/6 mm + T-parça + çekvalf | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Çekvalf pompa durunca hortumdaki suyun geri kaçmasını önler. Redüksiyon gerekmedi (17 Kasım 2026: 4×6 mm hortum pompaya doğrudan uyuyor). 12 Kasım 2026: 2 × 3 m silikon 4×6 mm hortum, T-parça ve çekvalf alındı |
 | Damlatıcı veya kılcal boru | 2 set | Akvaryumcu / ziraat bayi | |
 | Toprak, torf, perlit | 2 yatak için tek torba karışım | Fidancı / ziraat bayi | İki yatak aynı karışımla doldurulur |
@@ -107,9 +107,10 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Şeffaf PE örtü | 1 | Hırdavat | Yağmur koruması, bkz. §8. 17 Kasım 2026: mini sera yerine şeffaf örtü seçildi; henüz alınmadı |
 | Sensör uzatma kablosu | — | Evde | Cat6 kablo evde var; yetmezse kırmızı ve siyah montaj kablosu (§2.2) uzatma olarak kullanılır, teller etiketlenir |
 | Radyasyon kalkanı için beyaz, havalandırmalı küçük kap | 1 | Market | DHT22 doğrudan güneşte yanlış okur |
-| Şeffaf oje veya silikon | 1 | Market / hırdavat | Kapasitif sensör kenarları ve kablo girişleri |
-| Mezür (1 L, ml işaretli) | 1 | Market | Akış sensörü kalibrasyonu |
-| Mutfak terazisi (1 g hassasiyet) | 1 | Evde ya da market | Gravimetrik kalibrasyon (E1) |
+| Şeffaf oje | 1 | Evde var | Kapasitif sensör kart kenarları |
+| Soğuk silikon (şeffaf, nötr), 1 tüp | 1 | Hırdavat | Elektronik kutusunun kablo girişleri. Asetik (sirke kokulu) tip bakır uçları karartabilir; sıcak silikon dışarıda tutmaz. Alınacak |
+| Mezür / ölçü kabı (1 L, ml işaretli) | 1 | Market | Elle sulama ve akış sensörü kalibrasyonu. Evde yok, alınacak |
+| Mutfak terazisi (1 g hassasiyet) | 1 | Evde var | Gravimetrik kalibrasyon (E1), hasatta taze ağırlık |
 | USB-C şarj aleti (5 V 3 A / en az 15 W) ve kablo | 1 | Evde | UNO Q beslemesi |
 
 ## 5. Sadeleştirme ve gerekçeleri
