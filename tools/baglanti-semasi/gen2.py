@@ -87,6 +87,7 @@ NOTES = {
      "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez.",
      "Oje: sensör toprağa girmeden önce kartın kesik kenarlarına şeffaf oje sür, kurumasını bekle; üstteki elektronik kısmı oje ya da makaronla koru. Ojesiz kenar nem çeker ve okuma kayar."],
  2: ["Önkoşul: güç hatları kurulu. Adaptörü prize en son tak; pompalar yalnızca suyun içindeyken çalıştırılır.",
+     "5 V girişi: adaptörün fişi kesildi, iki teli klemensle bağlı. İlk güç vermeden önce multimetreyle + teli bul (DC 20 V kademesi, +5 okunan yönde kırmızı prob +).",
      "MOSFET kartı üç klemenslidir (+, LOAD, −): pompa + ile LOAD arasına bağlanır. Yazılar kartın arka yüzündedir; çizimdeki klemens sırası temsilidir, yazıya uy.",
      "Pompadan önce test: yalnızca adaptör bağlıyken + ile LOAD arası 0 V; PWM'e 3,3 V verince yaklaşık 5 V ve kart LED'i yanar."],
  3: ["Kontrol: multimetre süreklilik kademesinde, şamandırayı oynatınca bir konumda bip, diğerinde sessiz. Tellerin yönü fark etmez."],
@@ -284,7 +285,7 @@ def pdfpage(no, tot, title, sub, body, h=PH):
     return "\n".join([f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}">',
         f'<rect width="{W}" height="{h}" fill="#fff"/>', t(40, 30, title, 17, "bold"), t(40, 46, sub, 9.5, fill="#66716d"),
         t(W-40, 30, f"Suİz bağlantı şeması · {no}/{tot}", 9, fill="#66716d", anchor="end"),
-        t(W-40, 44, "17 Kasım 2026 · taslak; parçalar 16 Kasım'da karşılaştırıldı, testler bekliyor", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
+        t(W-40, 44, "21 Kasım 2026 · taslak; parçalar 16 Kasım'da karşılaştırıldı, testler bekliyor", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
 def rows_for(s): return [(k, col, a, b, n) for k, st, col, a, b, n, g in ROWS if st == s]
 TOT = 8
 fig_g = lambda only=None: '<g transform="translate(0,40)">' + parts() + wires_svg(only=only) + '</g>'

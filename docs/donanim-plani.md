@@ -30,7 +30,7 @@ Tüm kalemler 20.10.2026'da **stokta**, sipariş **teslim alındı** (Kasım 202
 | 4 | Şamandıra, dik tip (Robotistan ürün kodu 18584) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi. Dik tip, iki sarı tel, polarite yok; kovanın iç duvarına sarkıtılan şeride takılır (bkz. §6.1). Fiyat ilk plandaki üründen (ZP7510) kalmadır; 18584 için doğrulanmadı |
 | 5 | [DHT22 Dijital Sıcaklık ve Nem Sensörü Modülü](https://www.robotistan.com/dht22-sicaklik-nem-sensoru-modulu) | 1 | **2** | 105,62 | 211,24 | Modül tipi (3,3–5 V). Ortam sıcaklık/nem, VPD ve ET₀ hesabı |
 | 6 | [5V 2A DC Adaptör 5.5mm x 2.1mm - 1 Metre Kablo](https://www.robotistan.com/5v-2a-dc-adaptor-55mm-x-21mm-1-metre-kablo) | 1 | **1** | 142,44 | 142,44 | Pompa ve sensör hattı. UNO Q ayrı beslenir (bkz. §6) |
-| 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi |
+| 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi olarak alındı, ama gelen parça erkek fişli çıktı ve adaptöre takılamıyor. 21 Kasım 2026: adaptörün fişi kesildi, iki tel klemensle bağlandı; bu parça kullanılmıyor (fişi geri takmak için saklanıyor) |
 | 8 | [1N5819 Diyot](https://www.robotistan.com/1n5819-diyot) | 2 | **10** | 2,96 | 29,60 | Pompa flyback koruması |
 | 9 | [1/4 W 10K Direnç Paketi](https://www.robotistan.com/14w-10k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Akış darbe hatlarında 5 V → 3,3 V bölücü (üst direnç) |
 | 10 | [1/4 W 20K Direnç Paketi](https://www.robotistan.com/14w-20k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Bölücünün alt direnci |
@@ -130,9 +130,9 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 ```text
 USB-C şarj aleti (5 V 3 A) ──> UNO Q USB-C
 
-5 V 2 A adaptör ─> Barrel jack ─┬─> LR7843 A "+" ─> Pompa A ─> LR7843 A "LOAD"   [1N5819: + ile LOAD arasında, çizgili uç +'da]
-                                ├─> LR7843 B "+" ─> Pompa B ─> LR7843 B "LOAD"
-                                └─> YF-S401 A/B VCC
+5 V 2 A adaptör ─> klemens (fiş kesildi) ─┬─> LR7843 A "+" ─> Pompa A ─> LR7843 A "LOAD"   [1N5819: + ile LOAD arasında, çizgili uç +'da]
+                                          ├─> LR7843 B "+" ─> Pompa B ─> LR7843 B "LOAD"
+                                          └─> YF-S401 A/B VCC
 Adaptör GND ──> LR7843 A/B "−" (kart pompanın eksi tarafını anahtarlar)
 Ortak GND: 5 V adaptör GND'si ile UNO Q GND'si birleştirilir (akış sinyali için şart)
 UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
@@ -188,7 +188,7 @@ Parçalar açılıp şemayla karşılaştırıldı. İlk şemadaki dört klemens
 4. Şamandıra: hangi konumda kontak kapanıyor.
 5. Akış sensörü: bölücünün orta noktası ile GND arası 0–3,3 V arasında gidip gelmeli, 3,4 V'u geçmemeli; ancak ondan sonra D2/D3'e bağlanır.
 
-Durum: üç MOSFET kartından biri lehimlendi (bir GND lehimi soğuk kalmış olabilir, kontrol edilecek); kalan ikisi lehimlenmedi.
+Durum (21 Kasım 2026): MOSFET kartları lehimlendi (ilk karttaki bir GND lehimi soğuk kalmış olabilir, 2. testte kontrol edilecek). Elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı. Henüz güç verilmedi ve yukarıdaki testlerin hiçbiri yapılmadı. Güç vermeden önce adaptörün + ucu multimetreyle doğrulanır.
 
 **İlk kez kuranlar için sıra:** her modül önce breadboard üzerinde tek başına denenir (önce multimetreyle gerilim kontrolü, sonra kod). Pompa ve şamandıra timsah kabloyla denenir. Hepsi çalıştıktan sonra pertinaksa lehimlenir ve klemenslerle kutuya taşınır.
 

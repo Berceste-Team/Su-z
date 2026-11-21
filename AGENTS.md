@@ -20,7 +20,9 @@
 6. Commit ve push yalnızca kullanıcı istediğinde yapılır.
 7. Şemanın kaynağı `tools/baglanti-semasi/gen2.py`'dir; çalıştırınca `tools/baglanti-semasi/index.html` ve `docs/sema/index.html` yazılır (ikisi aynı olmalı). Şema değişince PDF de (`Suiz-Baglanti-Semasi.pdf`) `out/b1…b8.svg` dosyalarından yeniden üretilir.
 
-## Güncel durum (17 Kasım 2026)
+## Güncel durum (21 Kasım 2026)
+
+- 21 Kasım 2026: MOSFET kartları lehimlendi, elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı (gelen klemensli jak erkek çıktı). Henüz güç verilmedi, hiçbir test yapılmadı. Yataklar hazırlanıyor; Tur 1 ekiminin 19 Kasım'da yapılıp yapılmadığı teyit edilmedi, takvim buna göre gözden geçirilecek.
 
 - Robotistan siparişi ve 6 kapasitif nem sensörü (v2.0, HW-390, Robocombo) teslim alındı ve parçadan doğrulandı. Elde ayrıca dirençli tip sensörler var; deneyde kullanılmaz.
 - **Kullanıcıya hatırlat (kendisi istedi, 16 Kasım 2026):** kapasitif nem sensörleri toprağa girmeden önce kart kenarlarına şeffaf oje sürülmeli, elektronik kısım oje ya da makaronla korunmalı. Bu iş yapıldığı teyit edilene kadar, sensörler ya da ekim konuşulduğunda ve her oturumun sonunda hatırlatın; yapılınca bu maddeyi silin. Aynı not şemanın nem sensörü adımında da yazar.

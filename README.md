@@ -25,7 +25,7 @@
 | **Geliştirme dönemi** | 15 Ekim – 30 Aralık 2026 |
 | **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitkiler (turp / roka, 3–4 hafta) |
 | **Yayın** | GitHub, Arduino Project Hub ve maker.robotistan.com (yayın penceresi: 30 Aralık 2026 – 15 Ocak 2027) |
-| **Durum** | Robotistan siparişi ve 6 kapasitif nem sensörü (v2.0, 4 + 2 yedek) teslim alındı; sensörler 16 Kasım 2026'da parçadan doğrulandı. Donanım ve MVP aşaması 9 Kasım 2026'da başladı; deney takvimi 15 Ocak 2027'ye kadar uzar (§9.2, §11) |
+| **Durum** | 21 Kasım 2026: parçalar teslim alındı ve 16 Kasım'da parçadan doğrulandı; MOSFET kartları lehimlendi ve devrenin elektrik bağlantıları kuruldu. Henüz güç verilmedi, hiçbir parça test edilmedi; yataklar hazırlanıyor. Deney takvimi 15 Ocak 2027'ye kadar uzar (§9.2, §11) |
 | **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler Notion tahtasında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
 
 ## 📑 İçindekiler
