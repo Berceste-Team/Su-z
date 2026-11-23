@@ -1,6 +1,6 @@
 # Suİz — Donanım Temin ve Hazırlık Planı
 
-> **Senkronizasyon:** Bu belge Notion ana dokümanıyla senkron tutulur (bkz. [AGENTS.md](../AGENTS.md)). Notion güncel görev durumunun, bu belge yayınlanacak teknik kaydın ana kaynağıdır.
+> **Kaynak:** Projenin güncel bilgisi [proje sitesinde](https://berceste-team.github.io/Su-z/) tutulur; bu belge donanım ve tesisatın ayrıntılı kaydıdır ve siteyle aynı karar ve tarihleri içerir. Notion yalnızca görev tahtası için kullanılır (bkz. [AGENTS.md](../AGENTS.md)).
 >
 > Hazırlayan: donanım ve tesisat sorumlusu · İlk sürüm: 17 Ekim 2026 · Sadeleştirilmiş sürüm: 20 Ekim 2026
 > Fiyatlar 20.10.2026'da robotistan.com ve direnc.net ürün sayfalarında görülen KDV dahil liste fiyatlarıdır. Stok durumu aynı gün ürün sayfalarından tek tek kontrol edildi. Sipariş öncesi sepette tekrar bakılmalıdır.
@@ -9,9 +9,9 @@
 
 | Konu | Karar |
 | :--- | :--- |
-| **Hazırlık süresi** | Donanım ve MVP için 9 Kasım – 8 Aralık 2026. Bitki yetiştirme ve A/B deneyi dahil toplam süre 15 Ocak 2027'ye kadar (16 Kasım 2026'da uzatıldı); güncel takvim README §11 ve Notion'dadır |
+| **Hazırlık süresi** | Kurulum ve kural tabanlı sulama için 9 Kasım – 14 Aralık 2026; kod dondurma 16 Aralık. Tek ekim (23 Kasım 2026 kararı); A/B dahil toplam süre 15 Ocak 2027'ye kadar; güncel takvim proje sitesinde ve README §11'dedir |
 | **Konum** | Adana, balkon |
-| **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Tek istisna kapasitif toprak nem sensörüdür (Robotistan'da yok, bkz. [Bölüm 3](#3-robotistan-dışı-tek-kalem)) |
+| **Temin kuralı** | Elektronik kalemlerin tamamı Robotistan'dan alınır. Tek istisna kapasitif toprak nem sensörüdür (Robotistan'da yok, bkz. [Bölüm 3](#3-robotistan-dışı-kalemler)); aynı siparişe header ve kondansatör de eklendi |
 | **Bütçe** | 50 USD Robotistan hediye çeki. Çeki aşan kısım ve kargo eşiği ekip tarafından karşılanır |
 | **Deneyim** | Ekip ilk kez tesisat ve devre kuruyor. Bu yüzden kritik her kalemden **en az bir yedek** alınır; deneme için breadboard, kalıcı kurulum için pertinaks ve lehim malzemesi listeye eklenmiştir |
 | **Sadeleştirme** | İlk plana göre 6 kalem çıkarıldı (bkz. [Bölüm 5](#5-sadeleştirme-ve-gerekçeleri)). Başvurunun çekirdek iddiaları (A/B deneyi, iki derinlikte kapasitif ölçüm, akışla doğrulanan sulama, MCU'da donanımsal emniyet) aynen korunur |
@@ -27,10 +27,10 @@ Tüm kalemler 20.10.2026'da **stokta**, sipariş **teslim alındı** (Kasım 202
 | 1 | [Su Akış Sensörü YF-S401 Debimetre 0.3-6L/Min 3.5mm - Beyaz](https://www.robotistan.com/yfs401-akis-sensoru-3mm) | 2 | **3** | 226,33 | 678,99 | Yatak başına akış ve hacim. Depo hacmi de bundan hesaplanır. Üç tel 3'lü dişi JST konnektörle biter (sarı sinyal, siyah GND, kırmızı 5 V); erkek jumper doğrudan girer |
 | 2 | [Mini Dalgıç Su Pompası 6V 120 Litre/Saat](https://www.robotistan.com/mini-dalgic-pompa-6v-120-litresaat) | 2 | **4** | 50,09 | 200,36 | 2,5–6 V, 130–220 mA. Giriş 4,7 mm, çıkış 7,5 mm. 5 V ile doğrudan çalışır. Tek siyah kılıfta ince kırmızı ve siyah tel; uçlar soyulup klemense sıkılır |
 | 3 | [LR7843 MOSFET Sürücü Kartı](https://www.robotistan.com/lr7843-mosfet-kontrol-modulu) | 2 | **3** | 48,89 | 146,67 | Optokuplörlü, 3,3–5 V sinyalle tetiklenir (3,3 V ile açıldığı henüz ölçülmedi). Lehimsiz gelir; üç klemensli: −, LOAD, + (bkz. §6.1) |
-| 4 | Şamandıra, dik tip (Robotistan ürün kodu 18584) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi. Dik tip, iki sarı tel, polarite yok; kovanın iç duvarına sarkıtılan şeride takılır (bkz. §6.1) |
+| 4 | Şamandıra, dik tip (Robotistan ürün kodu 18584) | 2 | **3** | 145,45 | 436,35 | Şamandıra: yazılımdan bağımsız düşük seviye kilidi. Dik tip, iki sarı tel, polarite yok; kovanın iç duvarına sarkıtılan şeride takılır (bkz. §6.1). Fiyat ilk plandaki üründen (ZP7510) kalmadır; 18584 için doğrulanmadı |
 | 5 | [DHT22 Dijital Sıcaklık ve Nem Sensörü Modülü](https://www.robotistan.com/dht22-sicaklik-nem-sensoru-modulu) | 1 | **2** | 105,62 | 211,24 | Modül tipi (3,3–5 V). Ortam sıcaklık/nem, VPD ve ET₀ hesabı |
 | 6 | [5V 2A DC Adaptör 5.5mm x 2.1mm - 1 Metre Kablo](https://www.robotistan.com/5v-2a-dc-adaptor-55mm-x-21mm-1-metre-kablo) | 1 | **1** | 142,44 | 142,44 | Pompa ve sensör hattı. UNO Q ayrı beslenir (bkz. §6) |
-| 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi |
+| 7 | [Klemens Girişli DC Barrel Jack](https://www.robotistan.com/klemens-girisli-dc-barrel-jack-dc-barrel-to-wire-jack) | 1 | **2** | 9,66 | 19,32 | Adaptör girişi olarak alındı, ama gelen parça erkek fişli çıktı ve adaptöre takılamıyor. 21 Kasım 2026: adaptörün fişi kesildi, iki tel klemensle bağlandı; bu parça kullanılmıyor (fişi geri takmak için saklanıyor) |
 | 8 | [1N5819 Diyot](https://www.robotistan.com/1n5819-diyot) | 2 | **10** | 2,96 | 29,60 | Pompa flyback koruması |
 | 9 | [1/4 W 10K Direnç Paketi](https://www.robotistan.com/14w-10k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Akış darbe hatlarında 5 V → 3,3 V bölücü (üst direnç) |
 | 10 | [1/4 W 20K Direnç Paketi](https://www.robotistan.com/14w-20k-direnc-paketi-10-adet) | 2 | **20** | 0,24 | 4,80 | Bölücünün alt direnci |
@@ -71,20 +71,24 @@ Tüm kalemler 20.10.2026'da **stokta**, sipariş **teslim alındı** (Kasım 202
 | Çekirdek elektronik | 1.874,57 |
 | Bağlantı ve montaj | 1.097,07 |
 | **Robotistan ara toplam** | **≈ 2.971,64** |
-| Alet (evde yoksa) | 1.213,85 |
+| Alet (evde yoksa; multimetre, havya ve lehim teli elde) | 1.213,85 |
 | **Alet dahil** | **≈ 4.185,49** |
 
 Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 
 **Robotistan'da tükenmiş veya bulunmayanlar (20.10.2026):** kapasitif toprak nem sensörü, su geçirmez DS18B20, 8×5 mm hortum, 22AWG montaj kablosu, 2600'lük direnç seti.
 
-## 3. Robotistan dışı tek kalem
+## 3. Robotistan dışı kalemler
 
 | Kalem | Kaynak | Alınacak | Birim (TL) | Toplam (TL) | Not |
 | :--- | :--- | :-: | --: | --: | :--- |
-| [Kapasitif Toprak Nem Sensörü - Higrometre](https://www.direnc.net/kapasitif-toprak-nem-sensoru) | direnc.net (20.10.2026 stokta) | **6** (4 + 2 yedek) | 50,56 | 303,36 | 3,3–5,5 V, üzerinde regülatör var. Çıkış 0–3 V, yani UNO Q analog girişleri için güvenli |
+| [Kapasitif Toprak Nem Sensörü - Higrometre](https://robocombo.com/kapasitif-toprak-nem-sensoru-higrometre-3237) | Robocombo (sipariş no. 3767, 11 Kasım 2026) | **6** (4 + 2 yedek) | 42,50 | 255,00 | Gelen kart v2.0 (HW-390). 3,3–5,5 V, üzerinde regülatör var. Çıkış 0–3 V, yani UNO Q analog girişleri için güvenli |
+| 40 pin erkek header (altın kaplı) | Robocombo (aynı sipariş) | 3 | 5,00 | 15,00 | Modülleri pertinaksa sökülebilir bağlamak |
+| 40 pin dişi header | Robocombo (aynı sipariş) | 3 | 6,50 | 19,50 | Aynı amaç |
+| 1000 µF 16 V elektrolitik kondansatör | Robocombo (aynı sipariş) | 2 | 5,00 | 10,00 | 5 V pompa hattında, MOSFET kartlarının yanında (şemada C1, C2); pompa açılışındaki gerilim düşüşünün analog nem okumalarını bozmasını önler |
+| | **Toplam** (150,00 TL HepsiJet kargo dahil) | | | **449,50** | |
 
-**Durum (16 Kasım 2026): 6 kapasitif sensör teslim alındı ve parçadan doğrulandı.** Sipariş direnc.net yerine başka bir siteden verildi. Gelen sensör "Capacitive Soil Moisture Sensor v2.0" (HW-390): tek parça siyah bıçak, üç pin (GND, VCC, AOUT), 3'lü JST kablo (siyah GND, kırmızı VCC, sarı AOUT). 3,3 V'tan beslenir; bıçak yalnızca beyaz çizgiye kadar toprağa girer. **Toprağa girmeden önce yapılacak:** kart kenarlarına şeffaf oje sürülür (kesik kenarlar nem çekip okumayı kaydırır), elektronik kısım oje ya da makaronla korunur. İlk test: AOUT–GND arası havada ve suda ölçülür; iki değer belirgin farklı olmalıdır. Elde ayrıca dirençli tip sensörler (iki bacaklı çıplak metal çatal, dört pinli karşılaştırıcı kartla) var; toprakta haftalar içinde paslandıkları için deneyde kullanılmazlar, yalnızca tezgâh denemesi içindir.
+**Durum (16 Kasım 2026): 6 kapasitif sensör teslim alındı ve parçadan doğrulandı.** İlk planda kaynak direnc.net'ti (20.10.2026'da 50,56 TL, stokta); sipariş anında orada stok olmadığı için Robocombo'dan verildi (sipariş no. 3767, 11 Kasım 2026). Gelen sensör "Capacitive Soil Moisture Sensor v2.0" (HW-390): tek parça siyah bıçak, üç pin (GND, VCC, AOUT), 3'lü JST kablo (siyah GND, kırmızı VCC, sarı AOUT). 3,3 V'tan beslenir; bıçak yalnızca beyaz çizgiye kadar toprağa girer. **Toprağa girmeden önce yapılacak:** kart kenarlarına şeffaf oje sürülür (kesik kenarlar nem çekip okumayı kaydırır), elektronik kısım oje ya da makaronla korunur. İlk test: AOUT–GND arası havada ve suda ölçülür; iki değer belirgin farklı olmalıdır. Elde ayrıca dirençli tip sensörler (iki bacaklı çıplak metal çatal, dört pinli karşılaştırıcı kartla) var; toprakta haftalar içinde paslandıkları için deneyde kullanılmazlar, yalnızca tezgâh denemesi içindir.
 
 **Neden dışarıdan:** Robotistan'da yalnızca rezistif toprak sensörleri var. Rezistif problar 2,5 ayda korozyona uğrar ve README'deki "korozyona dayanıklı kapasitif sensör" iddiasını bozar. Kart kenarları ve üstteki elektronik oje veya makaronla kaplanır.
 
@@ -93,19 +97,20 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Kalem | Adet | Nereden | Not |
 | :--- | :-: | :--- | :--- |
 | Kasa (~60 × 40 × 20 cm) | 2 (özdeş) | Balıkçı (strafor), pazar, ambalajcı, Trendyol | Bkz. §7 |
-| Naylon astar + drenaj tepsisi | 2 | Hırdavat / market | Süzülen suyu ölçmek için tepsi |
-| Bidon, 20 L, ışık geçirmeyen, kapaklı | 2 | Hırdavat | Şamandıra kapağa ya da yan duvara monte edilir |
-| Hortum **8 × 5 mm** (iç çap 5 mm) | ~5 m | Akvaryumcu | Pompa çıkışı 7,5 mm. Robotistan'ın pompaya önerdiği ölçü budur (orada tükenmiş) |
-| Hortum 4/6 mm + redüksiyon + T-parça | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Redüksiyon ölçüsü ürünler gelince ölçülerek alınır |
+| Drenaj tepsisi (+ kasa delikliyse naylon astar) | 2 | Hırdavat / market | Süzülen suyu tutar ve ölçmeye yarar; masadaki elektroniğe su akmasını önler. Alınacak |
+| Kova (su kabı), kapaklı ve ışık geçirmeyen | 2 | Ayarlanacak | 17 Kasım 2026: 20 L bidon yerine kova seçildi (geniş ağız; pompa ve şamandıra yerleşimi kolay). Şamandıra iç duvara sarkıtılan şeride takılır; delik açılmaz (bkz. §6.1). Hacim netleşince README'deki 20 L değeri güncellenecek |
+| Hortum 4/6 mm + T-parça + çekvalf | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Çekvalf pompa durunca hortumdaki suyun geri kaçmasını önler. Redüksiyon gerekmedi (17 Kasım 2026: 4×6 mm hortum pompaya doğrudan uyuyor). 12 Kasım 2026: 2 × 3 m silikon 4×6 mm hortum, T-parça ve çekvalf alındı |
 | Damlatıcı veya kılcal boru | 2 set | Akvaryumcu / ziraat bayi | |
 | Toprak, torf, perlit | 2 yatak için tek torba karışım | Fidancı / ziraat bayi | İki yatak aynı karışımla doldurulur |
-| Turp veya roka tohumu | 2 paket (Tur 1 + Tur 2) | Ziraat bayi | |
-| Kapaklı plastik saklama kabı (~2 L) | 1 (+1 yedek) | Market / züccaciye | Elektronik kutusu (proje kutusu yerine) |
-| Şeffaf PE örtü ya da mini balkon serası | 1 | Hırdavat / Idefix | Yağmur koruması, bkz. §8 |
+| Roka tohumu | Tek ekime yetecek kadar (yedek ekim olmadığı için fazla ekilip seyreltilir) | Trendyol | 23 Kasım 2026: alındı (83 TL). Turp seçeneği düştü |
+| Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Trendyol (12 Kasım 2026'da sipariş edildi) | Elektronik kutusu. İlk plandaki kapaklı saklama kabının yerine alındı |
+| Şeffaf PE örtü | 1 | Hırdavat | Yağmur koruması, bkz. §8. 17 Kasım 2026: mini sera yerine şeffaf örtü seçildi; henüz alınmadı |
+| Sensör uzatma kablosu | — | Evde | Cat6 kablo evde var; yetmezse kırmızı ve siyah montaj kablosu (§2.2) uzatma olarak kullanılır, teller etiketlenir |
 | Radyasyon kalkanı için beyaz, havalandırmalı küçük kap | 1 | Market | DHT22 doğrudan güneşte yanlış okur |
-| Şeffaf oje veya silikon | 1 | Market / hırdavat | Kapasitif sensör kenarları ve kablo girişleri |
-| Mezür (1 L, ml işaretli) | 1 | Market | Akış sensörü kalibrasyonu |
-| Mutfak terazisi (1 g hassasiyet) | 1 | Evde ya da market | Gravimetrik kalibrasyon (E1) |
+| Şeffaf oje | 1 | Evde var | Kapasitif sensör kart kenarları |
+| Soğuk silikon (şeffaf, nötr), 1 tüp | 1 | Hırdavat | Elektronik kutusunun kablo girişleri. Asetik (sirke kokulu) tip bakır uçları karartabilir; sıcak silikon dışarıda tutmaz. Alınacak |
+| Mezür / ölçü kabı (1 L, ml işaretli) | 1 | Market | Elle sulama ve akış sensörü kalibrasyonu. Evde yok, alınacak |
+| Mutfak terazisi (1 g hassasiyet) | 1 | Evde var | Gravimetrik kalibrasyon (E1), hasatta taze ağırlık |
 | USB-C şarj aleti (5 V 3 A / en az 15 W) ve kablo | 1 | Evde | UNO Q beslemesi |
 
 ## 5. Sadeleştirme ve gerekçeleri
@@ -115,7 +120,7 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | **HC-SR04 ×2** ve 2 gerilim bölücüsü | Depo hacmi **akış sensörünün saydığı hacimden** hesaplanır (başlangıç hacmi − toplam akış). Her dolumda bidon işaretinden veya mezürle elle sıfırlanır. Alt sınır kilidi şamandırada kalır | Plan zaten "akış birincil, seviye kaba kontrol" diyordu. Doğrulama zincirinde akış ve toprak tepkisi korunur |
 | **TEMT6000** | MPU, **Open-Meteo**'dan güneş radyasyonu ve ET₀ alır. İnternet yoksa DHT22 sıcaklığıyla **Hargreaves** (FAO-56) yöntemine düşer | Buharlaşma tahmini FAO'nun kendi girdisine dayanır; yerel ölçüm DHT22 ile sürer |
 | **12 V 2 A adaptör + LM2596** | UNO Q evdeki USB-C şarj aletinden, pompa ve sensörler 5 V 2 A adaptörden beslenir | Ayar gerektiren voltaj düşürücü kalkar; VIN pini belirsizliği ortadan kalkar |
-| **Proje kutusu** | Kapaklı plastik saklama kabı | Daha ucuz, sudan daha iyi korur |
+| **Proje kutusu** | Kapaklı plastik saklama kabı; 12 Kasım 2026'da onun yerine şeffaf kapaklı termoplastik buat alındı (§4) | Daha ucuz, sudan daha iyi korur |
 | **AJ-SR04M** (yedek) | — | Ultrasonik sensör kullanılmıyor |
 
 **Dokunulmayanlar:** 4 kapasitif sensör (iki derinlik, çapraz doğrulama), iki ayrı bidon (A/B su bütçesinin fiziksel olarak gösterilmesi), akış sensörü ve şamandıra (doğrulanmış aktüasyon ve donanımsal emniyet).
@@ -125,9 +130,9 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 ```text
 USB-C şarj aleti (5 V 3 A) ──> UNO Q USB-C
 
-5 V 2 A adaptör ─> Barrel jack ─┬─> LR7843 A "+" ─> Pompa A ─> LR7843 A "LOAD"   [1N5819: + ile LOAD arasında, çizgili uç +'da]
-                                ├─> LR7843 B "+" ─> Pompa B ─> LR7843 B "LOAD"
-                                └─> YF-S401 A/B VCC
+5 V 2 A adaptör ─> klemens (fiş kesildi) ─┬─> LR7843 A "+" ─> Pompa A ─> LR7843 A "LOAD"   [1N5819: + ile LOAD arasında, çizgili uç +'da]
+                                          ├─> LR7843 B "+" ─> Pompa B ─> LR7843 B "LOAD"
+                                          └─> YF-S401 A/B VCC
 Adaptör GND ──> LR7843 A/B "−" (kart pompanın eksi tarafını anahtarlar)
 Ortak GND: 5 V adaptör GND'si ile UNO Q GND'si birleştirilir (akış sinyali için şart)
 UNO Q 3,3 V ──> kapasitif sensörler ×4, DHT22
@@ -183,7 +188,7 @@ Parçalar açılıp şemayla karşılaştırıldı. İlk şemadaki dört klemens
 4. Şamandıra: hangi konumda kontak kapanıyor.
 5. Akış sensörü: bölücünün orta noktası ile GND arası 0–3,3 V arasında gidip gelmeli, 3,4 V'u geçmemeli; ancak ondan sonra D2/D3'e bağlanır.
 
-Durum: üç MOSFET kartından biri lehimlendi (bir GND lehimi soğuk kalmış olabilir, kontrol edilecek); kalan ikisi lehimlenmedi.
+Durum (21 Kasım 2026): MOSFET kartları lehimlendi (ilk karttaki bir GND lehimi soğuk kalmış olabilir, 2. testte kontrol edilecek). Elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı. Henüz güç verilmedi ve yukarıdaki testlerin hiçbiri yapılmadı. Güç vermeden önce adaptörün + ucu multimetreyle doğrulanır.
 
 **İlk kez kuranlar için sıra:** her modül önce breadboard üzerinde tek başına denenir (önce multimetreyle gerilim kontrolü, sonra kod). Pompa ve şamandıra timsah kabloyla denenir. Hepsi çalıştıktan sonra pertinaksa lehimlenir ve klemenslerle kutuya taşınır.
 
@@ -203,45 +208,45 @@ Durum: üç MOSFET kartından biri lehimlendi (bir GND lehimi soğuk kalmış ol
 
 ## 8. Balkon kurulumu — Adana
 
-- **Yağmur deneyi bozar.** Yağmur ölçülmeyen bir su girdisidir (P); su bütçesini ve A/B karşılaştırmasını geçersiz kılar. Adana'da yağışlı dönem Kasım–Şubat'tır ve Tur 2 (14 Aralık – 7 Ocak) tam bu döneme denk gelir. Yataklar yağmur almamalı:
+- **Yağmur deneyi bozar.** Yağmur ölçülmeyen bir su girdisidir (P); su bütçesini ve A/B karşılaştırmasını geçersiz kılar. Adana'da yağışlı dönem Kasım–Şubat'tır ve A/B dönemi (17 Aralık – 5 Ocak) tam bu döneme denk gelir. Yataklar yağmur almamalı:
   - saçak / kapalı balkon bölümü, **veya**
   - şeffaf PE / polikarbonat örtü (yanları havalandırmalı), **veya**
   - raflı mini balkon serası (~2.000 TL; ılık havada kapağı açık tutulmalı, aşırı ısınmaya dikkat).
-- **Elektronik:** saklama kabı yağmur ve doğrudan güneş almayan yere konur; kablo girişleri silikonla kapatılır, kablolar kaba aşağıdan girer (damla döngüsü). Priz kaçak akım korumalı olmalı.
+- **Elektronik:** elektronik kutusu (buat) yağmur ve doğrudan güneş almayan yere konur; kablo girişleri silikonla kapatılır, kablolar kaba aşağıdan girer (damla döngüsü). Priz kaçak akım korumalı olmalı.
 - **Depolar:** ışık geçirmeyen ve kapaklı bidon (yosun, sivrisinek, yağmur suyu girişi). Şamandıra bidona monte edilir; her dolumda bidonun yanına çizilen litre işaretleriyle depo hacmi elle kaydedilir.
-- **Sıcaklık ve ışık:** Adana'da don riski düşük; turp ve roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
+- **Sıcaklık ve ışık:** Adana'da don riski düşük; roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
 - **Sensör yerleşimi:** DHT22 iki yatağın ortasına, gölgelikli bir radyasyon kalkanı içine (beyaz, havalandırmalı küçük kap) yerleştirilir; doğrudan güneşte yanlış yüksek sıcaklık okur.
 
 ## 9. Hazırlık takvimi (güncel)
 
-> Önceki takvimler (17 Ekim – 7 Kasım; ardından 30 Aralık'ta biten 9 Kasım planı) geçerliliğini yitirdi. Takvim 16 Kasım 2026'da 15 Ocak 2027'ye kadar uzatıldı (gerekçe README §9.2). Güncel görev ve tarihler Notion görev tahtasında tutulur; özeti aşağıdadır. İki tur korunur.
+> Önceki takvimler (17 Ekim – 7 Kasım; 9 Kasım planı; 16 Kasım'daki iki turlu plan) geçerliliğini yitirdi. 23 Kasım 2026'da tek ekime geçildi (gerekçe README §9.2). Güncel takvim proje sitesindedir, görevler Notion görev tahtasında tutulur; özeti aşağıdadır.
 
 | Dönem | Donanım ve tesisat | Yazılım |
 | :--- | :--- | :--- |
-| **9–19 Kasım** | Siparişi say ve kontrol et; parçaları şemayla karşılaştır (§6.1); MOSFET kartlarını lehimle; UNO Q + App Lab kurulumu, Bridge testi (**M0**); pin 5 V toleransını doğrula; MOSFET, pompa, akış, şamandıra testleri; saksı, kova, toprak, tohum, hortum temini; balkonda yağmur korumalı alan; **19 Kasım Tur 1 ekim** (sistem kurulana kadar mezürle eşit elle sulama ve kayıt) | MCU ↔ MPU mesaj şeması (JSON alanları, birimler, olay tipleri); depo iskeleti (`firmware/`, `app/`, `simulation/`) |
-| **20 Kasım – 8 Aralık** | Nem sensörleri ve DHT22 toprakta, ölçümler kayıtta (**24 Kasım**; önce kart kenarlarına oje); kalibrasyon (**E1**); pompa debisi ve YF-S401 darbe/litre kalibrasyonu; kural tabanlı sulama **3 Aralık**'a kadar Yatak B'de, **8 Aralık**'a kadar Yatak A'da (zamanlayıcı) uçtan uca; **E2** kuruma eğrileri | MCU: örnekleme + medyan filtre, pompa sürücü, akıştan depo hacmi, güvenlik kilitleri. MPU: veri alma + SQLite, Open-Meteo istemcisi, simülatör ilk sürüm, kural tabanlı politika, pano ilk sürüm |
-| **9–13 Aralık** | **E3** güvenlik testleri (9–11 Aralık); **E4** anomali enjeksiyonu (tarih netleşecek); **13 Aralık** Tur 1 hasadı, dondurma, yatakların boşaltılması | Model v1, model Tur 1'de gölge modda, anomali tespiti, bütçe politikası, pano (karar gerekçesi), senaryo motoru |
-| **14 Aralık – 7 Ocak** | **Tur 2** ekim ve **E5** A/B deneyi (24 gün) | Dokümantasyon, video |
-| **8–15 Ocak** | Analiz ve sonuçların yayını (8–10 Ocak); yayın dönemi 15 Ocak'ta biter | **E6**, grafikler, yayın |
+| **23 – 30 Kasım** | Yatakları hazırla (kasa, tepsi, toprak); **ekim en geç 30 Kasım** (sistem kurulana kadar ölçü kabıyla eşit elle sulama ve kayıt); sensörlere oje | Sözleşme v1, test hattı, Bridge PoC (yazılım planı Faz 0) |
+| **1 – 7 Aralık** | İlk güç verme ve testler (§6.1); kalibrasyon (**E1**); **sensörler ve DHT22 toprakta, en geç 7 Aralık** | Gerçek veri hattı: Bridge → SQLite, kalibrasyon modülü (Faz 1) |
+| **8 – 14 Aralık** | Sulama hattı ve kural tabanlı sulama iki yatakta; **E3** güvenlik testleri; **E2** kuruma eğrileri | Komutlar, heartbeat, zamanlayıcı ve eşik politikası, karar kaydı, bütçe (Faz 2) |
+| **15 – 16 Aralık** | Son kontroller; **16 Aralık kod ve donanım dondurma** | Gölge modda model, kalite kontrolleri, pano (Faz 3); `v1.0-freeze` etiketi |
+| **17 Aralık – 5 Ocak** | **E5** A/B tam veri (20 gün); **6 Ocak hasat** | Dokümantasyon, video |
+| **7 – 15 Ocak** | Analiz ve sonuçların yayını (7–10 Ocak); yayın dönemi 15 Ocak'ta biter | **E6**, grafikler, yayın |
 
 Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bırakılmıştır).
 
 ## 10. Açık noktalar
 
-- [ ] **Oje (unutma):** 6 kapasitif nem sensörünün kart kenarlarına şeffaf oje sürülecek, elektronik kısım korunacak; sensörler toprağa girmeden önce (hedef 24 Kasım) bitmeli (bkz. §3)
+- [ ] **Oje:** 6 kapasitif nem sensörünün kart kenarlarına şeffaf oje; sensörler toprağa girmeden önce (en geç 7 Aralık). Ayrıntı şemada, sensörlerin yanındaki kırmızı uyarıda
 - [ ] Kapasitif sensörlerin ilk testi: AOUT–GND havada ve suda ölçülecek (bkz. §3)
 - [ ] MOSFET kartının 3,3 V sinyalle tam açılıp açılmadığı, şamandıranın hangi konumda kapandığı, akış sensörünün yön oku (bkz. §6.1 testleri)
 - [ ] UNO Q dijital pinlerinin 5 V toleransının ve USB-C güç gereksiniminin resmi datasheet'ten doğrulanması
-- [ ] Pompa çıkışı (7,5 mm) ile YF-S401 bağlantı ağzı arasındaki redüksiyon ölçüsü (parçalar geldi, ölçülecek)
+- [ ] 4×6 mm hortumun YF-S401 ağızlarına uyumu sulama hattı kurulurken denenecek (pompaya uyduğu 17 Kasım'da görüldü; kalın hortum ve redüksiyon alınmayacak)
 - [ ] YF-S401'in 3,5 mm girişinin pompa debisini ne kadar kıstığı: ilk iş debi ölçülür; 0,3 L/dk altına düşerse sensör alt sınırın dışında kalır
 - [ ] Balkonun yönü ve yağmurdan korunan alanın boyutu
-- [ ] Elde havya, multimetre ve lehim teli olup olmadığı (§2.3)
 - [ ] Yayın için GitHub deposu ve lisans (kaynak kod MIT, dokümantasyon ve veri CC BY 4.0 önerildi)
 
 ## Kaynaklar
 
 - Robotistan ürün sayfaları (20.10.2026): tablolardaki bağlantılar
-- Kapasitif sensör: [direnc.net](https://www.direnc.net/kapasitif-toprak-nem-sensoru)
+- Kapasitif sensör: [Robocombo](https://robocombo.com/kapasitif-toprak-nem-sensoru-higrometre-3237) (ilk planda [direnc.net](https://www.direnc.net/kapasitif-toprak-nem-sensoru))
 - YF-S401 teknik bilgi: [DFRobot wiki](https://wiki.dfrobot.com/sen0216/)
 - UNO Q pin gerilimleri (üçüncü taraf, doğrulanmalı): [etechnophiles](https://www.etechnophiles.com/?p=22458) · [52Pi](https://docs.52pi.com/md/kz-0092/kz-0092/)
 - Hava verisi: [Open-Meteo](https://open-meteo.com/) (radyasyon, ET₀) · Hargreaves yöntemi: FAO-56, Bölüm 3

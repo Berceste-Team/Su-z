@@ -84,8 +84,10 @@ K(5, "gri", [(RX(3), 520), (RX(3), 512), (16, 512), (16, 140), (U("D12")[0], 140
 
 NOTES = {
  1: ["Her nem sensörünün üç teli breadboard'a girer: VCC ve GND alt hatlara, AOUT a sırasına. Aynı sıranın e deliğinden çıkan kablo sinyali UNO Q'ya taşır.",
-     "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez."],
+     "Kontrol: USB-C takılıyken alt + ile alt − arası 3,3 V; her sensörün AOUT–GND arası havada 1,5–3 V. A0–A5'e 3,3 V'tan fazlası verilmez.",
+     "Oje: sensör toprağa girmeden önce kartın kesik kenarlarına şeffaf oje sür, kurumasını bekle; üstteki elektronik kısmı oje ya da makaronla koru. Ojesiz kenar nem çeker ve okuma kayar."],
  2: ["Önkoşul: güç hatları kurulu. Adaptörü prize en son tak; pompalar yalnızca suyun içindeyken çalıştırılır.",
+     "5 V girişi: adaptörün fişi kesildi, iki teli klemensle bağlı. İlk güç vermeden önce multimetreyle + teli bul (DC 20 V kademesi, +5 okunan yönde kırmızı prob +).",
      "MOSFET kartı üç klemenslidir (+, LOAD, −): pompa + ile LOAD arasına bağlanır. Yazılar kartın arka yüzündedir; çizimdeki klemens sırası temsilidir, yazıya uy.",
      "Pompadan önce test: yalnızca adaptör bağlıyken + ile LOAD arası 0 V; PWM'e 3,3 V verince yaklaşık 5 V ve kart LED'i yanar."],
  3: ["Kontrol: multimetre süreklilik kademesinde, şamandırayı oynatınca bir konumda bip, diğerinde sessiz. Tellerin yönü fark etmez."],
@@ -127,9 +129,35 @@ def mosfet(x, y, nm, dname, pwm_top):
          *sig, diode(x+MW//2, y+32, y+66, dname)]
     return "\n".join(o)
 
+RED = "#d0021b"
+OJE_N = "Oje nereye sürülür?"
+OJE_H = ("Şart: toprağa giren kesik kenarlar ve uç (kırmızı çizgi). Kenardan nem çeker, kart şişer, okuma kayar; iki kat, biraz taşırarak sür. "
+         "Önerilir: beyaz çizginin üstündeki elektronik; ince oje ya da makaron. "
+         "Sürme: bıçağın düz yüzleri (ölçüm buradan yapılır) ve konnektör (temas bozulur). "
+         "Kalibrasyonu oje kuruduktan sonra yap.")
+def oje_uyari():
+    """Nem sensörlerinin yanında büyük kırmızı oje uyarısı; bıçak kenarları kırmızı çizilir."""
+    o = []
+    for nm, r, *_ in SENS:
+        xa = RX(r); y = 520
+        o.append(f'<path d="M{xa-5:.1f},{y+44} V{y+92} L{xa+12.7:.1f},{y+104} L{xa+30.4:.1f},{y+92} V{y+44}" fill="none" stroke="{RED}" stroke-width="3" stroke-linejoin="round"/>')
+    bx, by, bw, bh = 828, 500, 352, 122
+    o += [f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="6" fill="#fff1f1" stroke="{RED}" stroke-width="3"/>',
+          f'<path d="M{bx},{by+60} H{RX(25)+44:.1f}" stroke="{RED}" stroke-width="4"/>',
+          f'<path d="M{RX(25)+44:.1f},{by+60} l12,-8 v16 Z" fill="{RED}" transform="rotate(180 {RX(25)+50:.1f} {by+60})"/>',
+          t(bx+14, by+30, "ÖNCE OJE!", 22, "bold", RED),
+          t(bx+14, by+52, "Nem sensörleri toprağa girmeden önce:", 11, "bold", RED),
+          t(bx+14, by+70, "• Şart: kırmızı çizilen kenarlar ve uç, iki kat", 10.5),
+          t(bx+14, by+86, "• Önerilir: beyaz çizginin üstündeki elektronik", 10.5),
+          t(bx+14, by+102, "• Sürme: bıçağın düz yüzleri ve konnektör", 10.5),
+          t(bx+bw-12, by+28, "üzerine gel: ayrıntı", 8.5, fill="#96560a", anchor="end")]
+    o = [f'<g class="tp" data-n="{OJE_N}" data-h="{OJE_H}">' + "\n".join(o) + '</g>']
+    return "\n".join(o)
+
 def parts():
     o = [uno(("3V3", "GND", "A0", "A1", "A2", "A3", "D2", "D3", "D4", "D5", "D10", "D11", "D12")), bread()]
     for nm, r, *_ in SENS: o.append(sensor(RX(r), "Nem " + nm))
+    o.append(oje_uyari())
     dx = RX(3)
     o += [f'<rect x="{dx-13:.1f}" y="514" width="51.4" height="70" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
           pinmark(dx, 520, "out", "d"), pinmark(dx+12.7, 520, "+", "d"), pinmark(dx+25.4, 520, "−", "d"), t(dx+12.7, 564, "DHT22", 9, "bold", anchor="middle"),
@@ -234,6 +262,8 @@ def layout(web=False):
             body = (f'<path d="M{sx-8},258 H{sx+8} V352 L{sx},364 L{sx-8},352 Z" fill="#2f3a36" stroke="#111"/>'
                     f'<rect x="{sx-10}" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/>'
                     f'<line x1="{sx-12}" y1="300" x2="{sx+12}" y2="300" stroke="#fff" stroke-width="1.2"/>'
+                    + f'<path d="M{sx-8},300 V352 L{sx},364 L{sx-8},352 Z M{sx+8},300 V352 L{sx},364" fill="none" stroke="#d0021b" stroke-width="2.2"/>'
+                    + (f'<g class="tp" data-n="{OJE_N}" data-h="{OJE_H}">' if web else "") + t(sx, 228, "ÖNCE OJE!", 9, "bold", "#d0021b", "middle") + ("</g>" if web else "")
                     + t(sx, 240, f"Nem {nm}{j}", 8.5, "bold", anchor="middle"))
             o.append(grp(f"nem{nm}{j}", body))
         # kova + sandalye
@@ -252,10 +282,9 @@ def layout(web=False):
               tip(f"Delikli hortum {nm}", f'<path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#3a7fc4" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/><path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#3a7fc4" stroke-width="1.5"/><path d="M{x0+40},302 H{x0+240}" fill="none" stroke="#000" stroke-opacity="0" stroke-width="12"/>')]
         fx = hx + d*70; rx_ = hx + d*122; cx = hx + d*160
         o.append(grp(f"akis{nm}", f'<rect x="{fx-22}" y="{hy-12}" width="44" height="24" rx="4" fill="#dfe9e6" stroke="#1a211f"/><path d="M{fx-d*10},{hy} H{fx+d*10} m{-d*5},-4 l{d*5},4 l{-d*5},4" fill="none" stroke="#1a211f" stroke-width="1.6"/>'))
-        o += [tip(f"Redüksiyon {nm}", f'<path d="M{rx_-d*9},{hy-7} L{rx_+d*9},{hy-3} V{hy+3} L{rx_-d*9},{hy+7} Z" fill="#fff" stroke="#1a211f"/>'),
-              tip(f"Çekvalf {nm}", f'<rect x="{cx-13}" y="{hy-8}" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M{cx-d*7},{hy} H{cx+d*7} m{-d*4},-3.5 l{d*4},3.5 l{-d*4},3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/>'),
+        o += [tip(f"Çekvalf {nm}", f'<rect x="{cx-13}" y="{hy-8}" width="26" height="16" rx="3" fill="#fff" stroke="#1a211f"/><path d="M{cx-d*7},{hy} H{cx+d*7} m{-d*4},-3.5 l{d*4},3.5 l{-d*4},3.5" fill="none" stroke="#1a211f" stroke-width="1.4"/>'),
               tip(f"T-parça {nm}", f'<circle cx="{tx}" cy="300" r="6" fill="#fff" stroke="#1a211f"/>'),
-              num(hx - d*22, 470, 1), num(hx - d*18, 300, 2), num(fx, hy-24, 3), num(rx_, hy-22, 4), num(cx, hy-22, 5), num(tx - d*44, hy-16, 6), num(tx + 16, 284, 7), num(x0+250, 318, 8)]
+              num(hx - d*22, 470, 1), num(hx - d*18, 300, 2), num(fx, hy-24, 3), num(cx, hy-22, 4), num(tx + 16, 284, 5), num(x0+250, 318, 6)]
         # kablo demetleri (kesik çizgi)
         bxc = 600
         ex = bxc - side*30
@@ -268,11 +297,11 @@ def layout(web=False):
     o += [f'<path d="M600,404 V470 H690" fill="none" stroke="#1a211f" stroke-width="1.4"/>', f'<rect x="690" y="458" width="46" height="24" rx="3" fill="#fff" stroke="#1a211f"/>',
           t(713, 474, "priz", 8.5, "bold", anchor="middle"), t(744, 474, "USB-C adaptör + 5 V adaptör; topraklı, sudan uzak ve kuru", 8.5, fill="#66716d")]
     return "\n".join(o)
-LEGEND = ["Mini pompa: kovanın dibinde, tamamen suyun içinde.", "Kalın hortum: pompanın 7,5 mm çıkışından akış sensörüne.",
-          "Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.", "Redüksiyon: kalın hortumdan 4×6 mm ince hortuma geçiş.",
-          "Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.", "İnce hortum (4×6 mm): saksının üstüne kadar.",
+LEGEND = ["Mini pompa: kovanın dibinde, tamamen suyun içinde.", "Hortum (4×6 mm silikon): pompa çıkışından akış sensörüne, oradan saksının üstüne kadar tek ölçü.",
+          "Akış sensörü (YF-S401): üzerindeki ok pompadan saksıya doğru bakar.",
+          "Çekvalf: oku pompadan saksıya doğru; pompa durunca hortumdaki su geri kaçmaz.",
           "T-parça: hattı saksının ortasında ikiye ayırır.", "Delikli hortum: toprağın üstünde, iki ucu kapalı, iğneyle delinmiş."]
-LNOTES = ["Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır.",
+LNOTES = ["Nem sensörleri beyaz çizgiye kadar toprağa girer; çizginin üstündeki elektronik kısım toprağın dışında ve kuru kalır. Toprağa girmeden önce kart kenarlarına şeffaf oje sürülür.",
           "Şamandıra kovanın dibine yakın durur: su onun altına inince pompa kilitlenir. Kovalar sandalyede, su seviyesi kesik mavi çizginin altında.",
           "İki saksı eşit ışık alacak şekilde yan yana; buat ve DHT22 gölgede. Kesik gri çizgiler kablo demetlerini gösterir, ayrıntısı Elektrik görünümünde."]
 
@@ -284,7 +313,7 @@ def pdfpage(no, tot, title, sub, body, h=PH):
     return "\n".join([f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}">',
         f'<rect width="{W}" height="{h}" fill="#fff"/>', t(40, 30, title, 17, "bold"), t(40, 46, sub, 9.5, fill="#66716d"),
         t(W-40, 30, f"Suİz bağlantı şeması · {no}/{tot}", 9, fill="#66716d", anchor="end"),
-        t(W-40, 44, "15 Kasım 2026 · taslak, parçalarla doğrulanmadı", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
+        t(W-40, 44, "21 Kasım 2026 · taslak; parçalar 16 Kasım'da karşılaştırıldı, testler bekliyor", 8.5, fill="#96560a", anchor="end"), body, "</svg>"])
 def rows_for(s): return [(k, col, a, b, n) for k, st, col, a, b, n, g in ROWS if st == s]
 TOT = 8
 fig_g = lambda only=None: '<g transform="translate(0,40)">' + parts() + wires_svg(only=only) + '</g>'

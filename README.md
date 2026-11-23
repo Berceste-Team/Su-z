@@ -10,7 +10,7 @@
 
 </div>
 
-> **Senkronizasyon notu:** Bu depo ile Notion ana dokümanı ve görev tahtası senkron tutulur. Notion güncel görev durumunun, bu depo ise yayınlanacak teknik belgelerin ana kaynağıdır; ikisinde de aynı karar ve tarihler yer alır. Biri değiştirilirse diğeri de güncellenmelidir (kurallar için [AGENTS.md](AGENTS.md)).
+> **Kaynak notu:** Projenin güncel bilgisi (durum, takvim, kurulum, bağlantı şeması) tek yerde tutulur: [proje sitesi](https://berceste-team.github.io/Su-z/) (kaynağı bu depodaki `docs/`). Bu README ve [docs/donanim-plani.md](docs/donanim-plani.md) ayrıntılı teknik kayıttır ve siteyle aynı karar ve tarihleri içerir. Notion yalnızca görev tahtası için kullanılır (kurallar için [AGENTS.md](AGENTS.md)).
 
 ---
 
@@ -23,10 +23,10 @@
 | **Fiziksel prototip ölçeği** | 2 adet 0,24 m² test yatağı (60 × 40 cm), toplam 0,48 m² |
 | **Örnek tarla ölçeği** | 1 dekar (1000 m²), mm tabanlı dijital ikiz / senaryo motoru ile |
 | **Geliştirme dönemi** | 15 Ekim – 30 Aralık 2026 |
-| **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitkiler (turp / roka, 3–4 hafta) |
+| **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitki: roka (3–4 hafta) |
 | **Yayın** | GitHub, Arduino Project Hub ve maker.robotistan.com (yayın penceresi: 30 Aralık 2026 – 15 Ocak 2027) |
-| **Durum** | Robotistan siparişi ve 6 kapasitif nem sensörü (v2.0, 4 + 2 yedek) teslim alındı; sensörler 16 Kasım 2026'da parçadan doğrulandı. Donanım ve MVP aşaması 9 Kasım 2026'da başladı; deney takvimi 15 Ocak 2027'ye kadar uzar (§9.2, §11) |
-| **Güncel takip** | Notion (ana doküman ve görev tahtası) ile senkron tutulur, bkz. aşağıdaki not ve [AGENTS.md](AGENTS.md) |
+| **Durum** | 23 Kasım 2026: parçalar teslim alındı, MOSFET kartları lehimlendi ve devrenin elektrik bağlantıları kuruldu; henüz güç verilmedi, testler yapılmadı. Yataklar hazırlanıyor, roka tohumu alındı. Tek ekim yapılır; deney takvimi 15 Ocak 2027'de biter (§9.2, §11) |
+| **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler Notion tahtasında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
 
 ## 📑 İçindekiler
 
@@ -67,11 +67,11 @@ Sulamada klasik yaklaşım, toprak nemi bir eşiğin altına düştüğünde pom
 
 Sistem; kuru çalışmayı, tıkanıklığı, sensör arızasını ve bağlantı kaybını fiziksel olarak tespit eder ve güvenli duruma geçer. Ek olarak, FAO yöntemlerine dayanan bir **ürün uygunluk ve senaryo (what-if) motoru**, kullanıcıya "su bütçem %20 azalırsa hangi kararlar değişir?" sorusunun yanıtını sunar.
 
-Doğrulama, tohumdan hasada 3–4 hafta süren hızlı döngülü model bitkilerle (turp / roka), 0,24 m²'lik iki kontrollü test yatağında **zamanlayıcı tabanlı geleneksel sulamaya karşı** A/B testiyle yapılır. Karar katmanı bütçeyi **mm (L/m²)** biriminde tuttuğu için ölçekten bağımsızdır; aynı motor 1 dekarlık örnek bir tarla için de çalıştırılabilir.
+Doğrulama, tohumdan hasada 3–4 hafta süren hızlı döngülü bir model bitkiyle (roka), 0,24 m²'lik iki kontrollü test yatağında **zamanlayıcı tabanlı geleneksel sulamaya karşı** A/B testiyle yapılır. Karar katmanı bütçeyi **mm (L/m²)** biriminde tuttuğu için ölçekten bağımsızdır; aynı motor 1 dekarlık örnek bir tarla için de çalıştırılabilir.
 
 ### English Summary
 
-**Suİz** is a closed-loop, water-budget-aware irrigation decision system running on the **Arduino UNO Q**. The real-time **STM32 MCU** handles sensing, pump control and hardware-level safety interlocks; the **Linux MPU** runs a lightweight on-device ML model that forecasts root-zone soil moisture, a residual-based anomaly detector for sensor trust, and a budget-aware decision policy. Every irrigation decision is verified physically through flow measurement, tank level and post-irrigation soil response. A FAO-based crop-suitability and what-if engine works in millimetres of water, so it is scale-independent. The prototype is validated on two controlled 0.24 m² test beds with fast-cycle model crops (radish / rocket) in an A/B test (Suİz vs. a tuned timer baseline) and evaluated with a 1-decare virtual field. All results, including negative ones, will be reported transparently on Arduino Project Hub.
+**Suİz** is a closed-loop, water-budget-aware irrigation decision system running on the **Arduino UNO Q**. The real-time **STM32 MCU** handles sensing, pump control and hardware-level safety interlocks; the **Linux MPU** runs a lightweight on-device ML model that forecasts root-zone soil moisture, a residual-based anomaly detector for sensor trust, and a budget-aware decision policy. Every irrigation decision is verified physically through flow measurement, tank level and post-irrigation soil response. A FAO-based crop-suitability and what-if engine works in millimetres of water, so it is scale-independent. The prototype is validated on two controlled 0.24 m² test beds with a fast-cycle model crop (rocket) in an A/B test (Suİz vs. a tuned timer baseline) and evaluated with a 1-decare virtual field. All results, including negative ones, will be reported transparently on Arduino Project Hub.
 
 ---
 
@@ -143,7 +143,7 @@ Kök bölgesindeki su dengesi birim alan başına belirlenir. Bu yüzden 0,24 m�
 | :--- | :--- |
 | **Yatak sayısı** | 2 (Yatak A: kontrol, Yatak B: Suİz). Bütçe ve zaman elverirse 3. yatak: Yatak C (kısıtlı bütçe) |
 | **Kasa boyutu** | 60 × 40 cm, derinlik ≈ 20 cm, toprak derinliği ≈ 15 cm |
-| **Bitki** | Turp (*Raphanus sativus*) veya roka (*Eruca vesicaria*): tohumdan hasada 3–4 hafta süren hızlı döngülü model bitkiler. İki yatakta aynı tür ve aynı ekim yoğunluğu |
+| **Bitki** | Roka (*Eruca vesicaria*): tohumdan hasada 3–4 hafta süren hızlı döngülü model bitki. İki yatakta aynı ekim yoğunluğu |
 | **Sulama hattı** | Yatak başına bir gözenekli / damlatıcılı sulama hattı, ayrı pompa ve ayrı depo |
 | **Depo** | Yatak başına 20 L (bütçe hesabı ve kuru çalışma testleri için) |
 | **Sensörler (yatak başına)** | 2 korozyona dayanıklı kapasitif toprak nem sensörü (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm), akış sensörü, şamandıra (depo hacmi akış sensöründen hesaplanır) |
@@ -153,13 +153,13 @@ Kök bölgesindeki su dengesi birim alan başına belirlenir. Bu yüzden 0,24 m�
 
 ### 4.3 Prototip su bütçesi
 
-Prototipte bütçe **Tur 2 (E5) deneyinin 24 günü** için tanımlanır. İç mekânda bitki su tüketiminin yaklaşık 1–3 mm/gün aralığında olacağı varsayılmıştır; bu değer E2 (kuruma eğrisi) deneyleriyle kalibre edilecektir.
+Prototipte bütçe **A/B tam veri döneminin (E5) 20 günü** için tanımlanır (17 Aralık – 5 Ocak). İç mekânda bitki su tüketiminin yaklaşık 1–3 mm/gün aralığında olacağı varsayılmıştır; bu değer E2 (kuruma eğrisi) deneyleriyle kalibre edilecektir. Tutarlar önceki 24 günlük plandaki günlük ortalamalar korunarak 20 güne ölçeklendi (23 Kasım 2026); kesin değer E2 verisiyle belirlenir.
 
-| Senaryo | Bütçe (24 gün) | Litre (0,24 m² yatak) | Günlük ortalama |
+| Senaryo | Bütçe (20 gün) | Litre (0,24 m² yatak) | Günlük ortalama |
 | :--- | :--- | :--- | :--- |
-| Normal | 50 mm | 12,0 L | ≈ 2,1 mm/gün |
-| %20 kısıtlı | 40 mm | 9,6 L | ≈ 1,7 mm/gün |
-| %40 kısıtlı | 30 mm | 7,2 L | ≈ 1,3 mm/gün |
+| Normal | 42 mm | 10,1 L | ≈ 2,1 mm/gün |
+| %20 kısıtlı | 34 mm | 8,2 L | ≈ 1,7 mm/gün |
+| %40 kısıtlı | 25 mm | 6,0 L | ≈ 1,3 mm/gün |
 
 Tek bir sulama olayı yaklaşık 0,3–1,2 L (≈ 1,25–5 mm) hacmindedir; 1–2 L/dk debili bir mini pompa ile yaklaşık 10–50 saniyelik bir çalışmaya karşılık gelir. Kontrol yatağının (Yatak A) zamanlayıcı dozu (günde iki kez yaklaşık 1 mm), bitkiyi strese sokmayacak şekilde **normal bütçeye yakın** ayarlanır (adil bir kontrol, "kasıtlı kötü" bir baz çizgisi değildir). Suİz ise sabit takvime değil, gerçek tüketime göre daha seyrek ve daha büyük dozlarla sulama yapabilir.
 
@@ -168,8 +168,8 @@ Tek bir sulama olayı yaklaşık 0,3–1,2 L (≈ 1,25–5 mm) hacmindedir; 1–
 | Grup | Sulama yöntemi | Amaç |
 | :--- | :--- | :--- |
 | **Yatak A (kontrol)** | Ayarlanmış zamanlayıcı: günde iki kez sabit doz | Yaygın uygulamayı temsil eder |
-| **Yatak B (Suİz)** | Bütçe tavanı 50 mm; kararlar model + politika ile | Suİz'in su kullanımı ve bitki gelişimi üzerindeki etkisi |
-| **Yatak C (opsiyonel)** | Suİz, bütçe tavanı 40 mm | Kısıtlı bütçede karar davranışı |
+| **Yatak B (Suİz)** | Bütçe tavanı 42 mm; kararlar model + politika ile | Suİz'in su kullanımı ve bitki gelişimi üzerindeki etkisi |
+| **Yatak C (opsiyonel)** | Suİz, bütçe tavanı 34 mm | Kısıtlı bütçede karar davranışı |
 
 ### 4.5 Ölçeğin sınırlılıkları
 
@@ -275,18 +275,19 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 | Bileşen | Adet | Teknik rolü |
 | :--- | :---: | :--- |
 | **Arduino® UNO™ Q** (2 GB veya 4 GB) | 1 | MCU + MPU: sensör okuma, pompa kontrolü, Edge AI, pano |
-| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog, 3,3–5,5 V) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından tek dış alım kalemi* |
+| **Korozyona dayanıklı kapasitif toprak nem sensörü** (analog, 3,3–5,5 V) | 4 (+2 yedek) | Yatak başına iki derinlikte (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm) toprak nemi. *Robotistan'da kapasitif model bulunmadığından dışarıdan (Robocombo) alındı; gelen kart v2.0 (HW-390)* |
 | **Sıcaklık / nem sensörü** (DHT22 modülü) | 1 (+1 yedek) | Ortam koşulları; VPD ve ET₀ hesabı |
 | **Düşük debili akış sensörü** (YF-S401, 0,3–6 L/dk, Hall etkili) | 2 (+1 yedek) | Sulama sırasında gerçek su akışının ve hacminin ölçümü; depo hacmi de bundan hesaplanır |
 | **Mini DC dalgıç pompa** (6 V, 120 L/sa) | 2 (+2 yedek) | Depoya daldırılmış, yatak başına sulama; 5 V hattan beslenir |
 | **Opto-izoleli MOSFET sürücü** (LR7843) + flyback diyot (1N5819) | 2 (+1 yedek) | Pompaların güvenli sürülmesi; kontrol tarafının güç hattından yalıtılması. Kart üç klemenslidir (−, LOAD, +): pompa + ile LOAD arasına bağlanır, kart pompanın eksi tarafını anahtarlar |
 | **Şamandıra (float) anahtarı** (dik tip, Robotistan ürün kodu 18584) | 2 (+1 yedek) | Yazılımdan bağımsız, donanımsal düşük seviye kilidi. Su varken kontak kapalı olacak şekilde takılır: tel koparsa "su yok" okunur ve pompa kilitlenir |
 | **5 V 2 A DC adaptör** | 1 | Pompa ve akış sensörü hattı. UNO Q, USB-C şarj aletinden ayrı beslenir |
+| **1000 µF 16 V elektrolitik kondansatör** | 2 | 5 V pompa hattında, MOSFET kartlarının yanında; pompa açılışındaki gerilim düşüşünün analog nem okumalarını bozmasını önler |
 | **Depo, 20 L** (ışık geçirmeyen, kapaklı, litre işaretli) | 2 | Bütçeli su kaynağı |
 | **Bitki yatağı kasası** (≈ 60 × 40 × 20 cm, drenaj delikli), toprak, tohum | 2 | Test yatakları |
-| **Sulama hattı** (8×5 mm ve 4/6 mm hortum, redüksiyon, damlatıcı) | 2 set | Kontrollü su uygulaması |
+| **Sulama hattı** (4×6 mm silikon hortum, çekvalf, T-parça, delikli hortum) | 2 set | Kontrollü su uygulaması |
 | Breadboard, pertinaks, klemens, jumper ve montaj kablosu, makaron, gerilim bölücü dirençler | — | Deneme, kalıcı kurulum ve bağlantı |
-| Kapaklı plastik saklama kabı | 1 | Elektronik kutusu |
+| Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Elektronik kutusu (ilk plandaki saklama kabının yerine) |
 | Toprak sıcaklık sensörü (DS18B20, su geçirmez) *(opsiyonel)* | 2 | Kapasitif sensörlerin sıcaklık düzeltmesi |
 | Yük hücresi + HX711 *(opsiyonel)* | 2 | Depo ağırlığından bağımsız hacim çapraz doğrulaması |
 
@@ -300,7 +301,7 @@ Aşağıdaki liste, iki yataklı çekirdek prototip içindir. Elektronik kalemle
 - Kapasitif sensörler her yatak toprağı için **iki noktalı kalibrasyon** (kuru/doygun) ve gravimetrik kontrol ile kalibre edilir. Kart kenarları ve elektroniği nemden korunur.
 - YF-S401'in ölçüm aralığı (0,3–6 L/dk) pompa debisini kapsar. Litre başına darbe sayısı satıcıya göre değiştiğinden mezürle kalibre edilir ve E3 deneyinde doğrulanır.
 - **Hacim doğrulamasında akış sensörü birincildir.** Depo hacmi akıştan hesaplanır, her dolumda bidon işaretleriyle elle sıfırlanır; alt sınır kilidi şamandıradadır.
-- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu (kapaklı saklama kabı) yağmur ve doğrudan güneş almayan yere konur.
+- Prototip balkonda (Adana) çalışır. Yağmur ölçülmeyen bir su girdisi olduğundan yataklar ve depolar yağmurdan korunur (saçak, şeffaf örtü veya mini sera); elektronik kutusu (şeffaf kapaklı buat) yağmur ve doğrudan güneş almayan yere konur.
 
 ---
 
@@ -350,7 +351,7 @@ Sulama sonrası gözlenen toprak tepkisi, bu formüldeki etkinlik katsayısını
 
 Kısa geliştirme süresi nedeniyle veri iki kaynaktan oluşur:
 
-1. **Gerçek veri:** E2 (kuruma eğrisi) deneyleri ve Tur 1 boyunca yataklardan toplanan ölçümler.
+1. **Gerçek veri:** E2 (kuruma eğrisi) deneyleri ve deneme dönemi boyunca yataklardan toplanan ölçümler.
 2. **Sentetik veri:** Kök bölgesi su dengesi simülatöründen üretilen veri; farklı hava koşulları, gürültü ve sensör arızaları içerir. Ön eğitim, veri artırma ve anomali enjeksiyonu için kullanılır.
 
 ```text
@@ -425,7 +426,7 @@ Toprak nemi (üst / alt)   : %27 / %31 (ort. %29)   Sulama eşiği : %30
 Sıcaklık / Hava nemi     : 24 °C / %41            Hedef nem    : %33
 Son sulama               : 31 saat önce           VPD          : yüksek
 Önerilen doz             : 4,0 mm (0,96 L)   [ (%33 − %29) × Z_r 100 mm ]
-Bütçe                    : 31,2 / 50 mm kaldı · bütçe hızı 1,6 mm/gün · hız normal
+Bütçe                    : 26,2 / 42 mm kaldı · bütçe hızı 1,6 mm/gün · hız normal
 Depo seviyesi            : %68
 Karar güveni             : %88
 ```
@@ -484,7 +485,7 @@ Tasarımın amacı yalnızca doğru karar üretmek değil, **yanlış kararları
 
 Prototipin başarısı yalnızca model doğruluğuyla değil, **kararın fiziksel dünyada doğru uygulanması ve bitki/su sonucuyla** değerlendirilir.
 
-**Model bitki seçimi.** Dar takvim aralığında (3–4 hafta) tohumdan hasada tüm vejetatif ve yaprak gelişim evrelerini tamamlayabilen hızlı döngülü bitkiler seçilmiştir: turp (*Raphanus sativus*) veya roka (*Eruca vesicaria*).
+**Model bitki seçimi.** Dar takvim aralığında (3–4 hafta) tohumdan hasada tüm vejetatif ve yaprak gelişim evrelerini tamamlayabilen hızlı döngülü bir bitki seçilmiştir: roka (*Eruca vesicaria*). Turp seçeneği 23 Kasım 2026'da düşürüldü; tohum alındı.
 
 **Karşılaştırmalı A/B düzeneği.**
 - **Kontrol grubu (Yatak A):** Geleneksel tarımda yaygın kullanılan, sabit zaman aralıklı ve tek eşikli zamanlayıcı kontrolü.
@@ -502,19 +503,22 @@ Depo hacmi akış sensörünün saydığı hacimden hesaplanır ve her dolumda b
 
 | Kod | Deney | Dönem | Amaç | Çıktı |
 | :--- | :--- | :--- | :--- | :--- |
-| **E1** | Sensör kalibrasyonu | Tarih netleşecek (sensörler toprağa girmeden önce, 24 Kasım'a kadar) | İki noktalı (kuru/doygun) ve gravimetrik kalibrasyon | Kalibrasyon eğrileri, ölçüm belirsizliği |
-| **E2** | Kuruma eğrisi (dry-down) | 24 Kasım – 13 Aralık (sensörler toprağa girdikten sonra) | Tur 1 yataklarında, çimlenme öncesi (fiilen bitkisiz) ve bitkili dönemde, sulamalar arasında; farklı sıcaklık/nem/ışık altında toprak neminin doğal azalışı; ET aralığının kalibrasyonu | Model eğitim verisi, gerçek ET aralığı |
-| **E3** | Aktüatör ve güvenlik testleri | 9–11 Aralık | Kuru çalışma kilidi, akış yok, hortum kesme, MPU heartbeat kaybı, elektrik kesintisi | Geçti/kaldı tablosu, debi doğrulaması |
+| **E1** | Sensör kalibrasyonu | Tarih netleşecek (sensörler toprağa girmeden önce, en geç 7 Aralık) | İki noktalı (kuru/doygun) ve gravimetrik kalibrasyon | Kalibrasyon eğrileri, ölçüm belirsizliği |
+| **E2** | Kuruma eğrisi (dry-down) | Sensörler toprağa girdikten sonra – 16 Aralık (deneme dönemi) | Aynı yataklarda, çimlenme öncesi (fiilen bitkisiz) ve bitkili dönemde, sulamalar arasında; farklı sıcaklık/nem/ışık altında toprak neminin doğal azalışı; ET aralığının kalibrasyonu | Model eğitim verisi, gerçek ET aralığı |
+| **E3** | Aktüatör ve güvenlik testleri | En geç 14 Aralık (kural tabanlı sulamayla birlikte) | Kuru çalışma kilidi, akış yok, hortum kesme, MPU heartbeat kaybı, elektrik kesintisi | Geçti/kaldı tablosu, debi doğrulaması |
 | **E4** | Anomali enjeksiyonu | Tarih netleşecek (dondurmadan önce) | Sensör sökme, sıçrama, donma, sentetik bozulma | Yakalama oranı, yanlış alarm sayısı |
-| **E5** | A/B sulama deneyi (Tur 2) | 14 Aralık – 7 Ocak (24 gün) | Suİz (Yatak B) ile ayarlanmış zamanlayıcının (Yatak A) karşılaştırılması | Su kullanımı, nem kararlılığı, bitki gelişimi |
-| **E6** | Senaryo motoru doğrulama | 8–10 Ocak | Senaryo motorunun tahmin ettiği su kullanımının E5'te ölçülenle karşılaştırılması | MAPE / sapma |
+| **E5** | A/B sulama deneyi (tam veri) | 17 Aralık – 5 Ocak (20 gün) | Suİz (Yatak B) ile ayarlanmış zamanlayıcının (Yatak A) karşılaştırılması | Su kullanımı, nem kararlılığı, bitki gelişimi |
+| **E6** | Senaryo motoru doğrulama | 7–10 Ocak | Senaryo motorunun tahmin ettiği su kullanımının E5'te ölçülenle karşılaştırılması | MAPE / sapma |
 
-### 9.2 İki tur yaklaşımı
+### 9.2 Tek ekim yaklaşımı
 
-- **Tur 1 (19 Kasım – 13 Aralık):** İlk ekim 19 Kasım'da. Ekim sensörlerden bağımsızdır; sistem kurulana kadar iki yatak mezürle ölçülen eşit hacimlerle elle sulanır ve kaydedilir. Nem sensörleri ve DHT22 24 Kasım'a kadar toprağa girer ve ölçümler kaydedilir. **Kural tabanlı** sulama 3 Aralık'a kadar Yatak B'de uçtan uca çalışır (pompa, akış, şamandıra, kilitler); aynı kurulum 8 Aralık'a kadar Yatak A'da zamanlayıcı moduyla tamamlanır. Güvenlik testleri (E3) 9–11 Aralık'ta yapılır. Suİz modeli Tur 1'de **gölge modunda** çalışır: kararlarını üretir ve kaydeder ancak pompayı sürmez; başlangıç tarihi netleşecek. Tur 1 hasadı 13 Aralık'tadır. Tur 1 aynı zamanda ikinci ekim için yedek ve çimlenme kontrolüdür.
-- **Tur 2 (14 Aralık – 7 Ocak, 24 gün):** Yataklar 13 Aralık'ta boşaltılır, toprak karıştırılıp nemi eşitlenir ve yeni ekim yapılır. Model v1 devrededir; **kod ve donanım 13 Aralık'ta donmuştur**. A/B deneyi (E5) bu turda yürütülür. Analiz ve sonuçların yayını 8–10 Ocak'tadır.
+Tek ekim yapılır (karar: 23 Kasım 2026, [yazılım planı](docs/yazilim-plani.md) §1). Aynı bitkiler iki dönemden geçer:
 
-> **Takvim notu (16 Kasım 2026):** Takvim 15 Ocak 2027'ye, yani yarışmanın yayın döneminin sonuna kadar uzatıldı. Önceki plan (Tur 1: 15 Kasım – 3 Aralık, dondurma 3 Aralık, Tur 2: 4–27 Aralık, yayın 30 Aralık) geçerliliğini yitirdi: kurulum gecikti, ekim 19 Kasım'a kaydı. Sonuç olarak A/B deneyi yayın penceresinin (30 Aralık – 15 Ocak) içinde biter ve sonuçlar 8–10 Ocak'ta yayımlanır; pencerenin kapanmasına yalnızca 5 gün kalır, bu risk bilinerek alınmıştır. Daha önceki takvim notu (9 Kasım 2026): özgün plan 5 Kasım – 1 Aralık idi ve Tur 1 kısaltılmıştı.
+- **Deneme dönemi (ekim – 16 Aralık):** Ekim en geç 30 Kasım'da yapılır ve sistemden bağımsızdır; sistem kurulana kadar iki yatak ölçü kabıyla eşit hacimlerle elle sulanır ve kaydedilir. Sensörler en geç 7 Aralık'ta toprağa girer ve gerçek veri kaydı başlar. Kural tabanlı sulama (Yatak A zamanlayıcı, Yatak B eşik kuralı) ve güvenlik testleri (E3) en geç 14 Aralık'ta tamamlanır. Bu dönemde kalibrasyon yapılır, kuruma eğrileri (E2) kaydedilir, model **gölge modda** denenir (karar üretir ve kaydeder ama pompayı sürmez) ve roka eşikleri ayarlanır. Bu dönemin verisi yayımlanacak karşılaştırmaya girmez.
+- **Kod dondurma (16 Aralık):** sistem deneme verisinde doğru çalışınca kod etiketlenir (`v1.0-freeze`); sonrasında yalnızca güvenlik hataları düzeltilir, donanım da yerinde kalır.
+- **A/B tam veri dönemi (17 Aralık – 5 Ocak, 20 gün):** aynı bitkiler Yatak A'da zamanlayıcıyla, Yatak B'de Suİz ile sulanır (E5). Yayımlanacak sonuçlar yalnızca bu dönemin verisinden çıkar. Hasat 6 Ocak'ta, iki yatakta aynı gün yapılır; analiz ve yayın 7–10 Ocak'tadır.
+
+> **Takvim notu (23 Kasım 2026):** İki tur bırakıldı, tek ekime geçildi. Gerekçe: kurulum gecikti ve ekim 19 Kasım'da yapılamadı; iki turlu plan (Tur 1: 19 Kasım – 13 Aralık, Tur 2: 14 Aralık – 7 Ocak) donanım kurulumuna yeterli zaman bırakmıyordu. Ödünleşimler: yedek ekim yoktur; deneme döneminde iki yatak zaten farklı sulandığı için A/B karşılaştırması bitkinin yalnızca ikinci yarısını kapsar ve bu sınırlılık sonuçlarda belirtilir; kurulum dondurmayı geciktirirse A/B dönemi kısalır (dondurma 19 Aralık'a kayarsa 17 güne iner). Önceki takvim notları: 16 Kasım 2026'da takvim 15 Ocak'a uzatılmıştı; 9 Kasım 2026'da Tur 1 kısaltılmıştı.
 >
 > **Sensör notu (16 Kasım 2026):** Kapasitif toprak nem sensörleri (v2.0, HW-390, 6 adet) teslim alındı ve parçadan doğrulandı: tek parça bıçak, üç pin (GND, VCC, AOUT). Ayrıca elde dirençli tip (iki bacaklı çıplak metal çatal) sensörler de var; bunlar toprakta paslandığı için deneyde kullanılmaz. Toprağa girmeden önce kart kenarlarına şeffaf oje sürülecek.
 
@@ -571,17 +575,18 @@ Aşağıdaki değerler **tasarım hedefleridir**; sonuçlar hedefin altında kal
 
 ## 11. Proje Geliştirme Takvimi ve Kilometre Taşları
 
-Takvim, yarışmanın resmî aşamalarına göre kurgulanmıştır: başvuru 1 Ekim'de kapanır; ön değerlendirme ve kit gönderimi 1–15 Ekim; geliştirme **15 Ekim – 30 Aralık**; yayın ve değerlendirme **30 Aralık – 15 Ocak**; sonuçlar 16 Ocak 2027'de açıklanır. Proje takvimi 16 Kasım 2026'da 15 Ocak'a kadar uzatıldı: A/B deneyi yayın penceresinin içinde biter (gerekçe §9.2). Kart eline ulaşmadan önceki dönem simülasyon, veri hazırlığı ve malzeme temini için kullanılır.
+Takvim, yarışmanın resmî aşamalarına göre kurgulanmıştır: başvuru 1 Ekim'de kapanır; ön değerlendirme ve kit gönderimi 1–15 Ekim; geliştirme **15 Ekim – 30 Aralık**; yayın ve değerlendirme **30 Aralık – 15 Ocak**; sonuçlar 16 Ocak 2027'de açıklanır. Proje takvimi 16 Kasım 2026'da 15 Ocak'a kadar uzatıldı; 23 Kasım 2026'da tek ekime geçildi (gerekçe §9.2). Fazlar [yazılım planındaki](docs/yazilim-plani.md) sırayı izler. Kart eline ulaşmadan önceki dönem simülasyon, veri hazırlığı ve malzeme temini için kullanılır.
 
 ### Fazlar
 
 | Dönem | Faz | Temel görevler ve çıktılar |
 | :--- | :--- | :--- |
 | **Eylül – 8 Kasım** | **Hazırlık (plan gerisinde kalındı)** | Tasarım, donanım planı ve Robotistan siparişi |
-| **9 Kasım – 8 Aralık** | **Donanım ve MVP** | UNO Q kurulumu, parçaların şemayla karşılaştırılması ve lehim, sensör kalibrasyonları (E1), MCU'da bağımsız acil güvenlik kilitleri; kural tabanlı sulama 3 Aralık'a kadar Yatak B'de, 8 Aralık'a kadar Yatak A'da (zamanlayıcı) uçtan uca |
-| **19 Kasım – 13 Aralık** | **Veri toplama ve model (Tur 1)** | 1. tur model bitki ekimi (19 Kasım), sensörler toprakta (24 Kasım), gerçek kuruma eğrilerinin kaydedilmesi (E2), simülatör verisiyle birleştirilerek hafif ML modelinin eğitilmesi, modelin gölge modda denenmesi, anomali filtreleri, bütçe politikası, pano, senaryo motoru; güvenlik testleri (E3, 9–11 Aralık); 13 Aralık'ta hasat, kod ve donanım dondurma |
-| **14 Aralık – 7 Ocak** | **A/B doğrulama deneyi (Tur 2)** | 2. tur ekim ile Suİz ve klasik zamanlayıcı karşılaştırma testi (24 gün), su tüketimi ve gelişim metriklerinin toplanması; dokümantasyon taslakları ve video çekimi paralel yürütülür |
-| **8 – 15 Ocak** | **Belgelendirme ve yayın** | E6, deneysel sonuçların grafikleştirilmesi, proje videosu; 8–10 Ocak'ta GitHub, Arduino Project Hub ve maker.robotistan.com üzerinde açık kaynak dokümantasyon ve sonuç yayını; yayın dönemi 15 Ocak'ta biter |
+| **9 Kasım – 7 Aralık** | **Kurulum ve gerçek veri hattı (Faz 0–1)** | Lehim ve parça testleri, UNO Q ve Bridge testi, ekim (en geç 30 Kasım; elle eşit sulama), kalibrasyon (E1), sensörler toprakta ve gerçek veri SQLite'ta (en geç 7 Aralık) |
+| **7 – 14 Aralık** | **Kural tabanlı sulama (Faz 2, MVP)** | Yatak A zamanlayıcı, Yatak B eşik kuralı gerçek pompayı sürer; komutlar, heartbeat, karar kaydı, bütçe; güvenlik testleri (E3) |
+| **Ekim – 16 Aralık** | **Model, kalite, pano (Faz 3)** | Kuruma eğrileri (E2), kalite kontrolleri, gölge modda tahmin modeli, pano, senaryo motoru; Faz 2 ile paralel. **16 Aralık: kod dondurma** |
+| **17 Aralık – 5 Ocak** | **A/B tam veri (Faz 4, E5)** | Aynı bitkiler; Suİz ile zamanlayıcının karşılaştırması (20 gün); dokümantasyon ve video paralel yürür. Hasat 6 Ocak |
+| **7 – 15 Ocak** | **Analiz ve yayın (Faz 5)** | E6, grafikler; 7–10 Ocak'ta GitHub, Arduino Project Hub ve maker.robotistan.com'da sonuçlu yayın; yayın dönemi 15 Ocak'ta biter |
 
 ```mermaid
 gantt
@@ -594,25 +599,22 @@ gantt
     Yayın ve değerlendirme dönemi           :a4, 2026-12-30, 2027-01-15
     Sonuç açıklaması                        :milestone, a5, 2027-01-16, 0d
 
-    section 1 Donanım ve MVP
-    UNO Q kurulumu, lehim ve parça testleri :d1, 2026-11-09, 2026-11-24
-    Sensörler toprakta, kayıt başladı       :milestone, m1, 2026-11-24, 0d
-    Kural tabanlı sulama Yatak B            :d2, 2026-11-25, 2026-12-03
-    Aynı kurulum Yatak A (zamanlayıcı)      :d3, 2026-12-04, 2026-12-08
-    E3 güvenlik testleri                    :d4, 2026-12-09, 2026-12-11
+    section Kurulum ve deneme
+    Lehim, parça testleri, Bridge           :d1, 2026-11-09, 2026-12-07
+    Ekim (en geç)                           :milestone, m0, 2026-11-30, 0d
+    Sensörler toprakta, gerçek veri         :milestone, m1, 2026-12-07, 0d
+    Kural tabanlı sulama ve E3              :d2, 2026-12-07, 2026-12-14
+    E2, model gölge modda, pano             :v1, 2026-12-07, 2026-12-16
+    Kod dondurma                            :milestone, m3, 2026-12-16, 0d
 
-    section 2 Veri ve model Tur 1
-    Tur 1 ekim ve takip                     :v0, 2026-11-19, 2026-12-13
-    E2 kuruma eğrileri                      :v1, 2026-11-24, 2026-12-13
-    Hasat, kod ve donanım dondurma          :milestone, m3, 2026-12-13, 0d
+    section A/B tam veri
+    E5 A/B (aynı bitkiler)                  :e1, 2026-12-17, 2027-01-05
+    Dokümantasyon ve video                  :e2, 2026-12-17, 2027-01-05
+    Hasat                                   :milestone, m5, 2027-01-06, 0d
 
-    section 3 A/B doğrulama Tur 2
-    Tur 2 ekim ve E5 A/B deneyi             :e1, 2026-12-14, 2027-01-07
-    Dokümantasyon ve video                  :e2, 2026-12-14, 2027-01-07
-
-    section 4 Yayın
-    Analiz, E6 ve sonuçların yayını         :p1, 2027-01-08, 2027-01-10
-    Yayın döneminin sonu                    :milestone, m4, 2027-01-15, 0d
+    section Yayın
+    Analiz, E6 ve sonuçların yayını         :p1, 2027-01-07, 2027-01-10
+    Yayın döneminin sonu                    :milestone, m6, 2027-01-15, 0d
 ```
 
 ### Kilometre taşları
@@ -620,18 +622,18 @@ gantt
 | Kod | Tarih | Çıkış ölçütü |
 | :--- | :--- | :--- |
 | **M0** | Tarih netleşecek | UNO Q çalışıyor (16 Kasım: ilk program çalıştı); App Lab çalışıyor; MCU ve MPU arasında Bridge testi geçti |
-| **M1** | 24 Kasım | Tüm sensörler MCU'dan okunuyor, Linux tarafında kaydediliyor; kalibrasyon eğrileri hazır |
-| **M2 (MVP)** | 3 Aralık (Yatak B) · 8 Aralık (Yatak A) | Kural tabanlı sulama uçtan uca çalışıyor: pompa, akış doğrulama, depo kilidi, azami süre |
+| **M1** | En geç 7 Aralık | Tüm sensörler MCU'dan okunuyor, Linux tarafında kaydediliyor; kalibrasyon eğrileri hazır |
+| **M2 (MVP)** | En geç 14 Aralık | Kural tabanlı sulama iki yatakta uçtan uca çalışıyor: pompa, akış doğrulama, depo kilidi, azami süre |
 | **M3** | Tarih netleşecek (dondurmadan önce) | Model v1 (tahmin + anomali) gerçek test setinde baz çizgisine karşı raporlandı; pano ve senaryo motoru hazır |
-| **M4** | 13 Aralık | Tur 1 hasadı; kod ve donanım donduruldu; Tur 2 (A/B, E5) 14 Aralık'ta başlar |
-| **M5** | 7 Ocak | Deney ölçümleri tamamlandı |
-| **M6** | 8–10 Ocak | Proje ve sonuçlar GitHub, Arduino Project Hub ve maker.robotistan.com'da yayında |
+| **M4** | 16 Aralık | Kod ve donanım donduruldu; A/B tam veri (E5) 17 Aralık'ta başlar |
+| **M5** | 5 Ocak | A/B ölçümleri tamamlandı; hasat 6 Ocak |
+| **M6** | 7–10 Ocak | Proje ve sonuçlar GitHub, Arduino Project Hub ve maker.robotistan.com'da yayında |
 
 ### Takvim ilkeleri
 
-1. **Dondurma tarihi 13 Aralık'tır.** Sonrasında yalnızca güvenlik hataları düzeltilir; böylece deney tutarlı kalır ve dokümantasyon için zaman açılır.
-2. **Dokümantasyon deneyle paralel yürür.** Proje metni, devre şeması, kod açıklamaları ve video, Tur 2 sürerken hazırlanır; deney bittiğinde (7 Ocak) yalnızca sonuçlar eklenir.
-3. **Yayın penceresi etkileşim içindir.** 30 Aralık – 15 Ocak arasında görüntülenme ve beğeni toplanır. Deney 7 Ocak'ta bittiği için sonuçlu yayın 8–10 Ocak'ta yapılır; etkileşim için kalan süre kısadır ve bu bilinen bir ödünleşimdir.
+1. **Dondurma tarihi 16 Aralık'tır.** Sonrasında yalnızca güvenlik hataları düzeltilir; böylece A/B verisi baştan sona aynı sistemle toplanır. Kurulum gecikirse dondurma kayar ve A/B dönemi kısalır.
+2. **Dokümantasyon deneyle paralel yürür.** Proje metni, devre şeması, kod açıklamaları ve video A/B dönemi sürerken hazırlanır; deney bittiğinde (5 Ocak) yalnızca sonuçlar eklenir.
+3. **Yayın penceresi etkileşim içindir.** 30 Aralık – 15 Ocak arasında görüntülenme ve beğeni toplanır. Deney 5 Ocak'ta bittiği için sonuçlu yayın 7–10 Ocak'ta yapılır; etkileşim için kalan süre kısadır ve bu bilinen bir ödünleşimdir.
 4. **Kapsam kesme sırası** (gecikme halinde): Yatak C → yük hücresi → OLED → Isolation Forest karşılaştırması → E6. Kapalı döngü (MVP), güvenlik katmanı ve E5 deneyi asla kesilmez.
 
 ---
@@ -642,8 +644,7 @@ gantt
 | :--- | :---: | :--- |
 | **Kart geç teslim edilir** | Orta / Yüksek | Hazırlık dönemindeki simülatör ve veri hattı karttan bağımsızdır. Gerekirse sensör ve pompa katmanı eldeki bir Arduino ile prototiplenir, MPU tarafı bilgisayarda çalıştırılır; kart geldiğinde taşınır |
 | **Gerçek veri yetersiz kalır** | Orta / Orta | Sentetik veri ile ön eğitim; fizik tabanlı özellikler; model baz çizgisini geçemezse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır |
-| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 çimlenme kontrolü ve ikinci deneme fırsatı verir; turp ↔ roka geçişi, yedek olarak tere |
-| **Kapasitif sensör siparişi gecikir** | Orta / Yüksek | Sensör gerektirmeyen işler (pompa, akış, şamandıra, MCU güvenlik, E3, MPU, simülatör) beklemeden sürer; E1 ve MVP tarihleri sipariş gününe göre güncellenir |
+| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; yedek ekim yok: yatak başına fazla tohum ekilip sonra seyreltilir; roka çimlenmezse yedek olarak tere |
 | **Sensör kayması ve kalibrasyon hatası** | Yüksek / Orta | İki noktalı + gravimetrik kalibrasyon; haftalık kontrol; iki derinlikte çapraz doğrulama; sıcaklık düzeltmesi |
 | **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; her dolumda bidon işaretleriyle elle hacim kontrolü ve isteğe bağlı yük hücresi ile çapraz kontrol |
 | **Bütçe/zaman aşımı** | Orta / Orta | Kapsam kesme sırası (Bölüm 11); MVP'nin M2'de tamamlanması |
@@ -696,19 +697,20 @@ suiz/
 ├── data/                # ham ve işlenmiş veriler
 ├── notebooks/           # eğitim, doğrulama ve deney analizleri
 ├── hardware/            # devre şeması, bağlantı planı, malzeme listesi
-├── docs/                # deney protokolleri, görseller, video
+├── docs/                # proje sitesi (index.html, sema/), donanım planı, deney protokolleri, görseller
+├── tools/               # bağlantı şeması üreteci (baglanti-semasi/)
 └── tests/
 ```
 
 ### İlerleme
 
 - [x] Proje tasarımı ve kapsam tanımı
-- [ ] Yarışma başvurusu (son tarih: 1 Ekim 2026)
+- [x] Yarışma başvurusu (son tarih: 1 Ekim 2026)
 - [ ] M0 – UNO Q kurulumu
 - [ ] M1 – Sensörler ve kalibrasyon
 - [ ] M2 – Kural tabanlı MVP
 - [ ] M3 – Model v1, pano ve senaryo motoru
-- [ ] M4 – Dondurma (13 Aralık) ve Tur 2 başlangıcı
+- [ ] M4 – Kod dondurma (16 Aralık) ve A/B tam veri başlangıcı
 - [ ] M5 – Deney ölçümleri
 - [ ] M6 – GitHub / Project Hub / maker.robotistan.com yayını
 
