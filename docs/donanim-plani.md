@@ -214,7 +214,7 @@ Durum (21 Kasım 2026): MOSFET kartları lehimlendi (ilk karttaki bir GND lehimi
   - raflı mini balkon serası (~2.000 TL; ılık havada kapağı açık tutulmalı, aşırı ısınmaya dikkat).
 - **Elektronik:** elektronik kutusu (buat) yağmur ve doğrudan güneş almayan yere konur; kablo girişleri silikonla kapatılır, kablolar kaba aşağıdan girer (damla döngüsü). Priz kaçak akım korumalı olmalı.
 - **Depolar:** ışık geçirmeyen ve kapaklı bidon (yosun, sivrisinek, yağmur suyu girişi). Şamandıra bidona monte edilir; her dolumda bidonun yanına çizilen litre işaretleriyle depo hacmi elle kaydedilir.
-- **Sıcaklık ve ışık:** Adana'da don riski düşük; turp ve roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
+- **Sıcaklık ve ışık:** Adana'da don riski düşük; roka sonbaharda iyi gelişir. Ekim'de öğle güneşi yatakları hızla kurutabilir: güneye bakan balkonda README'deki iç mekân varsayımı (1–3 mm/gün) aşılabilir, Aralık'ta ise ~1 mm/gün civarına düşmesi beklenir (tahmin). E2 kuruma deneyiyle kalibre edilmeli; kontrol yatağının zamanlayıcı dozu buna göre ayarlanır.
 - **Sensör yerleşimi:** DHT22 iki yatağın ortasına, gölgelikli bir radyasyon kalkanı içine (beyaz, havalandırmalı küçük kap) yerleştirilir; doğrudan güneşte yanlış yüksek sıcaklık okur.
 
 ## 9. Hazırlık takvimi (güncel)

@@ -23,7 +23,7 @@
 | **Fiziksel prototip ölçeği** | 2 adet 0,24 m² test yatağı (60 × 40 cm), toplam 0,48 m² |
 | **Örnek tarla ölçeği** | 1 dekar (1000 m²), mm tabanlı dijital ikiz / senaryo motoru ile |
 | **Geliştirme dönemi** | 15 Ekim – 30 Aralık 2026 |
-| **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitkiler (turp / roka, 3–4 hafta) |
+| **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitki: roka (3–4 hafta) |
 | **Yayın** | GitHub, Arduino Project Hub ve maker.robotistan.com (yayın penceresi: 30 Aralık 2026 – 15 Ocak 2027) |
 | **Durum** | 21 Kasım 2026: parçalar teslim alındı ve 16 Kasım'da parçadan doğrulandı; MOSFET kartları lehimlendi ve devrenin elektrik bağlantıları kuruldu. Henüz güç verilmedi, hiçbir parça test edilmedi; yataklar hazırlanıyor. Deney takvimi 15 Ocak 2027'ye kadar uzar (§9.2, §11) |
 | **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler Notion tahtasında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
@@ -67,11 +67,11 @@ Sulamada klasik yaklaşım, toprak nemi bir eşiğin altına düştüğünde pom
 
 Sistem; kuru çalışmayı, tıkanıklığı, sensör arızasını ve bağlantı kaybını fiziksel olarak tespit eder ve güvenli duruma geçer. Ek olarak, FAO yöntemlerine dayanan bir **ürün uygunluk ve senaryo (what-if) motoru**, kullanıcıya "su bütçem %20 azalırsa hangi kararlar değişir?" sorusunun yanıtını sunar.
 
-Doğrulama, tohumdan hasada 3–4 hafta süren hızlı döngülü model bitkilerle (turp / roka), 0,24 m²'lik iki kontrollü test yatağında **zamanlayıcı tabanlı geleneksel sulamaya karşı** A/B testiyle yapılır. Karar katmanı bütçeyi **mm (L/m²)** biriminde tuttuğu için ölçekten bağımsızdır; aynı motor 1 dekarlık örnek bir tarla için de çalıştırılabilir.
+Doğrulama, tohumdan hasada 3–4 hafta süren hızlı döngülü bir model bitkiyle (roka), 0,24 m²'lik iki kontrollü test yatağında **zamanlayıcı tabanlı geleneksel sulamaya karşı** A/B testiyle yapılır. Karar katmanı bütçeyi **mm (L/m²)** biriminde tuttuğu için ölçekten bağımsızdır; aynı motor 1 dekarlık örnek bir tarla için de çalıştırılabilir.
 
 ### English Summary
 
-**Suİz** is a closed-loop, water-budget-aware irrigation decision system running on the **Arduino UNO Q**. The real-time **STM32 MCU** handles sensing, pump control and hardware-level safety interlocks; the **Linux MPU** runs a lightweight on-device ML model that forecasts root-zone soil moisture, a residual-based anomaly detector for sensor trust, and a budget-aware decision policy. Every irrigation decision is verified physically through flow measurement, tank level and post-irrigation soil response. A FAO-based crop-suitability and what-if engine works in millimetres of water, so it is scale-independent. The prototype is validated on two controlled 0.24 m² test beds with fast-cycle model crops (radish / rocket) in an A/B test (Suİz vs. a tuned timer baseline) and evaluated with a 1-decare virtual field. All results, including negative ones, will be reported transparently on Arduino Project Hub.
+**Suİz** is a closed-loop, water-budget-aware irrigation decision system running on the **Arduino UNO Q**. The real-time **STM32 MCU** handles sensing, pump control and hardware-level safety interlocks; the **Linux MPU** runs a lightweight on-device ML model that forecasts root-zone soil moisture, a residual-based anomaly detector for sensor trust, and a budget-aware decision policy. Every irrigation decision is verified physically through flow measurement, tank level and post-irrigation soil response. A FAO-based crop-suitability and what-if engine works in millimetres of water, so it is scale-independent. The prototype is validated on two controlled 0.24 m² test beds with a fast-cycle model crop (rocket) in an A/B test (Suİz vs. a tuned timer baseline) and evaluated with a 1-decare virtual field. All results, including negative ones, will be reported transparently on Arduino Project Hub.
 
 ---
 
@@ -143,7 +143,7 @@ Kök bölgesindeki su dengesi birim alan başına belirlenir. Bu yüzden 0,24 m�
 | :--- | :--- |
 | **Yatak sayısı** | 2 (Yatak A: kontrol, Yatak B: Suİz). Bütçe ve zaman elverirse 3. yatak: Yatak C (kısıtlı bütçe) |
 | **Kasa boyutu** | 60 × 40 cm, derinlik ≈ 20 cm, toprak derinliği ≈ 15 cm |
-| **Bitki** | Turp (*Raphanus sativus*) veya roka (*Eruca vesicaria*): tohumdan hasada 3–4 hafta süren hızlı döngülü model bitkiler. İki yatakta aynı tür ve aynı ekim yoğunluğu |
+| **Bitki** | Roka (*Eruca vesicaria*): tohumdan hasada 3–4 hafta süren hızlı döngülü model bitki. İki yatakta aynı ekim yoğunluğu |
 | **Sulama hattı** | Yatak başına bir gözenekli / damlatıcılı sulama hattı, ayrı pompa ve ayrı depo |
 | **Depo** | Yatak başına 20 L (bütçe hesabı ve kuru çalışma testleri için) |
 | **Sensörler (yatak başına)** | 2 korozyona dayanıklı kapasitif toprak nem sensörü (kök bölgesi ≈ 5 cm, süzülme bölgesi ≈ 10 cm), akış sensörü, şamandıra (depo hacmi akış sensöründen hesaplanır) |
@@ -485,7 +485,7 @@ Tasarımın amacı yalnızca doğru karar üretmek değil, **yanlış kararları
 
 Prototipin başarısı yalnızca model doğruluğuyla değil, **kararın fiziksel dünyada doğru uygulanması ve bitki/su sonucuyla** değerlendirilir.
 
-**Model bitki seçimi.** Dar takvim aralığında (3–4 hafta) tohumdan hasada tüm vejetatif ve yaprak gelişim evrelerini tamamlayabilen hızlı döngülü bitkiler seçilmiştir: turp (*Raphanus sativus*) veya roka (*Eruca vesicaria*).
+**Model bitki seçimi.** Dar takvim aralığında (3–4 hafta) tohumdan hasada tüm vejetatif ve yaprak gelişim evrelerini tamamlayabilen hızlı döngülü bir bitki seçilmiştir: roka (*Eruca vesicaria*). Turp seçeneği 23 Kasım 2026'da düşürüldü; tohum alındı.
 
 **Karşılaştırmalı A/B düzeneği.**
 - **Kontrol grubu (Yatak A):** Geleneksel tarımda yaygın kullanılan, sabit zaman aralıklı ve tek eşikli zamanlayıcı kontrolü.
@@ -643,7 +643,7 @@ gantt
 | :--- | :---: | :--- |
 | **Kart geç teslim edilir** | Orta / Yüksek | Hazırlık dönemindeki simülatör ve veri hattı karttan bağımsızdır. Gerekirse sensör ve pompa katmanı eldeki bir Arduino ile prototiplenir, MPU tarafı bilgisayarda çalıştırılır; kart geldiğinde taşınır |
 | **Gerçek veri yetersiz kalır** | Orta / Orta | Sentetik veri ile ön eğitim; fizik tabanlı özellikler; model baz çizgisini geçemezse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır |
-| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 çimlenme kontrolü ve ikinci deneme fırsatı verir; turp ↔ roka geçişi, yedek olarak tere |
+| **Bitki gelişmez / kış ışığı yetersiz** | Orta / Yüksek | LED bitki lambası; Tur 1 çimlenme kontrolü ve ikinci deneme fırsatı verir; roka çimlenmezse yedek olarak tere |
 | **Sensör kayması ve kalibrasyon hatası** | Yüksek / Orta | İki noktalı + gravimetrik kalibrasyon; haftalık kontrol; iki derinlikte çapraz doğrulama; sıcaklık düzeltmesi |
 | **Akış sensörü düşük debide hatalı** | Orta / Orta | Düşük debiye uygun sensör; E3'te debi doğrulaması; her dolumda bidon işaretleriyle elle hacim kontrolü ve isteğe bağlı yük hücresi ile çapraz kontrol |
 | **Bütçe/zaman aşımı** | Orta / Orta | Kapsam kesme sırası (Bölüm 11); MVP'nin M2'de tamamlanması |
