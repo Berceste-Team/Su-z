@@ -129,9 +129,28 @@ def mosfet(x, y, nm, dname, pwm_top):
          *sig, diode(x+MW//2, y+32, y+66, dname)]
     return "\n".join(o)
 
+RED = "#d0021b"
+def oje_uyari():
+    """Nem sensörlerinin yanında büyük kırmızı oje uyarısı; bıçak kenarları kırmızı çizilir."""
+    o = []
+    for nm, r, *_ in SENS:
+        xa = RX(r); y = 520
+        o.append(f'<path d="M{xa-5:.1f},{y+44} V{y+92} L{xa+12.7:.1f},{y+104} L{xa+30.4:.1f},{y+92} V{y+44}" fill="none" stroke="{RED}" stroke-width="3" stroke-linejoin="round"/>')
+    bx, by, bw, bh = 828, 500, 352, 122
+    o += [f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="6" fill="#fff1f1" stroke="{RED}" stroke-width="3"/>',
+          f'<path d="M{bx},{by+60} H{RX(25)+44:.1f}" stroke="{RED}" stroke-width="4"/>',
+          f'<path d="M{RX(25)+44:.1f},{by+60} l12,-8 v16 Z" fill="{RED}" transform="rotate(180 {RX(25)+50:.1f} {by+60})"/>',
+          t(bx+14, by+30, "ÖNCE OJE!", 22, "bold", RED),
+          t(bx+14, by+52, "Nem sensörleri toprağa girmeden önce:", 11, "bold", RED),
+          t(bx+14, by+70, "• kartın kesik kenarlarına (kırmızı çizgi) şeffaf oje sür", 10.5, fill="#1a211f"),
+          t(bx+14, by+86, "• beyaz çizginin üstündeki elektronik kısmı da koru", 10.5, fill="#1a211f"),
+          t(bx+14, by+102, "• bıçağın düz yüzüne sürme; kuruyunca tak", 10.5, fill="#1a211f")]
+    return "\n".join(o)
+
 def parts():
     o = [uno(("3V3", "GND", "A0", "A1", "A2", "A3", "D2", "D3", "D4", "D5", "D10", "D11", "D12")), bread()]
     for nm, r, *_ in SENS: o.append(sensor(RX(r), "Nem " + nm))
+    o.append(oje_uyari())
     dx = RX(3)
     o += [f'<rect x="{dx-13:.1f}" y="514" width="51.4" height="70" rx="4" fill="#dfe9e6" stroke="#7d8a86"/>',
           pinmark(dx, 520, "out", "d"), pinmark(dx+12.7, 520, "+", "d"), pinmark(dx+25.4, 520, "−", "d"), t(dx+12.7, 564, "DHT22", 9, "bold", anchor="middle"),
@@ -236,6 +255,8 @@ def layout(web=False):
             body = (f'<path d="M{sx-8},258 H{sx+8} V352 L{sx},364 L{sx-8},352 Z" fill="#2f3a36" stroke="#111"/>'
                     f'<rect x="{sx-10}" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/>'
                     f'<line x1="{sx-12}" y1="300" x2="{sx+12}" y2="300" stroke="#fff" stroke-width="1.2"/>'
+                    + f'<path d="M{sx-8},300 V352 L{sx},364 L{sx-8},352 Z M{sx+8},300 V352 L{sx},364" fill="none" stroke="#d0021b" stroke-width="2.2"/>'
+                    + t(sx, 228, "ÖNCE OJE!", 9, "bold", "#d0021b", "middle")
                     + t(sx, 240, f"Nem {nm}{j}", 8.5, "bold", anchor="middle"))
             o.append(grp(f"nem{nm}{j}", body))
         # kova + sandalye
