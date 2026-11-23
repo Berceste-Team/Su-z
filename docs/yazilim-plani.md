@@ -270,7 +270,7 @@ Veri yolu artık belli (Bridge, §3) ve mesaj adları önerildi (§4). En kritik
 - [x] Tek ekim: deneme verisi, dondurma, tam veri (§1, §8)
 - [ ] Donanım tarafının sözleşme v1'i onaylaması (§10)
 - [ ] `status` alanının SQLite'ta nerede tutulacağı (sütun mu, ayrı tablo mu)
-- [ ] README ve Notion'daki iki turlu takvimin tek ekime göre güncellenmesi
+- [x] README, site ve donanım planındaki iki turlu takvimin tek ekime göre güncellenmesi (23 Kasım)
 
 ## 7. Hedef klasör ve dosya yapısı
 
@@ -346,7 +346,7 @@ Tek ekim olduğu için fazlar tarihten çok **sırayla** bağlıdır: bir faz bi
 - **Faz 4 — Tam veri toplama (A/B):** aynı bitkiler üzerinde Yatak A zamanlayıcıyla, Yatak B Suİz ile sulanır. Yayımlanacak sonuçlar yalnızca bu dönemin verisinden çıkar.
 - **Faz 5 — Analiz ve yayın:** hasat ölçümleri, su kullanımı karşılaştırması, grafikler, GitHub ve Project Hub yayını.
 
-**Risk:** deneme dönemi uzarsa tam veri dönemi kısalır. Bu yüzden Faz 1–2 önceliklidir; Faz 3'ün model ve senaryo kısmı gerekirse kapsam kesme sırasına göre kısaltılır (§11 sonu). README ve Notion'daki iki turlu takvim bu plana göre güncellenmelidir.
+**Risk:** deneme dönemi uzarsa tam veri dönemi kısalır. Bu yüzden Faz 1–2 önceliklidir; Faz 3'ün model ve senaryo kısmı gerekirse kapsam kesme sırasına göre kısaltılır (§11 sonu). README, site ve donanım planındaki takvim 23 Kasım 2026'da bu plana göre güncellendi (ekim en geç 30 Kasım, dondurma 16 Aralık, tam veri 17 Aralık – 5 Ocak).
 
 ## 9. Çalışma kuralları ve bitti tanımı
 
@@ -355,7 +355,7 @@ Tek kaynak main dalıdır; her iş kısa ömürlü bir dalda yapılır ve birka�
 1. Dal adı: `feature/<iş>`, `fix/<iş>`, `docs/<iş>` (ör. `feature/file-adapter`). PR başlığında Notion görevinin adı geçer.
 2. PR'ı açan merge etmez; diğer yazılımcı inceler, onaylar ve merge eder.
 3. Merge yöntemi: "Create a merge commit". Merge sonrası dal silinir.
-4. Bir karar, takvim ya da deney değişikliği hem README/docs'ta hem Notion ana dokümanında güncellenir (AGENTS.md).
+4. Bir karar, takvim ya da deney değişikliği önce proje sitesinde (`docs/index.html`), aynı iş içinde README ve docs'ta güncellenir; Notion yalnızca görev tahtasıdır (AGENTS.md).
 5. Mock ve gerçek veri hiçbir zaman karışmaz: her kayıtta `is_synthetic` taşınır, raporlarda yalnızca gerçek veri kullanılır.
 6. Kod dondurulduktan sonra (tam veri toplama başlarken) yalnızca güvenlik hataları düzeltilir.
 

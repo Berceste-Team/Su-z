@@ -130,6 +130,11 @@ def mosfet(x, y, nm, dname, pwm_top):
     return "\n".join(o)
 
 RED = "#d0021b"
+OJE_N = "Oje nereye sürülür?"
+OJE_H = ("Şart: toprağa giren kesik kenarlar ve uç (kırmızı çizgi). Kenardan nem çeker, kart şişer, okuma kayar; iki kat, biraz taşırarak sür. "
+         "Önerilir: beyaz çizginin üstündeki elektronik; ince oje ya da makaron. "
+         "Sürme: bıçağın düz yüzleri (ölçüm buradan yapılır) ve konnektör (temas bozulur). "
+         "Kalibrasyonu oje kuruduktan sonra yap.")
 def oje_uyari():
     """Nem sensörlerinin yanında büyük kırmızı oje uyarısı; bıçak kenarları kırmızı çizilir."""
     o = []
@@ -142,9 +147,11 @@ def oje_uyari():
           f'<path d="M{RX(25)+44:.1f},{by+60} l12,-8 v16 Z" fill="{RED}" transform="rotate(180 {RX(25)+50:.1f} {by+60})"/>',
           t(bx+14, by+30, "ÖNCE OJE!", 22, "bold", RED),
           t(bx+14, by+52, "Nem sensörleri toprağa girmeden önce:", 11, "bold", RED),
-          t(bx+14, by+70, "• kartın kesik kenarlarına (kırmızı çizgi) şeffaf oje sür", 10.5, fill="#1a211f"),
-          t(bx+14, by+86, "• beyaz çizginin üstündeki elektronik kısmı da koru", 10.5, fill="#1a211f"),
-          t(bx+14, by+102, "• bıçağın düz yüzüne sürme; kuruyunca tak", 10.5, fill="#1a211f")]
+          t(bx+14, by+70, "• Şart: kırmızı çizilen kenarlar ve uç, iki kat", 10.5),
+          t(bx+14, by+86, "• Önerilir: beyaz çizginin üstündeki elektronik", 10.5),
+          t(bx+14, by+102, "• Sürme: bıçağın düz yüzleri ve konnektör", 10.5),
+          t(bx+bw-12, by+28, "üzerine gel: ayrıntı", 8.5, fill="#96560a", anchor="end")]
+    o = [f'<g class="tp" data-n="{OJE_N}" data-h="{OJE_H}">' + "\n".join(o) + '</g>']
     return "\n".join(o)
 
 def parts():
@@ -256,7 +263,7 @@ def layout(web=False):
                     f'<rect x="{sx-10}" y="246" width="20" height="26" rx="2" fill="#dfe9e6" stroke="#7d8a86"/>'
                     f'<line x1="{sx-12}" y1="300" x2="{sx+12}" y2="300" stroke="#fff" stroke-width="1.2"/>'
                     + f'<path d="M{sx-8},300 V352 L{sx},364 L{sx-8},352 Z M{sx+8},300 V352 L{sx},364" fill="none" stroke="#d0021b" stroke-width="2.2"/>'
-                    + t(sx, 228, "ÖNCE OJE!", 9, "bold", "#d0021b", "middle")
+                    + (f'<g class="tp" data-n="{OJE_N}" data-h="{OJE_H}">' if web else "") + t(sx, 228, "ÖNCE OJE!", 9, "bold", "#d0021b", "middle") + ("</g>" if web else "")
                     + t(sx, 240, f"Nem {nm}{j}", 8.5, "bold", anchor="middle"))
             o.append(grp(f"nem{nm}{j}", body))
         # kova + sandalye

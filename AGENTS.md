@@ -20,12 +20,12 @@
 6. Commit ve push yalnızca kullanıcı istediğinde yapılır.
 7. Şemanın kaynağı `tools/baglanti-semasi/gen2.py`'dir; çalıştırınca `tools/baglanti-semasi/index.html` ve `docs/sema/index.html` yazılır (ikisi aynı olmalı). Şema değişince PDF de (`Suiz-Baglanti-Semasi.pdf`) `out/b1…b8.svg` dosyalarından yeniden üretilir.
 
-## Güncel durum (21 Kasım 2026)
+## Güncel durum (23 Kasım 2026)
 
-- 21 Kasım 2026: MOSFET kartları lehimlendi, elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı (gelen klemensli jak erkek çıktı). Henüz güç verilmedi, hiçbir test yapılmadı. Yataklar hazırlanıyor; Tur 1 ekiminin 19 Kasım'da yapılıp yapılmadığı teyit edilmedi, takvim buna göre gözden geçirilecek.
+- 21 Kasım 2026: MOSFET kartları lehimlendi, elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı (gelen klemensli jak erkek çıktı). Henüz güç verilmedi, hiçbir test yapılmadı. Yataklar hazırlanıyor; ekim 19 Kasım'da yapılmadı, takvim 23 Kasım'da tek ekime göre yeniden kuruldu. Roka tohumu alındı.
 
 - Robotistan siparişi ve 6 kapasitif nem sensörü (v2.0, HW-390, Robocombo) teslim alındı ve parçadan doğrulandı. Elde ayrıca dirençli tip sensörler var; deneyde kullanılmaz.
 - Oje: kapasitif nem sensörleri toprağa girmeden önce kart kenarlarına şeffaf oje sürülür. Bu not şemada (her adımda, sensörlerin yanında) büyük kırmızı uyarı olarak durur. Kullanıcı 23 Kasım 2026'da sözlü hatırlatmanın bırakılmasını istedi; oturum sonlarında hatırlatmayın.
 - MOSFET kartı (üç klemensli), akış sensörü, pompa ve şamandıra 16 Kasım'da parçalarla doğrulandı; şema ve dokümanlar düzeltildi (docs/donanim-plani.md §6.1).
-- **İki tur korunur; takvim 15 Ocak 2027'de biter.** Tur 1: 19 Kasım – 13 Aralık (sensörler toprakta 24 Kasım; kural tabanlı sulama Yatak B 3 Aralık, Yatak A 8 Aralık; güvenlik testleri 9–11 Aralık); kod ve donanım 13 Aralık'ta donar; Tur 2 / E5 A/B deneyi 14 Aralık – 7 Ocak; analiz ve yayın 8–10 Ocak.
+- **Tek ekim (23 Kasım 2026 kararı; docs/yazilim-plani.md):** ekim en geç 30 Kasım; sensörler toprakta ve gerçek veri en geç 7 Aralık; kural tabanlı sulama iki yatakta ve E3 en geç 14 Aralık; kod dondurma 16 Aralık; A/B tam veri 17 Aralık – 5 Ocak (20 gün); hasat 6 Ocak; analiz ve yayın 7–10 Ocak; yayın dönemi 15 Ocak'ta biter. Gerekçe README §9.2.
 - 17 Kasım 2026: Notion ana dokümanındaki proje bilgisi kaldırıldı; Notion yalnızca görev tahtasıdır. Test yatağı kabı (kasa) henüz alınmadı; ölçüleri netleşince alan ve litre hesapları gözden geçirilecek.
