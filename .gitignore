@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Ham veri git'e konmaz (docs/yazilim-plani.md §3)
+*.sqlite
+*.sqlite3
+*.db
+data/export/
+
+# Editör ve işletim sistemi
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
