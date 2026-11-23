@@ -102,7 +102,7 @@ Ara toplam 1.500 TL'nin üstünde olduğu için kargo ücretsizdir.
 | Hortum 4/6 mm + T-parça + çekvalf | ~5 m + birkaç adet | Akvaryumcu | YF-S401 girişi ve damlatıcı hattı. Çekvalf pompa durunca hortumdaki suyun geri kaçmasını önler. Redüksiyon gerekmedi (17 Kasım 2026: 4×6 mm hortum pompaya doğrudan uyuyor). 12 Kasım 2026: 2 × 3 m silikon 4×6 mm hortum, T-parça ve çekvalf alındı |
 | Damlatıcı veya kılcal boru | 2 set | Akvaryumcu / ziraat bayi | |
 | Toprak, torf, perlit | 2 yatak için tek torba karışım | Fidancı / ziraat bayi | İki yatak aynı karışımla doldurulur |
-| Turp veya roka tohumu | 2 paket (Tur 1 + Tur 2) | Ziraat bayi | |
+| Roka tohumu | Tur 1 + Tur 2 için yeterli | Trendyol | 23 Kasım 2026: alındı (83 TL). Turp seçeneği düştü; iki turda da roka ekilecek |
 | Şeffaf kapaklı termoplastik buat (280 × 210 × 74 mm) | 1 | Trendyol (12 Kasım 2026'da sipariş edildi) | Elektronik kutusu. İlk plandaki kapaklı saklama kabının yerine alındı |
 | Şeffaf PE örtü | 1 | Hırdavat | Yağmur koruması, bkz. §8. 17 Kasım 2026: mini sera yerine şeffaf örtü seçildi; henüz alınmadı |
 | Sensör uzatma kablosu | — | Evde | Cat6 kablo evde var; yetmezse kırmızı ve siyah montaj kablosu (§2.2) uzatma olarak kullanılır, teller etiketlenir |
