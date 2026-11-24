@@ -1,17 +1,30 @@
-"""Generate synthetic per-bed sensor messages without hardware or dependencies.
+"""Generate synthetic sensor data without hardware or external dependencies.
 
-The message schema is provisional until the MCU–MPU contract is agreed.
-Soil readings carry separate ADC counts and simulated volumetric moisture
-percentages. The 12-bit ADC range and linear dry/wet calibration below are
-simulation assumptions. The dry and wet endpoints represent 0% and 50% VWC.
+Both the legacy record format and the proposed v1 messages are provisional.
+Legacy soil readings carry ADC counts and simulated volumetric moisture
+percentages. The v1 messages carry raw ADC counts. The 12-bit ADC range and
+linear dry/wet calibration are simulation assumptions. The dry and wet
+endpoints represent 0% and 50% VWC.
 """
 
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+from itertools import groupby
 from math import exp, sin, tau
 from random import Random
 from typing import Literal
+
+from app.ingest.contract import (
+    NORMAL,
+    READ_ERROR,
+    SUIZ_AMBIENT,
+    SUIZ_READING,
+    UNREADABLE,
+    VERSION,
+    Ambient,
+    Reading,
+)
 
 Bed = Literal["A", "B"]
 FaultKind = Literal["spike", "freeze", "disconnect"]
@@ -152,4 +165,71 @@ def generate_records(
                 "air_temperature_c": temperature_c,
                 "relative_humidity_pct": relative_humidity_pct,
                 "soil": soil,
+            }
+
+
+def generate_messages(
+    *,
+    start: datetime,
+    samples: int,
+    seed: int,
+    interval_seconds: int = 60,
+    beds: Iterable[Bed] = ("A", "B"),
+    irrigation: Iterable[Irrigation] = (),
+    faults: Iterable[Fault] = (),
+) -> Iterator[dict]:
+    """Yield v1 argument lists with Python-side timestamps and provenance.
+
+    Each sample yields ambient once, then one reading per selected bed. Each
+    bed and the ambient stream count samples from zero on a shared uptime.
+    Flow, tank and pump fields are idle placeholders. Irrigation changes the
+    simulated soil only.
+    """
+    if type(interval_seconds) is not int:
+        raise ValueError("interval_seconds must be an integer for v1 messages")
+    records = generate_records(
+        start=start,
+        samples=samples,
+        seed=seed,
+        interval_seconds=interval_seconds,
+        beds=beds,
+        irrigation=irrigation,
+        faults=faults,
+    )
+    for seq, (timestamp, sample) in enumerate(groupby(records, key=lambda record: record["timestamp"])):
+        up_ms = seq * interval_seconds * 1000
+        metadata = {"timestamp": timestamp, "is_synthetic": True}
+        for index, record in enumerate(sample):
+            if index == 0:
+                yield {
+                    **metadata,
+                    "name": SUIZ_AMBIENT,
+                    "args": Ambient(
+                        v=VERSION,
+                        seq=seq,
+                        up_ms=up_ms,
+                        air_temp_c=record["air_temperature_c"],
+                        air_rh_pct=record["relative_humidity_pct"],
+                        dht_st=NORMAL,
+                    ),
+                }
+
+            shallow, deep = record["soil"]
+            adc5, adc10 = shallow["raw_adc"], deep["raw_adc"]
+            yield {
+                **metadata,
+                "name": SUIZ_READING,
+                "args": Reading(
+                    v=VERSION,
+                    bed=record["bed_id"],
+                    seq=seq,
+                    up_ms=up_ms,
+                    soil5_adc=UNREADABLE if adc5 is None else adc5,
+                    soil10_adc=UNREADABLE if adc10 is None else adc10,
+                    soil5_st=READ_ERROR if adc5 is None else NORMAL,
+                    soil10_st=READ_ERROR if adc10 is None else NORMAL,
+                    flow_pulses=0,
+                    tank_ok=1,
+                    pump_on=0,
+                ),
             }
