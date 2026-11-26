@@ -201,7 +201,7 @@ flowchart LR
         READ["Örnekleme ve medyan filtre"]
         SAFE["Güvenlik denetçisi"]
         DRIVE["Pompa sürücü"]
-        BACKUP["Yedek kural modu"]
+        BACKUP["Güvenli bekleme: pompa kapalı"]
     end
 
     subgraph MPU["UNO Q - MPU (Linux) - Zekâ ve arayüz"]
@@ -237,7 +237,7 @@ flowchart LR
 
 | Katman | Görev | Neden burada? |
 | :--- | :--- | :--- |
-| **MCU (STM32U585)** | Sensör örnekleme ve filtreleme; pompa sürme; azami çalışma süresi; şamandıra ile donanımsal düşük seviye kilidi; akış doğrulama zamanlayıcısı; MPU heartbeat izleme; yedek kural modu | Deterministik zamanlama ve **Linux çökse bile pompanın güvenli kalması** |
+| **MCU (STM32U585)** | Sensör örnekleme ve filtreleme; pompa sürme; azami çalışma süresi; şamandıra ile donanımsal düşük seviye kilidi; akış doğrulama zamanlayıcısı; MPU heartbeat izleme; heartbeat kaybında güvenli bekleme | Deterministik zamanlama ve **Linux çökse bile pompanın güvenli kalması** |
 | **MPU (Linux)** | Veri kaydı (SQLite/CSV); özellik çıkarımı; anomali tespiti; toprak nemi tahmini; karar politikası; su bütçesi; ürün uygunluk ve senaryo motoru; yerel web panosu | Python ekosistemi, yeterli bellek ve işlem gücü |
 | **Bridge (RPC)** | MCU → MPU: ham ölçümler, olaylar, alarmlar. MPU → MCU: sulama izni ve doz | Arduino'nun resmi MCU–MPU haberleşme yolu |
 
@@ -473,7 +473,7 @@ Tasarımın amacı yalnızca doğru karar üretmek değil, **yanlış kararları
 | Hortum kaçağı / tıkanıklık | Verilen hacim / hedef hacim oranı 0,8–1,2 dışında ise uyarı; sulama sonrası toprak tepkisi yoksa uyarı | MCU + MPU |
 | Depo boşalır | Şamandıra ile **donanımsal** kilit + yazılım eşiği (%10) | MCU (donanım) |
 | Aşırı sulama | Tek olay ≤ 60 sn, olaylar arası ≥ 20 dk, 72 saatlik bütçe penceresi | MCU |
-| MPU (Linux) donar veya çöker | Heartbeat 60 sn kaybolursa pompa kapanır; MCU sınırlı hacimli yedek kural moduna geçer | MCU |
+| MPU (Linux) donar veya çöker | Heartbeat 60 sn kaybolursa pompa kapanır; MCU güvenli beklemeye geçer ve heartbeat geri gelene kadar sulama yapmaz (26 Kasım 2026 kararı; gerekçe [yazılım planı](docs/yazilim-plani.md) §4.7) | MCU |
 | İnternet kesilir | Ölçüm, karar, kayıt ve pano tamamen yerel çalışır | MPU |
 | Elektrik kesintisi | Pompa açılışta varsayılan olarak KAPALI; bütçe durumu güç geldiğinde kalıcı kayıttan yüklenir | MCU + MPU |
 | Model yetersiz kalır | Model, politikaya girmeden önce baz çizgisine karşı doğrulanır; yetersizse fizik/kural tabanlı politika kullanılır ve bu durum raporlanır | Süreç |

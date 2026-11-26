@@ -108,6 +108,8 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 
 **24 Kasım 2026 düzeltmeleri** (komutlar yazılmadan önce eksik kalan kurallar; donanım onayı bekliyor): `suiz_irrigate` hacmi mL yerine akış darbesi olarak gönderir (§4.1 madde 4 ile çelişiyordu), `req_id` ve süre sınırı kuralları yazıldı, kilit ve `suiz_reset_lock` tanımlandı, DHT okunamazsa iki değer de `-1` olur (§4.3–4.5). Donanım tarafının kararını bekleyen maddeler ⏳ ile işaretli ve §4.7'de toplandı.
 
+**26 Kasım 2026, donanım incelemesi (PR #10):** §4.7'deki kararlar yazıldı (tek pompa, günlük tavan, yedek modda sulama yok); ADC çözünürlüğü, aralık dışı eşikleri, şamandıra filtresi, pompa çalışırken DHT ve nem kuralları ve açılış durumu eklendi (§4.1, §4.2, §4.3, §4.6). Doz süresi düzeltildi. Yedek kural kararı proje sitesine ve README §5, §8'e de işlendi.
+
 ### 4.1 Genel kurallar
 
 1. Tüm Bridge fonksiyon adları `suiz_` ile başlar.
@@ -117,6 +119,8 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 5. **Zaman damgasını Python atar** (UTC). MCU yalnızca `up_ms` (açılıştan beri milisaniye) gönderir; sıra ve kayıp mesaj tespiti `seq` ve `up_ms` ile yapılır.
 6. Okunamayan sayısal değer `-1` olarak gönderilir ve ilgili durum alanı `1` olur. Python bunu `None` olarak kaydeder.
 7. Örnekleme süresi sketch'te tek bir sabittir: `SAMPLE_PERIOD_S = 60`. Sulamadan sonraki 15 dakika `30` saniyeye iner. Değiştirmek sözleşme değişikliği sayılmaz.
+8. **Açılış:** sketch `setup()`'ın ilk satırlarında pompa pinlerini (D10, D11) `OUTPUT` ve `LOW` yapar; pompalar kapalı başlar.
+9. **Döngü beklemez:** sketch'in ana döngüsünde uzun bekleten kod (`delay()` gibi) bulunmaz; süreler `millis()` ile ölçülür. Akış darbeleri kesmeyle sayılamazsa yedek yöntem döngüde yaklaşık 1 ms'de bir yoklamadır (§4.7 madde 4) ve bu yalnızca döngü beklemezse çalışır.
 
 **Ölçüm sıklıkları doğru mu?** Evet. Toprak nemi saatler içinde değiştiği için 60 saniye gereğinden sıktır ama zararı yoktur: sulamanın toprağa inişini dakika dakika gösterir ve veri hacmi küçüktür (2 yatak × 1440 = 2880 satır/gün). **15 saniye bir ölçüm değildir;** Python'un MCU'ya gönderdiği "çalışıyorum" sinyalidir (heartbeat).
 
@@ -132,7 +136,7 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 
 **Tarla gözüyle dikkat edilecekler:**
 
-- **Doz küçüktür:** 0,24 m²'lik yatakta 1 mm su 240 mL'dir. Zamanlayıcının her dozu (≈ 1 mm) pompanın debisine göre yalnızca birkaç saniyelik çalışmaya denk gelir. Akış sensörünün bu kadar kısa sürede doğru sayması deneme döneminde mezürle kontrol edilmelidir.
+- **Doz küçüktür:** 0,24 m²'lik yatakta 1 mm su 240 mL'dir. İnce hortum ve akış sensörü üzerinden debi tahminen dakikada 0,5–1 L olduğundan zamanlayıcının her dozu (≈ 1 mm) yaklaşık 15–30 saniyelik çalışmaya denk gelir; kesin süre debi ölçülünce belli olur. Akış sensörünün bu küçük hacmi doğru sayması deneme döneminde mezürle kontrol edilmelidir.
 - **Kapasitif sensörler sıcaklıktan etkilenir:** balkonda gece-gündüz farkı okumada günlük dalgalanma yaratabilir. Kuruma eğrileri sıcaklıkla birlikte kaydedilir; dalgalanma büyükse sıcaklık düzeltmesi eklenir.
 - **Roka eşikleri başlangıçta tahmindir:** sulama eşiği ve hedef nem `crops/roka.yaml`'da tutulur ve deneme verisiyle (kalibrasyon ve kuruma eğrileri) ayarlanır. Tek ekim olduğu için bu ayar tam veri dönemi başlamadan bitmiş olmalıdır.
 
@@ -146,19 +150,21 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 | 2 | `bed` | str | `"A"` veya `"B"` |
 | 3 | `seq` | int | Yatak başına artan sayı (açılışta 0) |
 | 4 | `up_ms` | int | MCU açılışından beri ms |
-| 5 | `soil5_adc` | int | 5 cm sensör, 9 okumanın medyanı; okunamazsa -1 |
+| 5 | `soil5_adc` | int | 5 cm sensör, 9 okumanın medyanı, 12 bit (0–4095; sketch `analogReadResolution(12)` çağırır); `soil5_st = 1` ise `-1` |
 | 6 | `soil10_adc` | int | 10 cm sensör, aynı kural |
-| 7 | `soil5_st` | int | 0 normal, 1 aralık dışı (kopuk ya da kısa devre) |
+| 7 | `soil5_st` | int | 0 normal, 1 aralık dışı (kopuk ya da kısa devre): medyan ADC < 50 ya da > 4000. Eşikler sketch'te sabittir |
 | 8 | `soil10_st` | int | 10 cm için aynı kod |
 | 9 | `flow_pulses` | int | Açılıştan beri toplam akış darbesi; sıfırlanmaz |
-| 10 | `tank_ok` | int | Şamandıra: 1 su var, 0 su yok |
+| 10 | `tank_ok` | int | Şamandıra: 1 su var, 0 su yok. Yalnızca 2 saniye boyunca aynı kalırsa değişir (pompa suyu çalkalarken gereksiz `TANK_LOW` olmasın diye). Kontak su varken kapalıdır; tel koparsa "su yok" okunur |
 | 11 | `pump_on` | int | 1 pompa şu an çalışıyor, 0 kapalı |
+
+**Aralık dışı ve kopuk sensör:** MCU aralık dışını yakaladığında ADC yerine `-1` gönderir (§4.1 madde 6; `contract.py` `-1` ile `st = 1`'in birlikte gelmesini bekler). Kopan bir sensör kablosunda analog giriş boşta kalıp aralık içinde rastgele değerler okuyabilir; bunu MCU her zaman yakalayamaz, Python kalite katmanı (`spike`, `freeze`) yakalar.
 
 ### 4.3 MCU → Python: `suiz_ambient`, `suiz_irrigation_result`, `suiz_safety`
 
 | Mesaj | Ne zaman | Alanlar (sırayla) |
 | --- | --- | --- |
-| `suiz_ambient` | Her periyotta bir kez (DHT22 iki yatağa ortak) | `v`, `seq`, `up_ms`, `air_temp_c` (float), `air_rh_pct` (float), `dht_st` (0 normal, 1 okunamadı). `dht_st = 1` ise `air_temp_c` ve `air_rh_pct` **ikisi de** `-1` gönderilir; böylece gerçek −1 °C ile "okunamadı" karışmaz |
+| `suiz_ambient` | Her periyotta bir kez (DHT22 iki yatağa ortak) | `v`, `seq`, `up_ms`, `air_temp_c` (float), `air_rh_pct` (float), `dht_st` (0 normal, 1 okunamadı). `dht_st = 1` ise `air_temp_c` ve `air_rh_pct` **ikisi de** `-1` gönderilir; böylece gerçek −1 °C ile "okunamadı" karışmaz. Pompa çalışırken DHT22 okunmaz (kütüphane okuma sırasında kesmeleri birkaç ms kapatır, akış darbesi kaçabilir); o periyodun okuması pompa durunca yapılıp gönderilir |
 | `suiz_irrigation_result` | Her sulama isteği bittiğinde ya da reddedildiğinde | `v`, `req_id` (int), `bed`, `result` (`"done"`, `"rejected"`, `"aborted"`), `reason` (kod, §4.5), `run_ms` (int), `pulses` (bu sulamadaki darbe) |
 | `suiz_safety` | Güvenlik olayı anında | `v`, `bed` (`"A"`, `"B"` ya da genel olaylar için `"-"`), `code` (§4.5), `up_ms` |
 
@@ -167,7 +173,7 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 | Fonksiyon | Tür | Alanlar (sırayla) | Dönüş |
 | --- | --- | --- | --- |
 | `suiz_irrigate` | `Bridge.call`; sketch `provide_safe` ile karşılar | `v`, `req_id` (int), `bed`, `target_pulses` (int), `max_run_s` (int) | Hemen `"OK"` ya da ret kodu (§4.5); MCU sulamanın bitmesini beklemeden cevap verir. Sonuç ayrıca `suiz_irrigation_result` ile gelir |
-| `suiz_heartbeat` | `Bridge.notify`, 15 saniyede bir | `v`, `seq` | Yok. MCU 60 saniye heartbeat almazsa pompayı kapatır, yedek kural moduna geçer ve `HEARTBEAT_LOST` gönderir. ⏳ Yedek kural modunun ayrıntısı donanım kararı bekliyor (§4.7) |
+| `suiz_heartbeat` | `Bridge.notify`, 15 saniyede bir | `v`, `seq` | Yok. MCU 60 saniye heartbeat almazsa pompayı kapatır, güvenli beklemeye geçer ve `HEARTBEAT_LOST` gönderir. Güvenli beklemede pompa hiç çalışmaz; ilk heartbeat'te normal moda dönülür (§4.7 madde 3) |
 | `suiz_reset_lock` | `Bridge.call` | `v`, `bed` | `"OK"` (kilit açıldı ya da zaten açıktı) ya da `BAD_ARGS`. Yalnızca kullanıcı isteğiyle çağrılır; Python kendiliğinden çağırmaz |
 
 **`suiz_irrigate` kuralları**
@@ -175,7 +181,7 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 1. **Hacim darbe olarak gönderilir.** Python, istenen hacmi kalibrasyon dosyasındaki "litre başına darbe" değeriyle `target_pulses`'a çevirir. MCU hesap yapmaz: pompayı açar, bu sulamada saydığı darbe `target_pulses`'a ulaşınca kapatır. Böylece kalibrasyon yalnızca Python'da kalır (§4.1 madde 4) ve istek ile sonuç (`pulses`) aynı birimdedir.
 2. **Süre sınırı:** MCU, `max_run_s` ile kendi sabit sınırından (60 sn, README §8) **hangisi küçükse** onu uygular. Süre dolduğunda hedefe ulaşılmamışsa sulama `aborted` / `MAX_RUNTIME` ile biter.
 3. **`req_id`:** Python üretir; 1'den başlar, her istekte artar, Python yeniden başlasa da tekrar etmez (Python'da kalıcı kayıttan gelir). 32 bit işaretli tam sayıya sığar. MCU bu sayıyı yorumlamaz, yalnızca `suiz_irrigation_result` içinde aynen geri gönderir.
-4. **Tekrar deneme yok:** `Bridge.call` hata verir ya da zaman aşımına uğrarsa Python aynı isteği kendiliğinden tekrar göndermez (MCU ilk isteği almış olabilir; tekrar, çift sulama demektir). Bir sonraki karar döneminde politika durumu yeniden değerlendirir.
+4. **Tekrar deneme yok:** `Bridge.call` hata verir ya da zaman aşımına uğrarsa Python aynı isteği kendiliğinden tekrar göndermez (MCU ilk isteği almış olabilir; tekrar, çift sulama demektir). Bir sonraki karar döneminde politika durumu yeniden değerlendirir. **İstisna:** `BUSY` ile reddedilen istek MCU'ya ulaşmış ama uygulanmamıştır; Python onu bir sonraki karar döneminde yeni bir `req_id` ile yeniden ister. Böylece örneğin Yatak B sulanırken Yatak A'nın zamanlayıcı dozu kaybolmaz.
 5. **`BAD_ARGS`:** `v ≠ 1`, `bed` `"A"` ya da `"B"` değil, `target_pulses ≤ 0` ya da `max_run_s ≤ 0` ise istek reddedilir.
 6. **`MIN_INTERVAL`:** 20 dakika, o yatakta pompanın en son **durduğu** andan sayılır. Reddedilen istekler sayılmaz. MCU açıldıktan sonraki ilk istek bu kurala takılmaz.
 7. **Yarıda kesilen sulama:** Pompa çalışırken depo boşalırsa sulama `aborted` / `TANK_LOW`, heartbeat kaybolursa `aborted` / `HEARTBEAT_LOST` ile biter. Kabul edilen (`"OK"` dönülen) her istek için tam olarak bir `suiz_irrigation_result` gönderilir.
@@ -196,9 +202,9 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 | --- | --- | --- |
 | `OK` | dönüş | İstek kabul edildi |
 | `TANK_LOW` | ret, aborted, safety | Şamandıra su yok diyor |
-| `BUSY` | ret | Pompa zaten çalışıyor. ⏳ Yalnızca aynı yatağın pompası mı, yoksa herhangi bir pompa mı: donanım kararı bekliyor (§4.7) |
+| `BUSY` | ret | Pompalardan biri çalışıyor; aynı anda yalnızca bir pompa çalışır (§4.7 madde 1) |
 | `MIN_INTERVAL` | ret | O yatakta pompa durduğundan bu yana 20 dakika geçmedi |
-| `DAILY_LIMIT` | ret | Bu istekle yatağın günlük darbe tavanı aşılır. ⏳ "Gün"ün tanımı ve tavanın değeri donanım kararı bekliyor (§4.7) |
+| `DAILY_LIMIT` | ret | Bu istekle yatağın son 24 saatteki darbe toplamı tavanı aşar (geçici tavan 9000 darbe, §4.7 madde 2) |
 | `LOCKED` | ret, safety | Ret: yatak kilitli, `suiz_reset_lock` gerekir. Safety: yatak şimdi kilitlendi (art arda 2 `NO_FLOW`) |
 | `BAD_ARGS` | ret | Argüman eksik ya da hatalı |
 | `NO_FLOW` | aborted, safety | Pompa açıldı ama 3 saniyede akış darbesi yok |
@@ -209,6 +215,8 @@ Bu bölüm donanımcı ile yazılım ekibinin ortak referansıdır. **Sketch ve 
 Süre ve hacim sınırları README §8'deki değerlerdir; MCU'da sabit olarak tutulur.
 
 ### 4.6 Python tarafında karşılıklar ve Bridge PoC
+
+**Pompa çalışırken nem:** pompa açılışında ortak GND hattında gerilim oynar. Python, `pump_on = 1` olan `suiz_reading` satırlarını kaydeder ama bu satırlardaki nem değerlerini karara almaz.
 
 `bridge_adapter.py` gelen mesajları ortak `Measurement` modeline çevirir: `soil5_adc` → `soil_5cm_adc`, `soil10_adc` → `soil_10cm_adc`, kalibrasyondan sonra `soil_5cm_pct` ve `soil_10cm_pct`; `flow_pulses` → `flow_pulses_total`; `air_temp_c` → `air_temperature_c`; `air_rh_pct` → `relative_humidity_pct`. Ortam ölçümü `bed_id="ENV"` olarak saklanır. Mock üretici de aynı alanları üretecek şekilde güncellenir; böylece mock ve gerçek veri aynı yoldan geçer.
 
@@ -244,10 +252,15 @@ answer = Bridge.call("suiz_irrigate", 1, req_id, "B", target_pulses, 60)
 
 ⏳ işaretli maddeler sketch'i yazan donanım tarafının kararını bekler. Her maddede yazılım tarafının önerisi vardır; uygunsa öneri kabul edilir, değilse karar buraya yazılır. Karar verilince madde "Karar:" satırıyla kapatılır ve §4.4–4.5'teki ⏳ işareti kaldırılır. Sözleşme donanım tarafınca onaylanana kadar sürüm `v=1` kalır.
 
-1. ⏳ **İki pompa aynı anda çalışabilir mi? (`BUSY`)** İki pompa ve akış sensörleri aynı 5 V 2 A adaptörden beslenir; aynı anda çalışmaları gerilim düşüşüne ve nem okumalarında bozulmaya yol açabilir. *Öneri:* aynı anda yalnızca bir pompa çalışır; bir pompa çalışırken iki yataktan gelen her istek `BUSY` ile reddedilir.
-2. ⏳ **`DAILY_LIMIT`: "gün" nedir, tavan kaç darbedir?** MCU'da takvim saati yoktur (zamanı Python atar, §4.1 madde 5), bu yüzden "gece yarısı" bilinemez. *Öneri:* son 24 saatlik kayan pencere (`millis()` ile); tavan, yatak başına sabit bir darbe sayısıdır. Tavanın değeri kalibrasyon (litre başına darbe) ölçülünce birlikte belirlenir.
-3. ⏳ **Yedek kural modu (heartbeat kaybı).** README §8: "MCU sınırlı hacimli yedek kural moduna geçer". Tanımlanması gerekenler: yedek modda sulama yapılacak mı; yapılacaksa hangi koşulda, ne kadar ve ne sıklıkla; heartbeat geri gelince normal moda dönülüyor mu. *Öneri:* yedek mod yalnızca güvenli beklemedir, pompa hiç çalıştırılmaz; ilk heartbeat'te normal moda dönülür. Gerekçe: Python birkaç dakikada yeniden başlar; olası bir yedek sulama ise kaydı ve bütçeyi karıştırır. Yedek modda sulama yapılırsa bile Python harcanan suyu `flow_pulses` toplamından görür, çünkü bu sayaç sıfırlanmaz.
-4. ⏳ **Akış darbelerinin kesmeyle sayılması.** Sözleşme darbelerin kesmeyle (interrupt) sayıldığını varsayar. Kesme pinlerinin UNO Q çekirdeğinde çalıştığı henüz doğrulanmadı (proje sitesi, "Henüz doğrulanmadı"). Doğrulanınca buraya yazılır; çalışmazsa sayma yöntemi ve `target_pulses` birlikte yeniden ele alınır.
+1. **İki pompa aynı anda çalışabilir mi? (`BUSY`)** İki pompa ve akış sensörleri aynı 5 V 2 A adaptörden beslenir; aynı anda çalışmaları gerilim düşüşüne ve nem okumalarında bozulmaya yol açabilir.
+   **Karar (26 Kasım 2026, donanım):** aynı anda yalnızca bir pompa çalışır; bir pompa çalışırken iki yataktan gelen her istek `BUSY` ile reddedilir. `BUSY` reddi "tekrar deneme yok" kuralının istisnasıdır (§4.4 madde 4).
+2. **`DAILY_LIMIT`: "gün" nedir, tavan kaç darbedir?** MCU'da takvim saati yoktur (zamanı Python atar, §4.1 madde 5), bu yüzden "gece yarısı" bilinemez.
+   **Karar (26 Kasım 2026, donanım):** son 24 saatlik kayan pencere (`millis()` ile), yatak başına sabit tavan. Geçici tavan **9000 darbe**: YF-S401'in tipik ~5880 darbe/L değeriyle ≈ 1,5 L, normal günlük ihtiyacın yaklaşık 3 katı. Litre başına darbe kalibrasyonla ölçülünce güncellenir. MCU yeniden başlarsa pencere sıfırlanır; kabul edildi.
+3. **Yedek kural modu (heartbeat kaybı).** README §8 eskiden "MCU sınırlı hacimli yedek kural moduna geçer" diyordu ama modun ayrıntısı tanımlı değildi.
+   **Karar (26 Kasım 2026, donanım):** heartbeat kaybında güvenli bekleme: pompa hiç çalışmaz, ilk heartbeat'te normal moda dönülür. Gerekçe: Python birkaç dakikada yeniden başlar; olası bir yedek sulama ise kaydı ve bütçeyi karıştırır. Proje sitesi ve README §5, §8 bu karara göre güncellendi.
+4. ⏳ **Akış darbelerinin kesmeyle sayılması.** Kesme pinlerinin UNO Q çekirdeğinde çalıştığı henüz doğrulanmadı (proje sitesi, "Henüz doğrulanmadı").
+   **Karar (26 Kasım 2026, donanım): test sonrası.** `attachInterrupt` D2/D3'te ilk güç verme haftasında (en geç 7 Aralık) denenir. Çalışmazsa yedek yöntem: ana döngüde yaklaşık 1 ms'de bir pini yoklayıp kenar saymak (§4.1 madde 9). `target_pulses` iki durumda da aynı kalır. Test sonucu buraya yazılınca ⏳ kaldırılır.
+5. ⏳ **60 sn sınırı ve debi.** Tahmini debi dakikada 0,5–1 L ise 60 saniyelik sınır tek sulamayı yaklaşık 0,5–1 L ile (≈ 2–4 mm) kısıtlar; README §4.3 ise tek sulamayı 1,2 L'ye (5 mm) kadar ve debiyi 1–2 L/dk olarak varsayar. *Öneri:* debi ilk testte ölçülene kadar sınır 60 sn kalır; Python bir isteğin `target_pulses`'ını ölçülen debiyle 60 saniyeye sığacak şekilde sınırlar, daha büyük dozu sonraki karar dönemlerine böler. Debi ölçülünce sınırın korunup korunmayacağına ve README §4.3'ün güncellenmesine birlikte karar verilir.
 
 ## 5. Şu ana kadar yapılanlar (Hilal, 21 Kasım)
 
@@ -402,7 +415,7 @@ Sketch §4'teki adlarla ve alan sıralarıyla yazılır. Aşağıdaki maddeler d
 
 - [ ] Mesaj adları, alan sıraları ve kodlar (§4.2–4.5) sketch'e birebir uygulanır; ad ya da sıra değişikliği önce §4'e işlenir.
 - [ ] `suiz_irrigate` `provide_safe` ile karşılanır; her istek için `suiz_irrigation_result` gönderilir.
-- [ ] Heartbeat 60 saniye gelmezse pompa kapatılır, yedek kural moduna geçilir ve `HEARTBEAT_LOST` gönderilir.
+- [ ] Heartbeat 60 saniye gelmezse pompa kapatılır, güvenli beklemeye geçilir (pompa çalışmaz) ve `HEARTBEAT_LOST` gönderilir.
 - [ ] Akış darbeleri kesmeyle sayılır ve toplam sayacı sıfırlanmaz.
 - [ ] Bridge PoC (§4.6) yazılım tarafıyla birlikte çalıştırılır.
 
