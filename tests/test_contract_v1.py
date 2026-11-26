@@ -30,6 +30,13 @@ def test_v1_fields_follow_the_plan_in_order():
     assert validate_message(SUIZ_AMBIENT, list(AMBIENT)) == AMBIENT
 
 
+def test_irrigate_sends_target_pulses_not_volume():
+    # Plan §4.4: calibration stays in Python, so the MCU receives pulses.
+    assert MESSAGE_FIELDS["suiz_irrigate"] == (
+        "v", "req_id", "bed", "target_pulses", "max_run_s",
+    )
+
+
 @pytest.mark.parametrize(("index", "value", "error"), [
     (0, 2, "v must"),
     (0, True, "v must"),
