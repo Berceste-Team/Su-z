@@ -359,8 +359,11 @@ su-z/
 │   └── water_balance.py        fizik tabanlı simülatör (model ön eğitimi)
 ├── notebooks/                  E2 analizi, model eğitimi, E5 sonuçları
 ├── tests/                      ✅ her modülün testi; Bridge testleri sahte Bridge ile
-├── requirements.txt
-└── .github/workflows/tests.yml
+├── CLAUDE.md                   Claude Code çalışma kuralları (AGENTS.md ve bu plana atıf yapar)
+├── pyproject.toml              pytest ayarı (düz `pytest` komutu için)
+├── requirements.txt            kartta çalışacak paketler
+├── requirements-dev.txt        requirements.txt + test araçları
+└── .github/workflows/tests.yml CI: her PR'da testler (Python 3.13 ve 3.14)
 ```
 
 **Kural:** `arduino.app_utils` (Bridge) yalnızca `bridge_adapter.py` ve `control/` içinde import edilir. Geri kalan her şey Windows'ta mock veriyle çalışır ve test edilir. Dosya adları öneridir; modül başlarken PR'da netleşir.
@@ -438,7 +441,7 @@ Görevler fazlara (§8) ve bağımlılığa göre sıralıdır; kimin hangi gör
 | # | Görev | Faz | Durum | Kabul kriteri |
 | --- | --- | --- | --- | --- |
 | 1 | Plan ve sözleşme v1 raporunu tamamla, donanım tarafına onaylat (§4, §10) | 0 | Yapılıyor | §10'daki maddeler onaylandı; değişiklikler §4'e işlendi |
-| 2 | PR #5'i sözleşme v1 ile güncelle ve merge et | 0 | Yapılacak | `docs/data-contract.md` §4 ile aynı; TASLAK ibaresi kalktı |
+| 2 | Sözleşme v1'i donanım tarafına onaylat (eski taslak PR #5 kapatıldı; sözleşme §4'te) | 0 | Yapılacak | §4.7'deki ⏳ maddeler kapandı; donanım tarafı PR'ı onayladı |
 | 3 | Tailscale ağı ve uzaktan erişim (§3.3) | 0 | Yapılacak | Her ekip üyesi `ssh arduino@suiz-unoq` ile bağlanabiliyor |
 | 4 | `requirements.txt` ve GitHub Actions test hattı | 0 | Yapılacak | Her PR'da pytest otomatik çalışıyor |
 | 5 | Bridge PoC (§4.6) | 0 | Yapılacak | PoC'nin 6 adımı beklenen sonucu verdi |
