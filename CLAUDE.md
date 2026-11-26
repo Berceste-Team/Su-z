@@ -43,4 +43,13 @@ alanlar ve kodlar `app/ingest/contract.py`'de tek yerde tutulur. Sözleşme değ
 ## Komutlar (Windows, PowerShell)
 - Ortam: `python -m venv .venv`, `.venv\Scripts\activate`, `pip install -r requirements-dev.txt`
 - Test: `python -m pytest`
-- CI: her PR'da `.github/workflows/tests.yml` çalışır; bir iş main'e girmiş ve CI yeşilse bitmiş sayılır.
+- CI: her PR'da `.github/workflows/tests.yml` çalışır.
+
+## Bitti tanımı
+Bir görev, [docs/yazilim-plani.md](docs/yazilim-plani.md) §9'daki koşulların hepsi
+sağlanınca bitmiş sayılır:
+- Kod main'e merge edildi ve CI yeşil.
+- Yeni davranışın testi var (mock veriyle çalışması yeterli).
+- Notion görevindeki kabul kriterleri, incelemeyi yapan kişi tarafından kontrol edildi.
+- Bir veri alanı ya da mesaj değiştiyse `docs/data-contract.md` güncellendi (dosya
+  main'e girene kadar sözleşme yazılım planı §4'tedir).
