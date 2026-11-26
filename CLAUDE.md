@@ -51,5 +51,5 @@ sağlanınca bitmiş sayılır:
 - Kod main'e merge edildi ve CI yeşil.
 - Yeni davranışın testi var (mock veriyle çalışması yeterli).
 - Notion görevindeki kabul kriterleri, incelemeyi yapan kişi tarafından kontrol edildi.
-- Bir veri alanı ya da mesaj değiştiyse `docs/data-contract.md` güncellendi (dosya
-  main'e girene kadar sözleşme yazılım planı §4'tedir).
+- Bir veri alanı ya da mesaj değiştiyse sözleşme (yazılım planı §4) ve
+  `app/ingest/contract.py` birlikte güncellendi.

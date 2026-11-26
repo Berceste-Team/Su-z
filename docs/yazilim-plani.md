@@ -243,9 +243,7 @@ Veri yolu artık belli (Bridge, §3) ve mesaj adları önerildi (§4). En kritik
 **Mevcut koddaki eksikler**
 
 - Sensör `status` bilgisi SQLite'a kaydedilmiyor.
-- Arıza adı tutarsız: mock `freeze`, sözleşme `stuck`.
 - CSV dışa aktarımı yok (analiz ve yayın için gerekli).
-- `requirements.txt` ve otomatik test (CI) yok.
 - Mock, README §7.3'teki fizik tabanlı simülatör değil (ET, mm cinsinden doz yok); model ön eğitimi için ayrı simülatör gerekecek.
 
 **Hiç başlanmamış modüller**
