@@ -1,6 +1,6 @@
 # Suİz — Donanım Temin ve Hazırlık Planı
 
-> **Kaynak:** Projenin güncel bilgisi [proje sitesinde](https://berceste-team.github.io/Su-z/) tutulur; bu belge donanım ve tesisatın ayrıntılı kaydıdır ve siteyle aynı karar ve tarihleri içerir. Notion yalnızca görev tahtası için kullanılır (bkz. [AGENTS.md](../AGENTS.md)).
+> **Kaynak:** Projenin güncel bilgisi [proje sitesinde](https://berceste-team.github.io/Su-z/) tutulur; bu belge donanım ve tesisatın ayrıntılı kaydıdır ve siteyle aynı karar ve tarihleri içerir. Görevler [GitHub issue'larında](https://github.com/Berceste-Team/Su-z/issues) tutulur (bkz. [AGENTS.md](../AGENTS.md)).
 >
 > Hazırlayan: donanım ve tesisat sorumlusu · İlk sürüm: 17 Ekim 2026 · Sadeleştirilmiş sürüm: 20 Ekim 2026
 > Fiyatlar 20.10.2026'da robotistan.com ve direnc.net ürün sayfalarında görülen KDV dahil liste fiyatlarıdır. Stok durumu aynı gün ürün sayfalarından tek tek kontrol edildi. Sipariş öncesi sepette tekrar bakılmalıdır.
@@ -219,7 +219,7 @@ Durum (21 Kasım 2026): MOSFET kartları lehimlendi (ilk karttaki bir GND lehimi
 
 ## 9. Hazırlık takvimi (güncel)
 
-> Önceki takvimler (17 Ekim – 7 Kasım; 9 Kasım planı; 16 Kasım'daki iki turlu plan) geçerliliğini yitirdi. 23 Kasım 2026'da tek ekime geçildi (gerekçe README §9.2). Güncel takvim proje sitesindedir, görevler Notion görev tahtasında tutulur; özeti aşağıdadır.
+> Önceki takvimler (17 Ekim – 7 Kasım; 9 Kasım planı; 16 Kasım'daki iki turlu plan) geçerliliğini yitirdi. 23 Kasım 2026'da tek ekime geçildi (gerekçe README §9.2). Güncel takvim proje sitesindedir, görevler GitHub issue'larında tutulur; özeti aşağıdadır.
 
 | Dönem | Donanım ve tesisat | Yazılım |
 | :--- | :--- | :--- |
@@ -230,7 +230,7 @@ Durum (21 Kasım 2026): MOSFET kartları lehimlendi (ilk karttaki bir GND lehimi
 | **17 Aralık – 5 Ocak** | **E5** A/B tam veri (20 gün); **6 Ocak hasat** | Dokümantasyon, video |
 | **7 – 15 Ocak** | Analiz ve sonuçların yayını (7–10 Ocak); yayın dönemi 15 Ocak'ta biter | **E6**, grafikler, yayın |
 
-Sorumlular ekip içinde belirlenir (Notion tahtasında sorumlu alanı boş bırakılmıştır).
+Sorumlular ekip içinde belirlenir; atama GitHub issue'larında yapılır.
 
 ## 10. Açık noktalar
 
