@@ -10,7 +10,7 @@
 
 </div>
 
-> **Kaynak notu:** Projenin güncel bilgisi (durum, takvim, kurulum, bağlantı şeması) tek yerde tutulur: [proje sitesi](https://berceste-team.github.io/Su-z/) (kaynağı bu depodaki `docs/`). Bu README ve [docs/donanim-plani.md](docs/donanim-plani.md) ayrıntılı teknik kayıttır ve siteyle aynı karar ve tarihleri içerir. Notion yalnızca görev tahtası için kullanılır (kurallar için [AGENTS.md](AGENTS.md)).
+> **Kaynak notu:** Projenin güncel bilgisi (durum, takvim, kurulum, bağlantı şeması) tek yerde tutulur: [proje sitesi](https://berceste-team.github.io/Su-z/) (kaynağı bu depodaki `docs/`). Bu README ve [docs/donanim-plani.md](docs/donanim-plani.md) ayrıntılı teknik kayıttır ve siteyle aynı karar ve tarihleri içerir. Görevler [GitHub issue'larında](https://github.com/Berceste-Team/Su-z/issues) tutulur (kurallar için [AGENTS.md](AGENTS.md)).
 
 ---
 
@@ -26,7 +26,7 @@
 | **Doğrulama** | A/B deneyi: Suİz ve zamanlayıcı tabanlı geleneksel sulama; hızlı döngülü model bitki: roka (3–4 hafta) |
 | **Yayın** | GitHub, Arduino Project Hub ve maker.robotistan.com (yayın penceresi: 30 Aralık 2026 – 15 Ocak 2027) |
 | **Durum** | 23 Kasım 2026: parçalar teslim alındı, MOSFET kartları lehimlendi ve devrenin elektrik bağlantıları kuruldu; henüz güç verilmedi, testler yapılmadı. Yataklar hazırlanıyor, roka tohumu alındı. Tek ekim yapılır; deney takvimi 15 Ocak 2027'de biter (§9.2, §11) |
-| **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler Notion tahtasında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
+| **Güncel takip** | [Proje sitesi](https://berceste-team.github.io/Su-z/) tek veri kaynağıdır; görevler GitHub issue'larında tutulur, bkz. yukarıdaki not ve [AGENTS.md](AGENTS.md) |
 
 ## 📑 İçindekiler
 
@@ -714,7 +714,7 @@ suiz/
 - [ ] M5 – Deney ölçümleri
 - [ ] M6 – GitHub / Project Hub / maker.robotistan.com yayını
 
-> Günlük ilerleme ve görev durumu Notion görev tahtasında tutulur; bu liste kilometre taşı düzeyindedir.
+> Günlük ilerleme ve görev durumu GitHub issue'larında tutulur; bu liste kilometre taşı düzeyindedir.
 
 ### Ekip rolleri
 
