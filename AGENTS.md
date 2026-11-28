@@ -23,7 +23,7 @@
 
 ## Güncel durum (28 Kasım 2026)
 
-- 28 Kasım 2026: PR #9 (test altyapısı ve CI) ve PR #10 (sözleşme v1 komut kuralları) merge edildi. Görev takibi Notion'dan GitHub issue'larına taşındı: PR #9 ve #10 incelemesinden çıkan kararlar ve düzeltmeler #11–#18'de, Notion'daki açık görevler #20–#34'te (Faz 3 görevleri 7 Aralık civarında eklenir).
+- 28 Kasım 2026: PR #9 (test altyapısı ve CI) ve PR #10 (sözleşme v1 komut kuralları) merge edildi. Görev takibi Notion'dan GitHub issue'larına taşındı: PR #9 ve #10 incelemesinden çıkan kararlar ve düzeltmeler #11–#18'de, Notion'daki açık görevler dört issue'da toplandı: #20 (ekim), #21 (donanım, 7 Aralık), #27 (gerçek veri hattı, 7 Aralık), #34 (kural tabanlı sulama, 14 Aralık); Faz 3 görevleri 7 Aralık civarında eklenir.
 
 - 21 Kasım 2026: MOSFET kartları lehimlendi, elektrik bağlantıları kuruldu; 5 V adaptörün fişi kesilip klemensle bağlandı (gelen klemensli jak erkek çıktı). Henüz güç verilmedi, hiçbir test yapılmadı. Yataklar hazırlanıyor; ekim 19 Kasım'da yapılmadı, takvim 23 Kasım'da tek ekime göre yeniden kuruldu. Roka tohumu alındı.
 
