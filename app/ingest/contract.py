@@ -46,7 +46,7 @@ MESSAGE_FIELDS = {
     SUIZ_AMBIENT: Ambient._fields,
     "suiz_irrigation_result": ("v", "req_id", "bed", "result", "reason", "run_ms", "pulses"),
     "suiz_safety": ("v", "bed", "code", "up_ms"),
-    "suiz_irrigate": ("v", "req_id", "bed", "volume_ml", "max_run_s"),
+    "suiz_irrigate": ("v", "req_id", "bed", "target_pulses", "max_run_s"),
     "suiz_heartbeat": ("v", "seq"),
     "suiz_reset_lock": ("v", "bed"),
 }
