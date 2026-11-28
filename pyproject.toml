@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+# Make the repository root importable so `app` and `simulation` resolve
+# without installing the project; plain `pytest` then matches `python -m pytest`.
+pythonpath = ["."]
+testpaths = ["tests"]
