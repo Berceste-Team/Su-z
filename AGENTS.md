@@ -9,7 +9,7 @@
 | **Proje sitesi: [berceste-team.github.io/Su-z](https://berceste-team.github.io/Su-z/)** (kaynağı `docs/index.html`, şema `docs/sema/`) | Proje bilgisinin tek kaynağı: durum, takvim, kurulum, bağlantı şeması, sonuçlar |
 | **`README.md` ve `docs/donanim-plani.md`** | Ayrıntılı teknik kayıt (proje şartnamesi; donanım ve tesisat). Siteyle aynı karar ve tarihleri içermelidir. Kod `app/`, `simulation/` ve `uno-q-app/` (App Lab uygulaması; MCU sketch'i `uno-q-app/sketch/`, 28 Kasım 2026 kararı, #17) altında durur |
 | **[GitHub issue'ları](https://github.com/Berceste-Team/Su-z/issues)** | Görevler, düzeltmeler ve karar bekleyen konular (28 Kasım 2026'dan itibaren; Notion'un yerini aldı). Karar gerektiren issue'da karar ve gerekçesi issue'ya yazılır; atanan kişi işi o karara göre yapar ve PR açıklamasına `Closes #N` yazar |
-| **Notion** | 28 Kasım 2026'dan beri kullanılmıyor; açık görevler GitHub issue'larına taşındı. Yeni bilgi ya da görev Notion'a yazılmaz |
+| **Notion** | 28 Kasım 2026'dan beri görev tahtası olarak kullanılmıyor; açık görevler GitHub issue'larına taşındı, eski tahtalar donduruldu. Notion'da yalnızca ekip içi harcama tablosu tutulur; görev ya da proje bilgisi yazılmaz |
 
 ## Kurallar
 
